@@ -9,6 +9,6 @@ public class GameCore extends Game {
     @Override
     public void create() {
         ScreenManager.getInstance().initialize(this);
-        ScreenManager.getInstance().setScreen(new TestScreen());
+        ScreenManager.getInstance().clearAndSetScreen(new TestScreen());
     }
 }

@@ -25,8 +25,8 @@ public class TestScreen implements Screen, IObserver {
         font = new BitmapFont();
         font.getData().setScale(2f);
         
-        // Start game session
-        GameManager.getInstance().initNewGame();
+        // Start game session with StrayCat (true)
+        GameManager.getInstance().startNewGame(true);
         
         // Đăng ký nhận thông báo từ TimeManager
         TimeManager.getInstance().addObserver(this);
@@ -36,8 +36,8 @@ public class TestScreen implements Screen, IObserver {
 
     private void updateUIData() {
         TimeManager tm = TimeManager.getInstance();
-        timeString = String.format("%02d:%02d", tm.getHour(), tm.getMinute());
-        dayString = "Day " + tm.getDay() + " - " + tm.getDayOfWeek();
+        timeString = String.format("%02d:%02d", tm.getInGameHour(), tm.getInGameMinute());
+        dayString = "Phase: " + tm.getCurrentPhase() + " - " + tm.getCurrentDayOfWeek();
         uiNeedsUpdate = false;
     }
 

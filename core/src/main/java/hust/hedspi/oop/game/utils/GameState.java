@@ -1,8 +1,9 @@
 package hust.hedspi.oop.game.utils;
 
 public enum GameState {
+    MENU,
     PLAYING,
     PAUSED,
-    IN_MINIGAME,
+    MINIGAME,
     GAME_OVER
 }

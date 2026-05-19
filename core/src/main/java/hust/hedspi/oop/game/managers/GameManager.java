@@ -1,6 +1,8 @@
 package hust.hedspi.oop.game.managers;
 
 import hust.hedspi.oop.game.entities.Cat;
+import hust.hedspi.oop.game.entities.HouseCat;
+import hust.hedspi.oop.game.entities.StrayCat;
 import hust.hedspi.oop.game.utils.GameState;
 
 public class GameManager {
@@ -10,7 +12,7 @@ public class GameManager {
     private Cat player;
 
     private GameManager() {
-        currentState = GameState.PLAYING;
+        currentState = GameState.MENU;
     }
 
     public static GameManager getInstance() {
@@ -20,13 +22,15 @@ public class GameManager {
         return instance;
     }
 
-    public void initNewGame() {
-        StoryManager.getInstance().reset();
-        TimeManager.getInstance().reset();
+    public void startNewGame(boolean isStrayCat) {
+        StoryManager.getInstance().resetStoryFlags();
+        TimeManager.getInstance().resetTime();
         
-        // TODO: Initialize specific Cat based on selection (StrayCat or HouseCat)
-        player = new hust.hedspi.oop.game.entities.StrayCat(0, 0, 32, 32);
-        player.setHp(100);
+        if (isStrayCat) {
+            player = new StrayCat(0, 0, 32, 32);
+        } else {
+            player = new HouseCat(0, 0, 32, 32);
+        }
         
         currentState = GameState.PLAYING;
     }
@@ -38,22 +42,26 @@ public class GameManager {
 
         // Logic Sinh tử (Life & Death Cycle)
         if (player != null && player.getHp() <= 0) {
-            handleGameOver();
+            currentState = GameState.GAME_OVER;
+            StoryManager.getInstance().evaluateFinalEnding(player);
+            System.out.println("Game Over Triggered!");
         }
     }
 
-    private void handleGameOver() {
-        currentState = GameState.GAME_OVER;
-        // Giao cho StoryManager hiển thị Bad Ending hoặc Game Over
-        System.out.println("Game Over Triggered!");
+    public void pauseGame() {
+        if (currentState == GameState.PLAYING) {
+            currentState = GameState.PAUSED;
+        }
+    }
+
+    public void resumeGame() {
+        if (currentState == GameState.PAUSED) {
+            currentState = GameState.PLAYING;
+        }
     }
 
     public GameState getCurrentState() {
         return currentState;
-    }
-
-    public void setGameState(GameState state) {
-        this.currentState = state;
     }
 
     public Cat getPlayer() {

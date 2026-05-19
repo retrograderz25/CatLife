@@ -27,11 +27,6 @@ public class ScreenManager {
 
     public void pushScreen(Screen screen) {
         if (game == null) throw new IllegalStateException("ScreenManager must be initialized with Game instance first!");
-
-        if (!screenStack.isEmpty()) {
-            Screen current = screenStack.peek();
-            // We might want to just hide or let LibGDX handle it
-        }
         
         screenStack.push(screen);
         game.setScreen(screen);
@@ -46,16 +41,13 @@ public class ScreenManager {
             
             if (!screenStack.isEmpty()) {
                 game.setScreen(screenStack.peek());
-            } else {
-                // Quit game or show empty screen?
             }
         }
     }
 
-    public void setScreen(Screen screen) {
+    public void clearAndSetScreen(Screen screen) {
         if (game == null) throw new IllegalStateException("ScreenManager must be initialized with Game instance first!");
 
-        // Clear stack and set new root screen
         while (!screenStack.isEmpty()) {
             Screen old = screenStack.pop();
             old.dispose();
@@ -63,5 +55,10 @@ public class ScreenManager {
         
         screenStack.push(screen);
         game.setScreen(screen);
+    }
+
+    public Screen getCurrentScreen() {
+        if (screenStack.isEmpty()) return null;
+        return screenStack.peek();
     }
 }
