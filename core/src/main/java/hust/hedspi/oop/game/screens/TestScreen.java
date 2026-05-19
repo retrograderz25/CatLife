@@ -1,6 +1,7 @@
 package hust.hedspi.oop.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -9,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import hust.hedspi.oop.game.managers.GameManager;
 import hust.hedspi.oop.game.managers.TimeManager;
+import hust.hedspi.oop.game.managers.ScreenManager;
+import hust.hedspi.oop.game.minigames.RhythmMinigame;
 import hust.hedspi.oop.game.utils.IObserver;
 
 public class TestScreen implements Screen, IObserver {
@@ -51,6 +54,12 @@ public class TestScreen implements Screen, IObserver {
         TimeManager.getInstance().update(delta);
         GameManager.getInstance().update(delta);
 
+        // Nút tắt mở nhanh Minigame
+        if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+            ScreenManager.getInstance().pushScreen(new MinigameScreen(new RhythmMinigame()));
+            return; // Tránh render tiếp TestScreen trong frame này
+        }
+
         // UI update based on flags
         if (uiNeedsUpdate) {
             updateUIData();
@@ -74,6 +83,9 @@ public class TestScreen implements Screen, IObserver {
             font.setColor(Color.RED);
             font.draw(batch, "Player HP: " + GameManager.getInstance().getPlayer().getHp(), 50, Gdx.graphics.getHeight() - 300);
         }
+
+        font.setColor(Color.CYAN);
+        font.draw(batch, "Press [M] to test Rhythm Minigame", 50, 100);
         
         batch.end();
     }
