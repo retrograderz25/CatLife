@@ -1,16 +1,24 @@
 package hust.hedspi.oop.game.entities;
 
+import com.badlogic.gdx.graphics.Color;
+
 public class StrayCat extends Cat {
+    
+    private final int BASE_ATTACK_POWER = 10;
+    
     public StrayCat(float x, float y, float width, float height) {
         super(x, y, width, height);
+        setAttackPower(BASE_ATTACK_POWER);
+        createPlaceholderTexture(Color.ORANGE); // Mèo hoang màu cam
     }
 
     @Override
-    public void applyPassiveSkill() {
+    public void applyPassiveSkill(float dt) {
         // Tính Đa hình: Mèo hoang tăng sức mạnh khi ít máu
         if (getHp() < 30) {
-            // System.out.println("StrayCat Passive: Attack power increased due to low HP!");
-            // TODO: Áp dụng buff tăng sát thương / tốc chạy
+            setAttackPower(BASE_ATTACK_POWER * 2);
+        } else {
+            setAttackPower(BASE_ATTACK_POWER);
         }
     }
 }
