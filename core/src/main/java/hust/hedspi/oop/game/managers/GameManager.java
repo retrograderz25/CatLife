@@ -27,9 +27,9 @@ public class GameManager {
         TimeManager.getInstance().resetTime();
         
         if (isStrayCat) {
-            player = new StrayCat(0, 0, 32, 32);
+            player = new StrayCat(400, 300, 64, 64); // Center of screen, larger
         } else {
-            player = new HouseCat(0, 0, 32, 32);
+            player = new HouseCat(400, 300, 64, 64);
         }
         
         currentState = GameState.PLAYING;
@@ -40,11 +40,15 @@ public class GameManager {
             return;
         }
 
-        // Logic Sinh tử (Life & Death Cycle)
-        if (player != null && player.getHp() <= 0) {
-            currentState = GameState.GAME_OVER;
-            StoryManager.getInstance().evaluateFinalEnding(player);
-            System.out.println("Game Over Triggered!");
+        if (player != null) {
+            player.update(dt);
+            
+            // Logic Sinh tử (Life & Death Cycle)
+            if (player.getHp() <= 0) {
+                currentState = GameState.GAME_OVER;
+                StoryManager.getInstance().evaluateFinalEnding(player);
+                System.out.println("Game Over Triggered!");
+            }
         }
     }
 

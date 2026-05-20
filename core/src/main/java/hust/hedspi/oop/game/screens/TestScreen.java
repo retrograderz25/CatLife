@@ -69,6 +69,12 @@ public class TestScreen implements Screen, IObserver {
         ScreenUtils.clear(0.2f, 0.2f, 0.2f, 1);
         
         batch.begin();
+        
+        // Render Player
+        if (GameManager.getInstance().getPlayer() != null) {
+            GameManager.getInstance().getPlayer().render(batch);
+        }
+        
         font.setColor(Color.WHITE);
         font.draw(batch, "--- MANAGER TEST SCREEN ---", 50, Gdx.graphics.getHeight() - 50);
         
@@ -81,11 +87,11 @@ public class TestScreen implements Screen, IObserver {
         
         if (GameManager.getInstance().getPlayer() != null) {
             font.setColor(Color.RED);
-            font.draw(batch, "Player HP: " + GameManager.getInstance().getPlayer().getHp(), 50, Gdx.graphics.getHeight() - 300);
+            font.draw(batch, "Player HP: " + GameManager.getInstance().getPlayer().getHp() + " Energy: " + GameManager.getInstance().getPlayer().getEnergy() + " State: " + GameManager.getInstance().getPlayer().getCurrentState().getClass().getSimpleName(), 50, Gdx.graphics.getHeight() - 300);
         }
 
         font.setColor(Color.CYAN);
-        font.draw(batch, "Press [M] to test Rhythm Minigame", 50, 100);
+        font.draw(batch, "Press [M] to test Minigame | [WASD] Move | [Z] Sleep | [Space] Wake", 50, 100);
         
         batch.end();
     }
@@ -111,6 +117,9 @@ public class TestScreen implements Screen, IObserver {
         batch.dispose();
         font.dispose();
         TimeManager.getInstance().removeObserver(this);
+        if (GameManager.getInstance().getPlayer() != null) {
+            GameManager.getInstance().getPlayer().dispose();
+        }
     }
 
     @Override

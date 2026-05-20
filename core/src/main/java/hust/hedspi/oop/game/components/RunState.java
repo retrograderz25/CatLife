@@ -2,11 +2,11 @@ package hust.hedspi.oop.game.components;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import hust.hedspi.oop.game.entities.Cat;
 
 public class RunState implements ICatState {
-    private static final float SPEED = 150f;
 
     @Override
     public void enter(Cat cat) {
@@ -18,11 +18,12 @@ public class RunState implements ICatState {
         boolean isMoving = false;
         float x = cat.getX();
         float y = cat.getY();
+        float speed = cat.getSpeed();
 
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) { y += SPEED * dt; isMoving = true; }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) { y -= SPEED * dt; isMoving = true; }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) { x -= SPEED * dt; isMoving = true; }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) { x += SPEED * dt; isMoving = true; }
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) { y += speed * dt; isMoving = true; }
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) { y -= speed * dt; isMoving = true; }
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) { x -= speed * dt; isMoving = true; }
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) { x += speed * dt; isMoving = true; }
 
         cat.setPosition(x, y);
 
@@ -34,7 +35,11 @@ public class RunState implements ICatState {
 
     @Override
     public void render(Cat cat, SpriteBatch batch) {
-        // TODO: Vẽ sprite Mèo đang chạy (Run Animation)
+        if (cat.getTexture() != null) {
+            batch.setColor(Color.WHITE); // Reset color
+            // Thêm hiệu ứng bóp méo nhẹ hoặc rung để thể hiện chạy nếu muốn, tạm thời vẽ bình thường
+            batch.draw(cat.getTexture(), cat.getX(), cat.getY(), cat.getWidth(), cat.getHeight());
+        }
     }
 
     @Override

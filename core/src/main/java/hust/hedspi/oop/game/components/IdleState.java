@@ -2,6 +2,7 @@ package hust.hedspi.oop.game.components;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import hust.hedspi.oop.game.entities.Cat;
 
@@ -27,7 +28,10 @@ public class IdleState implements ICatState {
 
     @Override
     public void render(Cat cat, SpriteBatch batch) {
-        // TODO: Vẽ sprite Mèo đứng yên (Idle Animation)
+        if (cat.getTexture() != null) {
+            batch.setColor(Color.WHITE); // Reset color
+            batch.draw(cat.getTexture(), cat.getX(), cat.getY(), cat.getWidth(), cat.getHeight());
+        }
     }
 
     @Override
