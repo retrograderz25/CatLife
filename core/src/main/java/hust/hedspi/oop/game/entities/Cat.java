@@ -9,7 +9,6 @@ public abstract class Cat extends Entity {
     private int hp;
     private int hunger;
     private int energy;
-    private int karma;
 
     // State Pattern: Quản lý hành vi của Mèo
     private ICatState currentState;
@@ -19,7 +18,6 @@ public abstract class Cat extends Entity {
         this.hp = 100;
         this.hunger = 100;
         this.energy = 100;
-        this.karma = 0;
         
         // Trạng thái khởi điểm
         changeState(new IdleState());
@@ -73,8 +71,4 @@ public abstract class Cat extends Entity {
     public int getEnergy() { return energy; }
     public void decreaseEnergy(int amount) { this.energy = Math.max(0, this.energy - amount); }
     public void increaseEnergy(int amount) { this.energy = Math.min(100, this.energy + amount); }
-
-    public int getKarma() { return karma; }
-    public void increaseKarma(int amount) { this.karma += amount; }
-    public void decreaseKarma(int amount) { this.karma -= amount; }
 }
