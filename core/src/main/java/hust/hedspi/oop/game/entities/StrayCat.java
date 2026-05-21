@@ -1,37 +1,24 @@
 package hust.hedspi.oop.game.entities;
 
-import hust.hedspi.oop.game.skills.Skill;
-import java.util.ArrayList;
-import java.util.List;
+import com.badlogic.gdx.graphics.Color;
 
-public class StrayCat {
-    private String name;
-    private float stamina;
-    private float maxStamina;
-    private List<Skill> skills;
-
-    public StrayCat(String name) {
-        this.name = name;
-        this.maxStamina = 100f;
-        this.stamina = this.maxStamina;
-        this.skills = new ArrayList<>();
+public class StrayCat extends Cat {
+    
+    private final int BASE_ATTACK_POWER = 10;
+    
+    public StrayCat(float x, float y, float width, float height) {
+        super(x, y, width, height);
+        setAttackPower(BASE_ATTACK_POWER);
+        createPlaceholderTexture(Color.ORANGE); // Mèo hoang màu cam
     }
 
-    public void addSkill(Skill skill) {
-        skills.add(skill);
-    }
-
-    public void useSkill(int index) {
-        if (index >= 0 && index < skills.size()) {
-            skills.get(index).use(this);
+    @Override
+    public void applyPassiveSkill(float dt) {
+        // Tính Đa hình: Mèo hoang tăng sức mạnh khi ít máu
+        if (getHp() < 30) {
+            setAttackPower(BASE_ATTACK_POWER * 2);
         } else {
-            System.out.println("Kỹ năng ở vị trí " + index + " không tồn tại!");
-        }
-    }
-
-    public void update(float delta) {
-        for (Skill skill : skills) {
-            skill.update(delta);
+            setAttackPower(BASE_ATTACK_POWER);
         }
         
         // Hồi phục thể lực theo thời gian

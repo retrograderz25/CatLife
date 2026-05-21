@@ -2,6 +2,7 @@ package hust.hedspi.oop.game.components;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import hust.hedspi.oop.game.entities.Cat;
 
@@ -32,8 +33,11 @@ public class SleepState implements ICatState {
 
     @Override
     public void render(Cat cat, SpriteBatch batch) {
-        // TODO: Vẽ sprite Mèo đang ngủ (Sleep Animation)
-        // và vẽ chữ "Zzz..." bay lên
+        if (cat.getTexture() != null) {
+            batch.setColor(Color.LIGHT_GRAY); // Chỉnh màu tối lại để thể hiện đang ngủ
+            batch.draw(cat.getTexture(), cat.getX(), cat.getY(), cat.getWidth(), cat.getHeight() * 0.5f); // Ép lùn xuống
+            batch.setColor(Color.WHITE); // Reset màu sau khi vẽ
+        }
     }
 
     @Override

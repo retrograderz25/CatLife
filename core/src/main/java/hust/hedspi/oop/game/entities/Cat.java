@@ -1,5 +1,8 @@
 package hust.hedspi.oop.game.entities;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import hust.hedspi.oop.game.components.ICatState;
 import hust.hedspi.oop.game.components.IdleState;
@@ -10,6 +13,13 @@ public abstract class Cat extends Entity {
     private int hunger;
     private int energy;
 
+    // Các thuộc tính cơ bản thêm vào
+    private float speed;
+    private int attackPower;
+    
+    // Hình ảnh hiển thị tạm thời (Placeholder)
+    protected Texture texture;
+
     // State Pattern: Quản lý hành vi của Mèo
     private ICatState currentState;
 
@@ -19,8 +29,19 @@ public abstract class Cat extends Entity {
         this.hunger = 100;
         this.energy = 100;
         
+        this.speed = 150f;
+        this.attackPower = 10;
+        
         // Trạng thái khởi điểm
         changeState(new IdleState());
+    }
+
+    protected void createPlaceholderTexture(Color color) {
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(color);
+        pixmap.fill();
+        this.texture = new Texture(pixmap);
+        pixmap.dispose();
     }
 
     public void changeState(ICatState newState) {
@@ -38,11 +59,11 @@ public abstract class Cat extends Entity {
     }
 
     // Abstract method để ép buộc các class con phải định nghĩa nội tại riêng
-    public abstract void applyPassiveSkill();
+    public abstract void applyPassiveSkill(float dt);
 
     @Override
     public void update(float dt) {
-        applyPassiveSkill(); // Luôn áp dụng nội tại mỗi frame
+        applyPassiveSkill(dt); // Luôn áp dụng nội tại mỗi frame
         
         // Ủy quyền (Delegate) logic update cho State hiện tại
         if (currentState != null) {
@@ -55,6 +76,12 @@ public abstract class Cat extends Entity {
         // Ủy quyền (Delegate) logic vẽ cho State hiện tại
         if (currentState != null) {
             currentState.render(this, batch);
+        }
+    }
+
+    public void dispose() {
+        if (texture != null) {
+            texture.dispose();
         }
     }
 
@@ -71,4 +98,16 @@ public abstract class Cat extends Entity {
     public int getEnergy() { return energy; }
     public void decreaseEnergy(int amount) { this.energy = Math.max(0, this.energy - amount); }
     public void increaseEnergy(int amount) { this.energy = Math.min(100, this.energy + amount); }
+
+    public int getKarma() { return karma; }
+    public void increaseKarma(int amount) { this.karma += amount; }
+    public void decreaseKarma(int amount) { this.karma -= amount; }
+
+    public float getSpeed() { return speed; }
+    public void setSpeed(float speed) { this.speed = speed; }
+
+    public int getAttackPower() { return attackPower; }
+    public void setAttackPower(int attackPower) { this.attackPower = attackPower; }
+
+    public Texture getTexture() { return texture; }
 }
