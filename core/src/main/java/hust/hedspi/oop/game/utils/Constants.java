@@ -21,4 +21,11 @@ public class Constants {
     // Màn hình
     public static final int VIRTUAL_WIDTH = 1280;
     public static final int VIRTUAL_HEIGHT = 720;
+
+    // Minigame: Cào Móng (DAILY_SCRATCH)
+    public static final float CAO_MONG_DURATION          = 30f;
+    public static final int   CAO_MONG_WIN_THRESHOLD     = 45;
+    public static final float CAO_MONG_HAND_SHOW_TIME    = 0.3f;  // tổng thời gian 1 animation (vươn + giữ + rút)
+    public static final float CAO_MONG_SPRITE_SCALE      = 7f;    // scale cho board và mũi tên
+    public static final float CAO_MONG_HAND_SCALE        = 2f;  // scale bàn tay
 }

@@ -13,6 +13,7 @@ import hust.hedspi.oop.game.managers.TimeManager;
 import hust.hedspi.oop.game.managers.ScreenManager;
 import hust.hedspi.oop.game.managers.ResourceManager;
 import hust.hedspi.oop.game.minigames.RhythmMinigame;
+import hust.hedspi.oop.game.minigames.cao_mong.CaoMongMinigame;
 import hust.hedspi.oop.game.utils.IObserver;
 
 public class TestScreen implements Screen, IObserver {
@@ -57,6 +58,10 @@ public class TestScreen implements Screen, IObserver {
             ScreenManager.getInstance().pushScreen(new MinigameScreen(new RhythmMinigame()));
             return; // Tránh render tiếp TestScreen trong frame này
         }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+            ScreenManager.getInstance().pushScreen(new MinigameScreen(new CaoMongMinigame()));
+            return;
+        }
 
         // UI update based on flags
         if (uiNeedsUpdate) {
@@ -89,7 +94,7 @@ public class TestScreen implements Screen, IObserver {
             dialogFont.draw(batch, "Máu: " + GameManager.getInstance().getPlayer().getHp() + " Năng lượng: " + GameManager.getInstance().getPlayer().getEnergy() + " Hành vi: " + GameManager.getInstance().getPlayer().getCurrentState().getClass().getSimpleName(), 50, Gdx.graphics.getHeight() - 350);
         }
 
-        dialogFont.draw(batch, "Nhấn [M] chơi Minigame | [WASD] Di chuyển | [Z] Ngủ | [Space] Thức", 50, 100);
+        dialogFont.draw(batch, "Nhấn [M] Rhythm | [C] CaoMong | [WASD] Di chuyển | [Z] Ngủ | [Space] Thức", 50, 100);
         
         batch.end();
     }
