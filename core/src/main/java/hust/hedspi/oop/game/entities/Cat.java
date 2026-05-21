@@ -99,10 +99,6 @@ public abstract class Cat extends Entity {
     public void decreaseEnergy(int amount) { this.energy = Math.max(0, this.energy - amount); }
     public void increaseEnergy(int amount) { this.energy = Math.min(100, this.energy + amount); }
 
-    public int getKarma() { return karma; }
-    public void increaseKarma(int amount) { this.karma += amount; }
-    public void decreaseKarma(int amount) { this.karma -= amount; }
-
     public float getSpeed() { return speed; }
     public void setSpeed(float speed) { this.speed = speed; }
 

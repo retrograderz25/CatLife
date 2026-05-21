@@ -1,6 +1,6 @@
 package hust.hedspi.oop.game.skills;
 
-import hust.hedspi.oop.game.entities.StrayCat;
+import hust.hedspi.oop.game.entities.Cat;
 
 public class DashSkill extends BaseSkill {
     public DashSkill() {
@@ -9,7 +9,7 @@ public class DashSkill extends BaseSkill {
     }
 
     @Override
-    protected void performAction(StrayCat cat) {
-        System.out.println(cat.getName() + " lẩn trốn nhanh như chớp! Tăng mạnh tốc độ di chuyển trong thời gian ngắn.");
+    protected void performAction(Cat cat) {
+        System.out.println("Mèo lẩn trốn nhanh như chớp! Tăng mạnh tốc độ di chuyển trong thời gian ngắn.");
     }
 }

@@ -1,6 +1,6 @@
 package hust.hedspi.oop.game.skills;
 
-import hust.hedspi.oop.game.entities.StrayCat;
+import hust.hedspi.oop.game.entities.Cat;
 
 public abstract class BaseSkill implements Skill {
     protected String name;
@@ -33,26 +33,26 @@ public abstract class BaseSkill implements Skill {
     }
 
     @Override
-    public boolean canUse(StrayCat cat) {
+    public boolean canUse(Cat cat) {
         if (currentCooldown > 0) {
             System.out.println("[" + name + "] Kỹ năng đang hồi chiêu! (Còn " + String.format("%.1f", currentCooldown) + "s)");
             return false;
         }
-        if (cat.getStamina() < staminaCost) {
-            System.out.println("[" + name + "] Không đủ thể lực! (Cần: " + staminaCost + ", Hiện có: " + cat.getStamina() + ")");
+        if (cat.getEnergy() < staminaCost) {
+            System.out.println("[" + name + "] Không đủ thể lực! (Cần: " + staminaCost + ", Hiện có: " + cat.getEnergy() + ")");
             return false;
         }
         return true;
     }
 
     @Override
-    public void use(StrayCat cat) {
+    public void use(Cat cat) {
         if (canUse(cat)) {
-            cat.reduceStamina(staminaCost);
+            cat.decreaseEnergy(staminaCost);
             performAction(cat);
             currentCooldown = cooldown;
         }
     }
 
-    protected abstract void performAction(StrayCat cat);
+    protected abstract void performAction(Cat cat);
 }
