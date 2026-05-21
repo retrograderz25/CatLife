@@ -1,6 +1,15 @@
 package hust.hedspi.oop.game.utils;
 
 public class Constants {
+    // Chuỗi này chứa toàn bộ chữ cái Tiếng Việt (Viết hoa, viết thường, số và ký tự đặc biệt)
+    public static final String VIETNAMESE_CHARACTERS = 
+        "aAàÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬ" +
+        "bBcCdDđĐeEèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆ" +
+        "fFgGhHiIìÌỉỈĩĨíÍịỊjJkKlLmMnNoOòÒỏỎõÕóÓọỌ" +
+        "ôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢpPqQrRsStTuU" +
+        "ùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰvVwWxXyYỳỲỷỶỹỸýÝỵỴzZ" +
+        "0123456789! @#$%^&*()_+-=[]{}|;':,./<>?\"\\ ";
+
     // Thời gian
     public static final float REAL_SECONDS_PER_IN_GAME_MINUTE = 0.5f; // 1 real second = 2 game minutes => 0.5 real seconds = 1 game minute
     public static final int START_HOUR = 6;

@@ -7,10 +7,12 @@ package "hust.hedspi.oop.game" {
     
     class GameCore {
         + create(): void
+        + dispose(): void
     }
 
     package "utils" {
         class Constants {
+            + {static} VIETNAMESE_CHARACTERS: String
             + {static} REAL_SECONDS_PER_IN_GAME_MINUTE: float
             + {static} START_HOUR: int
             + {static} START_MINUTE: int
@@ -51,11 +53,45 @@ package "hust.hedspi.oop.game" {
             SENIOR
         }
 
-        abstract class EndingCondition {
-            # priority: int
-            + EndingCondition(priority: int)
+        enum MinigameID {
+            LOVE_HIPHOP
+            LOVE_MASSAGE
+            LOVE_DETECTIVE
+            DAILY_SCRATCH
+            DAILY_ESCAPE_SEWER
+            DAILY_FIGHT_STRAY
+            THIEF_HIDE
+            THIEF_ESCAPE_CAGE
+            GANG_FIGHT_1VN
+            GANG_MASSAGE_BOSS
+            GANG_FIGHT_BOSS
+            PET_BEG
+            PET_BATH
+            PET_ESCAPE_VET
+        }
+
+        enum GameResult {
+            WIN
+            LOSE
+            UNPLAYED
+        }
+
+        class TimeCondition {
+            - startHour: int
+            - endHour: int
+            - validDays: List
+            + TimeCondition(startHour: int, endHour: int, validDays: DayOfWeek...)
+            + isCurrentlyValid(): boolean
+        }
+
+        class EndingCondition {
+            - endingName: String
+            - priority: int
+            - requiredResults: Map
+            - EndingCondition(name: String, priority: int)
+            + getEndingName(): String
             + getPriority(): int
-            + isSatisfied(player: Cat): boolean
+            + isSatisfied(playerHistory: Map): boolean
         }
 
         interface IObserver {
@@ -91,7 +127,7 @@ package "hust.hedspi.oop.game" {
             - inGameMinute: int
             - currentDayOfWeek: DayOfWeek
             - currentPhase: Phase
-            - observers: List<IObserver>
+            - observers: List
             - TimeManager()
             + static getInstance(): TimeManager
             + resetTime(): void
@@ -106,20 +142,23 @@ package "hust.hedspi.oop.game" {
 
         class StoryManager <<Singleton>> {
             - static instance: StoryManager
-            - storyFlags: HashMap<EventFlag, Boolean>
-            - possibleEndings: List<EndingCondition>
+            - playerHistory: Map
+            - endingsDatabase: List
             - StoryManager()
             + static getInstance(): StoryManager
+            + initHistory(): void
             + resetStoryFlags(): void
-            + setFlag(flag: EventFlag, value: boolean): void
-            + getFlag(flag: EventFlag): boolean
+            - buildEndingsConfig(): void
+            + recordResult(id: MinigameID, isWin: boolean): void
+            - triggerInstantGameOver(reason: String): void
+            + isMinigameUnlocked(requestedGame: MinigameID): boolean
             + evaluateFinalEnding(player: Cat): EndingCondition
         }
 
         class ScreenManager <<Singleton>> {
             - static instance: ScreenManager
             - game: Game
-            - screenStack: Stack<Screen>
+            - screenStack: Stack
             - ScreenManager()
             + static getInstance(): ScreenManager
             + initialize(game: Game): void
@@ -127,6 +166,18 @@ package "hust.hedspi.oop.game" {
             + popScreen(): void
             + clearAndSetScreen(screen: Screen): void
             + getCurrentScreen(): Screen
+        }
+
+        class ResourceManager <<Singleton>> {
+            - static instance: ResourceManager
+            + dialogFont: BitmapFont
+            + nameFont: BitmapFont
+            + hudFont: BitmapFont
+            - ResourceManager()
+            + static getInstance(): ResourceManager
+            + initialize(): void
+            - generateFonts(): void
+            + dispose(): void
         }
 
         class SoundManager <<Singleton>> {
@@ -173,29 +224,41 @@ package "hust.hedspi.oop.game" {
             - hp: int
             - hunger: int
             - energy: int
-            - karma: int
+            - speed: float
+            - attackPower: int
+            # texture: Texture
             - currentState: ICatState
             + Cat(x: float, y: float, width: float, height: float)
+            # createPlaceholderTexture(color: Color): void
             + changeState(newState: ICatState): void
             + getCurrentState(): ICatState
-            + {abstract} applyPassiveSkill(): void
+            + {abstract} applyPassiveSkill(dt: float): void
             + update(dt: float): void
             + render(batch: SpriteBatch): void
-            + getHp(): int
-            + setHp(hp: int): void
-            + increaseHp(amount: int): void
-            + decreaseHp(amount: int): void
-            ... getters/setters for hunger, energy, karma
+            + dispose(): void
         }
 
         class StrayCat {
+            - BASE_ATTACK_POWER: int
             + StrayCat(x: float, y: float, width: float, height: float)
-            + applyPassiveSkill(): void
+            + applyPassiveSkill(dt: float): void
         }
 
         class HouseCat {
             + HouseCat(x: float, y: float, width: float, height: float)
-            + applyPassiveSkill(): void
+            + applyPassiveSkill(dt: float): void
+        }
+
+        class TriggerZone {
+            - timeCondition: TimeCondition
+            - linkedMinigame: IMinigameStrategy
+            - zoneName: String
+            + TriggerZone(x: float, y: float, w: float, h: float, name: String)
+            + setTimeCondition(condition: TimeCondition): void
+            + setLinkedMinigame(minigame: IMinigameStrategy): void
+            + onInteract(player: Cat): void
+            + update(dt: float): void
+            + render(batch: SpriteBatch): void
         }
     }
 
@@ -231,10 +294,70 @@ package "hust.hedspi.oop.game" {
         }
     }
 
+    package "skills" {
+        interface Skill {
+            + getName(): String
+            + getCooldown(): float
+            + canUse(cat: Cat): boolean
+            + use(cat: Cat): void
+            + update(delta: float): void
+        }
+
+        abstract class BaseSkill {
+            # name: String
+            # cooldown: float
+            # currentCooldown: float
+            # staminaCost: int
+            + BaseSkill(name: String, cooldown: float)
+            + canUse(cat: Cat): boolean
+            + use(cat: Cat): void
+            # {abstract} performAction(cat: Cat): void
+        }
+
+        class DashSkill {
+            + DashSkill()
+            # performAction(cat: Cat): void
+        }
+        
+        class HissSkill {
+            + HissSkill()
+            # performAction(cat: Cat): void
+        }
+
+        class ScratchSkill {
+            + ScratchSkill()
+            # performAction(cat: Cat): void
+        }
+    }
+
+    package "minigames" {
+        interface IMinigameStrategy {
+            + start(): void
+            + update(dt: float): void
+            + render(batch: SpriteBatch): void
+            + isFinished(): boolean
+            + isWon(): boolean
+            + dispose(): void
+        }
+
+        class RhythmMinigame {
+            - finished: boolean
+            - won: boolean
+            - timer: float
+            + start(): void
+            + update(dt: float): void
+            + render(batch: SpriteBatch): void
+        }
+    }
+
     package "screens" {
+        interface Screen {
+            + render(delta: float): void
+            + dispose(): void
+        }
+
         class TestScreen {
             - batch: SpriteBatch
-            - font: BitmapFont
             - timeString: String
             - dayString: String
             - uiNeedsUpdate: boolean
@@ -244,19 +367,30 @@ package "hust.hedspi.oop.game" {
             + dispose(): void
             + onNotify(args: Object...): void
         }
+
+        class MinigameScreen {
+            - strategy: IMinigameStrategy
+            - batch: SpriteBatch
+            - font: BitmapFont
+            - shouldExit: boolean
+            + MinigameScreen(strategy: IMinigameStrategy)
+            + render(delta: float): void
+        }
     }
 }
 
 ' Relationships
 GameCore --> ScreenManager : uses
+GameCore --> ResourceManager : uses
 GameCore --> TestScreen : creates
 
 TimeManager ..|> ISubject
 TestScreen ..|> IObserver
-TestScreen ..|> Screen : implements (libGDX)
+TestScreen ..|> Screen : implements
+MinigameScreen ..|> Screen : implements
 
 TimeManager "1" o--> "many" IObserver : observers
-StoryManager o--> EndingCondition : possibleEndings
+StoryManager "1" o--> "many" EndingCondition : endingsDatabase
 GameManager --> GameState : currentState
 GameManager --> Cat : player
 TimeManager --> DayOfWeek : currentDayOfWeek
@@ -265,11 +399,22 @@ TimeManager --> Phase : currentPhase
 Entity <|-- Cat
 Cat <|-- StrayCat
 Cat <|-- HouseCat
+Entity <|-- TriggerZone
+
+TriggerZone ..|> IInteractable
 
 ICatState <|.. IdleState
 ICatState <|.. RunState
 ICatState <|.. SleepState
 
 Cat "1" *--> "1" ICatState : currentState
+
+Skill <|.. BaseSkill
+BaseSkill <|-- DashSkill
+BaseSkill <|-- HissSkill
+BaseSkill <|-- ScratchSkill
+
+IMinigameStrategy <|.. RhythmMinigame
+MinigameScreen *--> IMinigameStrategy : strategy
 
 @enduml

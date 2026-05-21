@@ -18,14 +18,21 @@ Tài liệu này giải thích cấu trúc và mối quan hệ giữa các Core 
 - Bổ sung hàm `skipToNextMorning()` giúp tua nhanh thời gian khi Mèo đi ngủ.
 
 ### C. StoryManager (Bộ Xử Lý Cốt Truyện)
-- Cập nhật và truy xuất trạng thái các biến cố trong game thông qua tập hợp cờ `storyFlags` (HashMap).
-- Áp dụng **Chain of Responsibility Pattern** cho danh sách `possibleEndings`. Khi kết thúc game, hàm `evaluateFinalEnding(player)` sẽ duyệt qua các `EndingCondition` theo thứ tự ưu tiên (priority) giảm dần để chọn ra kết cục phù hợp nhất dựa trên chỉ số của Mèo.
+- Lịch sử game được theo dõi qua `playerHistory` dựa trên MinigameID thay vì EventFlags cũ.
+- Áp dụng **Chain of Responsibility Pattern** cùng **Builder Pattern** cho danh sách `possibleEndings`. Khi kết thúc game, hàm `evaluateFinalEnding(player)` sẽ duyệt qua các `EndingCondition` theo thứ tự ưu tiên giảm dần để chọn ra kết cục phù hợp nhất.
+- Hỗ trợ hàm `isMinigameUnlocked` để quản lý mở khóa tiến trình (Dependency logic).
 
 ### D. ScreenManager (Quản Lý Màn Hình)
 - Hoạt động như một cấu trúc `Stack<Screen>`. Giúp dễ dàng chuyển qua lại giữa các màn hình, ví dụ: Đang ở `PlayScreen` -> Đẩy (Push) `MinigameScreen` lên trên cùng -> Chơi xong thì Pop ra để quay lại `PlayScreen` ban đầu.
 - Sở hữu hàm `clearAndSetScreen()` để dọn dẹp các màn hình cũ khi đổi cảnh (tránh rò rỉ bộ nhớ).
 
-### E. SoundManager (Quản Lý Âm Thanh)
+### E. ResourceManager (Quản Lý Tài Nguyên & Font Chữ)
+- Quản lý việc sinh ra (generate) các font chữ Tiếng Việt trực tiếp từ file `.ttf` bằng thư viện `gdx-freetype`.
+- Khởi tạo 3 cấp độ hiển thị: `hudFont` (To, viền/đổ bóng), `nameFont` (Vừa, viền nổi bật), `dialogFont` (Chuẩn, dễ đọc).
+- Cài đặt cấu hình Pixel Art (`TextureFilter.Nearest`) để không bị nhòe mờ.
+- Xử lý gom nhóm `dispose()` tài nguyên an toàn khi game tắt.
+
+### F. SoundManager (Quản Lý Âm Thanh)
 - Tích hợp chặt chẽ với `AssetManager` của libGDX để tải và giải phóng file âm thanh an toàn, tránh văng game do hết RAM.
 - Tách biệt quản lý âm lượng giữa Nhạc nền (BGM) và Hiệu ứng (SFX) thông qua các biến `bgmVolume` và `sfxVolume`.
 

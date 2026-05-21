@@ -11,12 +11,12 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import hust.hedspi.oop.game.managers.GameManager;
 import hust.hedspi.oop.game.managers.TimeManager;
 import hust.hedspi.oop.game.managers.ScreenManager;
+import hust.hedspi.oop.game.managers.ResourceManager;
 import hust.hedspi.oop.game.minigames.RhythmMinigame;
 import hust.hedspi.oop.game.utils.IObserver;
 
 public class TestScreen implements Screen, IObserver {
     private SpriteBatch batch;
-    private BitmapFont font;
     
     // Cached data for UI (Observer Pattern)
     private String timeString = "";
@@ -25,8 +25,6 @@ public class TestScreen implements Screen, IObserver {
 
     public TestScreen() {
         batch = new SpriteBatch();
-        font = new BitmapFont();
-        font.getData().setScale(2f);
         
         // Start game session with StrayCat (true)
         GameManager.getInstance().startNewGame(true);
@@ -40,7 +38,7 @@ public class TestScreen implements Screen, IObserver {
     private void updateUIData() {
         TimeManager tm = TimeManager.getInstance();
         timeString = String.format("%02d:%02d", tm.getInGameHour(), tm.getInGameMinute());
-        dayString = "Phase: " + tm.getCurrentPhase() + " - " + tm.getCurrentDayOfWeek();
+        dayString = "Giai đoạn: " + tm.getCurrentPhase() + " - " + tm.getCurrentDayOfWeek();
         uiNeedsUpdate = false;
     }
 
@@ -75,23 +73,23 @@ public class TestScreen implements Screen, IObserver {
             GameManager.getInstance().getPlayer().render(batch);
         }
         
-        font.setColor(Color.WHITE);
-        font.draw(batch, "--- MANAGER TEST SCREEN ---", 50, Gdx.graphics.getHeight() - 50);
+        BitmapFont hudFont = ResourceManager.getInstance().hudFont;
+        BitmapFont dialogFont = ResourceManager.getInstance().dialogFont;
+        BitmapFont nameFont = ResourceManager.getInstance().nameFont;
+
+        hudFont.draw(batch, "--- THỬ NGHIỆM FONT TIẾNG VIỆT ---", 50, Gdx.graphics.getHeight() - 50);
         
-        font.setColor(Color.YELLOW);
-        font.draw(batch, "Time: " + timeString, 50, Gdx.graphics.getHeight() - 100);
-        font.draw(batch, dayString, 50, Gdx.graphics.getHeight() - 150);
+        hudFont.draw(batch, "Thời gian: " + timeString, 50, Gdx.graphics.getHeight() - 100);
+        hudFont.draw(batch, dayString, 50, Gdx.graphics.getHeight() - 150);
         
-        font.setColor(Color.GREEN);
-        font.draw(batch, "Game State: " + GameManager.getInstance().getCurrentState(), 50, Gdx.graphics.getHeight() - 250);
+        hudFont.draw(batch, "Trạng thái Game: " + GameManager.getInstance().getCurrentState(), 50, Gdx.graphics.getHeight() - 250);
         
         if (GameManager.getInstance().getPlayer() != null) {
-            font.setColor(Color.RED);
-            font.draw(batch, "Player HP: " + GameManager.getInstance().getPlayer().getHp() + " Energy: " + GameManager.getInstance().getPlayer().getEnergy() + " State: " + GameManager.getInstance().getPlayer().getCurrentState().getClass().getSimpleName(), 50, Gdx.graphics.getHeight() - 300);
+            nameFont.draw(batch, "Mèo Mun (Stray Cat)", 50, Gdx.graphics.getHeight() - 320);
+            dialogFont.draw(batch, "Máu: " + GameManager.getInstance().getPlayer().getHp() + " Năng lượng: " + GameManager.getInstance().getPlayer().getEnergy() + " Hành vi: " + GameManager.getInstance().getPlayer().getCurrentState().getClass().getSimpleName(), 50, Gdx.graphics.getHeight() - 350);
         }
 
-        font.setColor(Color.CYAN);
-        font.draw(batch, "Press [M] to test Minigame | [WASD] Move | [Z] Sleep | [Space] Wake", 50, 100);
+        dialogFont.draw(batch, "Nhấn [M] chơi Minigame | [WASD] Di chuyển | [Z] Ngủ | [Space] Thức", 50, 100);
         
         batch.end();
     }
@@ -115,7 +113,6 @@ public class TestScreen implements Screen, IObserver {
     @Override
     public void dispose() {
         batch.dispose();
-        font.dispose();
         TimeManager.getInstance().removeObserver(this);
         if (GameManager.getInstance().getPlayer() != null) {
             GameManager.getInstance().getPlayer().dispose();

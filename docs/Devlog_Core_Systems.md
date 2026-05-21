@@ -13,6 +13,7 @@ Tài liệu này ghi chú lại những hệ thống lõi (Core Systems) đã đ
 - `TimeManager`: Đếm giờ in-game (1s = 2m), quản lý Ngày và Giai đoạn lớn lên (Phase).
 - `StoryManager`: Quản lý lịch sử Minigame và chốt Ending.
 - `SoundManager`: Khung quản lý âm thanh cơ bản (chờ gắn AssetManager).
+- `ResourceManager`: Sinh tự động font Tiếng Việt chuẩn Pixel Art.
 
 **💡 Cách dùng khi dev tính năng khác:**
 - Cần trừ máu nhân vật từ một cạm bẫy? 
@@ -56,8 +57,9 @@ Tài liệu này ghi chú lại những hệ thống lõi (Core Systems) đã đ
 **🛠 Kỹ thuật áp dụng:** Kế thừa (Inheritance), Trừu tượng (Abstraction), Interface.
 
 **✅ Đã hoàn thành:**
-- Lớp gốc `Entity` quản lý tọa độ x,y và Hitbox. Lớp `Cat` quản lý chỉ số sinh tồn (HP, Energy).
+- Lớp gốc `Entity` quản lý tọa độ x,y và Hitbox. Lớp `Cat` quản lý chỉ số sinh tồn (HP, Energy, Speed, AttackPower).
 - Các class cụ thể `StrayCat`, `HouseCat` tự định nghĩa nội tại qua `applyPassiveSkill()`.
+- Lớp `TriggerZone` kế thừa `Entity` đóng vai trò vật thể ẩn có thể tương tác.
 - Interface `IInteractable` và `IDamageable`.
 
 **💡 Cách dùng khi dev tính năng khác:**
@@ -71,7 +73,7 @@ Tài liệu này ghi chú lại những hệ thống lõi (Core Systems) đã đ
 
 **✅ Đã hoàn thành:**
 - Interface `IMinigameStrategy` và màn hình dùng chung `MinigameScreen`.
-- Đã test thành công với `RhythmMinigame`. Khắc phục triệt để lỗi rò rỉ bộ nhớ (Access Violation) khi tắt màn hình.
+- Đã test thành công với `RhythmMinigame`. Khắc phục triệt để lỗi rò rỉ bộ nhớ (Access Violation) khi tắt màn hình bằng kỹ thuật trì hoãn thoát `shouldExit`.
 
 **💡 Cách dùng khi dev tính năng khác:**
 - Khi team Design giao cho làm minigame "Bắt Chuột":
@@ -100,7 +102,7 @@ Tài liệu này ghi chú lại những hệ thống lõi (Core Systems) đã đ
 **🛠 Kỹ thuật áp dụng:** Builder Pattern, Chain of Responsibility.
 
 **✅ Đã hoàn thành:**
-- Chuyển EventFlag thành `playerHistory` (lưu lịch sử Thắng/Thua của từng Minigame).
+- Lập bảng History (lưu lịch sử Thắng/Thua của từng Minigame qua `MinigameID`).
 - Áp dụng Builder Pattern để "lắp ráp" các Endings bằng mã lệnh cực kỳ dễ đọc. Đã nạp đầy đủ cấu hình Endings từ file Excel của Team Game Design.
 - Xử lý mượt mà việc "Khóa/Mở" (Dependency) minigame và "Chết đột ngột" (Instant Game Over).
 
@@ -111,3 +113,21 @@ Tài liệu này ghi chú lại những hệ thống lõi (Core Systems) đã đ
   👉 `if (StoryManager.getInstance().isMinigameUnlocked(MinigameID.GANG_FIGHT_BOSS)) { ... }`
 - Chốt Ending cuối game:
   👉 `EndingCondition finalEnding = StoryManager.getInstance().evaluateFinalEnding(player);`
+
+---
+
+## 8. Hệ Thống Quản Lý Tài Nguyên & Font Chữ (ResourceManager)
+**🛠 Kỹ thuật áp dụng:** Factory, Singleton, Freetype Font.
+
+**✅ Đã hoàn thành:**
+- Sử dụng `FreeTypeFontGenerator` để chuyển đổi file `zpix.ttf` thành `BitmapFont`.
+- Hỗ trợ full chuỗi ký tự có dấu tiếng Việt trong `Constants`.
+- Cấu hình Anti-aliasing (`TextureFilter.Nearest`) giữ nguyên chất lượng Pixel Art cổ điển.
+- Phân tách làm 3 cấp độ: `dialogFont`, `nameFont`, `hudFont`.
+
+**💡 Cách dùng khi dev tính năng khác:**
+- Khi vẽ trên màn hình HUD hoặc Minigame:
+  ```java
+  BitmapFont font = ResourceManager.getInstance().dialogFont;
+  font.draw(batch, "Chào con sen!", x, y);
+  ```
