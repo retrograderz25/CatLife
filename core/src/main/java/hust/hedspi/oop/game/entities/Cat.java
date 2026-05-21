@@ -12,7 +12,6 @@ public abstract class Cat extends Entity {
     private int hp;
     private int hunger;
     private int energy;
-    private int karma;
 
     // Các thuộc tính cơ bản thêm vào
     private float speed;
@@ -29,7 +28,6 @@ public abstract class Cat extends Entity {
         this.hp = 100;
         this.hunger = 100;
         this.energy = 100;
-        this.karma = 0;
         
         this.speed = 150f;
         this.attackPower = 10;

@@ -20,5 +20,26 @@ public class StrayCat extends Cat {
         } else {
             setAttackPower(BASE_ATTACK_POWER);
         }
+        
+        // Hồi phục thể lực theo thời gian
+        if (stamina < maxStamina) {
+            stamina += 5.0f * delta; // Hồi 5 stamina mỗi giây
+            if (stamina > maxStamina) {
+                stamina = maxStamina;
+            }
+        }
+    }
+
+    public int getStamina() {
+        return (int) stamina;
+    }
+
+    public void reduceStamina(int amount) {
+        this.stamina -= amount;
+        if (this.stamina < 0) this.stamina = 0;
+    }
+
+    public String getName() {
+        return name;
     }
 }
