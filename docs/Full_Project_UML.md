@@ -178,9 +178,11 @@ package "hust.hedspi.oop.game" {
             + dialogFont: BitmapFont
             + nameFont: BitmapFont
             + hudFont: BitmapFont
+            - bundle: I18NBundle
             - ResourceManager()
             + static getInstance(): ResourceManager
             + initialize(): void
+            + getBundle(): I18NBundle
             - generateFonts(): void
             + dispose(): void
         }
@@ -353,6 +355,31 @@ package "hust.hedspi.oop.game" {
             + update(dt: float): void
             + render(batch: SpriteBatch): void
         }
+
+        package "cao_mong" {
+            class CaoMongMinigame {
+                - timer: float
+                - score: int
+                - gameOver: boolean
+                - exitRequested: boolean
+                - won: boolean
+                - activeArrow: int
+                - handActive: boolean[2]
+                - handAnimTime: float[2]
+                - handTarget: int[2]
+                + start(): void
+                + update(dt: float): void
+                + render(batch: SpriteBatch): void
+                + isFinished(): boolean
+                + isWon(): boolean
+                + dispose(): void
+                - handOf(dir: int): int
+                - getLerpFactor(t: float): float
+                - zoneCenter(dir: int): float[]
+                - renderHand(batch, h, region): void
+                - renderGameOver(batch: SpriteBatch): void
+            }
+        }
     }
 
     package "screens" {
@@ -376,7 +403,6 @@ package "hust.hedspi.oop.game" {
         class MinigameScreen {
             - strategy: IMinigameStrategy
             - batch: SpriteBatch
-            - font: BitmapFont
             - shouldExit: boolean
             + MinigameScreen(strategy: IMinigameStrategy)
             + render(delta: float): void
@@ -420,6 +446,7 @@ BaseSkill <|-- HissSkill
 BaseSkill <|-- ScratchSkill
 
 IMinigameStrategy <|.. RhythmMinigame
+IMinigameStrategy <|.. CaoMongMinigame
 MinigameScreen *--> IMinigameStrategy : strategy
 
 @enduml
