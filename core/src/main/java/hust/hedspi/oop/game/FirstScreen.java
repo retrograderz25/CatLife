@@ -1,74 +1,45 @@
 package hust.hedspi.oop.game;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
-import hust.hedspi.oop.game.entities.StrayCat;
-import hust.hedspi.oop.game.skills.DashSkill;
-import hust.hedspi.oop.game.skills.HissSkill;
-import hust.hedspi.oop.game.skills.ScratchSkill;
 
 /** First screen of the application. Displayed after the application is created. */
 public class FirstScreen implements Screen {
-    
-    private StrayCat myCat;
-
     @Override
     public void show() {
-        // Khởi tạo mèo hoang và thêm các kỹ năng
-        myCat = new StrayCat("Mèo Mun");
-        myCat.addSkill(new ScratchSkill()); // Skill 0 (Phím 1)
-        myCat.addSkill(new HissSkill());    // Skill 1 (Phím 2)
-        myCat.addSkill(new DashSkill());    // Skill 2 (Phím 3)
-        
-        System.out.println("==================================================");
-        System.out.println("Trò chơi bắt đầu! Bạn đang điều khiển: " + myCat.getName());
-        System.out.println("Nhấn phím số 1: Cào (Scratch)  - Sát thương vật lý");
-        System.out.println("Nhấn phím số 2: Khè (Hiss)     - Gây hoảng sợ");
-        System.out.println("Nhấn phím số 3: Lẩn trốn (Dash)- Tăng tốc độ");
-        System.out.println("==================================================");
+        // Prepare your screen here.
     }
 
     @Override
     public void render(float delta) {
-        // Xóa màn hình
-        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        // Cập nhật logic của mèo (hồi chiêu, hồi thể lực)
-        myCat.update(delta);
-
-        // Xử lý Input từ bàn phím để test skill
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
-            myCat.useSkill(0);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
-            myCat.useSkill(1);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
-            myCat.useSkill(2);
-        }
+        // Draw your screen here. "delta" is the time since last render in seconds.
     }
 
     @Override
     public void resize(int width, int height) {
+        // If the window is minimized on a desktop (LWJGL3) platform, width and height are 0, which causes problems.
+        // In that case, we don't resize anything, and wait for the window to be a normal size before updating.
         if(width <= 0 || height <= 0) return;
+
+        // Resize your screen here. The parameters represent the new window size.
     }
 
     @Override
     public void pause() {
+        // Invoked when your application is paused.
     }
 
     @Override
     public void resume() {
+        // Invoked when your application is resumed after pause.
     }
 
     @Override
     public void hide() {
+        // This method is called when another screen replaces this one.
     }
 
     @Override
     public void dispose() {
+        // Destroy screen's assets here.
     }
 }
