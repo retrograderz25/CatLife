@@ -29,5 +29,6 @@
 ## 🟥 PHASE 3: CONTENT & ĐÁNH BÓNG (Tương Lai)
 - [ ] Vẽ / Tích hợp toàn bộ Sprite Animation.
 - [x] **Minigame Cào Móng – `CaoMongMinigame` (Strategy + I18N + StoryManager):** Minigame đầu tiên hoàn chỉnh: background, board, 4 zone mũi tên xoay đúng hướng bằng `TextureRegion` rotation, bàn tay mèo flash khi bấm đúng, đếm ngược 30 giây, game over overlay. Tuân thủ: font lấy từ `ResourceManager`, text từ `I18NBundle` (`assets/i18n/ui_vi.properties`), hằng số trong `Constants`, kết quả ghi vào `StoryManager.recordResult(DAILY_SCRATCH, won)`.
+- [x] **Minigame Thoát Khỏi Cống – `ThoatKhoiCongMinigame` (Strategy + Pixmap Collision + Camera Scroll + I18N):** Mèo điều hướng qua mê cung 1024×1024 trong 45 giây. Va chạm pixel-perfect bằng `Pixmap` đọc alpha channel của `road.png`. Camera cuộn dọc theo mèo (ngang cố định vì maze < screen). Sprite animation 3 trạng thái (IDLE/WALK/RUN) từ sprite sheet. Hiệu ứng bóng tối (`dark_frame.png` scale 2× màn hình) fade-in khi mèo rời spawn, tâm trong suốt tạo tầm nhìn hạn chế. Kết quả ghi vào `StoryManager.recordResult(DAILY_ESCAPE_SEWER, won)`.
 - [ ] Tích hợp âm thanh, BGM.
 - [ ] Cân bằng game (Chỉ số hồi/tiêu hao năng lượng, độ khó minigame).

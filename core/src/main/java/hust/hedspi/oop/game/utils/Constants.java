@@ -27,5 +27,15 @@ public class Constants {
     public static final int   CAO_MONG_WIN_THRESHOLD     = 45;
     public static final float CAO_MONG_HAND_SHOW_TIME    = 0.3f;  // tổng thời gian 1 animation (vươn + giữ + rút)
     public static final float CAO_MONG_SPRITE_SCALE      = 7f;    // scale cho board và mũi tên
-    public static final float CAO_MONG_HAND_SCALE        = 2f;  // scale bàn tay
+    public static final float CAO_MONG_HAND_SCALE        = 2f;    // scale bàn tay
+
+    // Minigame: Thoát Khỏi Cống (DAILY_ESCAPE_SEWER)
+    public static final float THOAT_CONG_DURATION        = 45f;   // giây
+    public static final int   THOAT_CONG_SPAWN_AREA      = 190;   // pixel vùng spawn góc trên-trái
+    public static final int   THOAT_CONG_GOAL_AREA       = 150;   // pixel vùng đích góc dưới-trái
+    public static final float THOAT_CONG_CAT_SPEED       = 100f;  // pixel/giây (đi bộ)
+    public static final float THOAT_CONG_CAT_RUN_SPEED   = 180f;  // pixel/giây (chạy – giữ Shift)
+    public static final float THOAT_CONG_MAZE_SCALE       = 0.75f;  // 768px hiển thị: cuộn ngang 128px, cuộn dọc 288px
+    public static final float THOAT_CONG_SPRITE_SCALE    = 1.0f;  // hệ số nhân lên trên mazeScale để tính kích thước mèo
+    public static final float THOAT_CONG_DARK_FADE       = 1.2f;  // alpha/giây fade-in bóng tối
 }

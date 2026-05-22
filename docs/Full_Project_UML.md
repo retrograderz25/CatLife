@@ -377,6 +377,35 @@ package "hust.hedspi.oop.game" {
                 - getLerpFactor(t: float): float
                 - zoneCenter(dir: int): float[]
                 - renderHand(batch, h, region): void
+                - renderHintPanel(batch: SpriteBatch): void
+                - renderGameOver(batch: SpriteBatch): void
+            }
+        }
+
+        package "thoat_khoi_cong" {
+            class ThoatKhoiCongMinigame {
+                - catImgX: float
+                - catImgY: float
+                - camImgY: float
+                - darkAlpha: float
+                - leftSpawn: boolean
+                - timer: float
+                - gameOver: boolean
+                - won: boolean
+                - exitRequested: boolean
+                - roadPixmap: Pixmap
+                - animState: AnimState
+                - animFrame: int
+                + start(): void
+                + update(dt: float): void
+                + render(batch: SpriteBatch): void
+                + isFinished(): boolean
+                + isWon(): boolean
+                + dispose(): void
+                - canMoveTo(nx: float, ny: float): boolean
+                - isWalkable(mx: float, my: float): boolean
+                - isInSpawnZone(): boolean
+                - endGame(playerWon: boolean): void
                 - renderGameOver(batch: SpriteBatch): void
             }
         }
@@ -447,6 +476,7 @@ BaseSkill <|-- ScratchSkill
 
 IMinigameStrategy <|.. RhythmMinigame
 IMinigameStrategy <|.. CaoMongMinigame
+IMinigameStrategy <|.. ThoatKhoiCongMinigame
 MinigameScreen *--> IMinigameStrategy : strategy
 
 @enduml
