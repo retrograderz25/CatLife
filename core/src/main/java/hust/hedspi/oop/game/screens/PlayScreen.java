@@ -4,11 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import hust.hedspi.oop.game.managers.GameManager;
 import hust.hedspi.oop.game.managers.TimeManager;
 import hust.hedspi.oop.game.screens.hud.PlayerHUD;
@@ -18,6 +20,8 @@ import hust.hedspi.oop.game.utils.Constants;
 public class PlayScreen implements Screen {
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
+    private OrthographicCamera camera;
+    private Viewport viewport;
     private Stage hudStage;
     
     private TimeHUD timeHUD;
@@ -27,6 +31,11 @@ public class PlayScreen implements Screen {
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
         
+        // Game Camera & Viewport
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT, camera);
+        camera.position.set(Constants.VIRTUAL_WIDTH / 2f, Constants.VIRTUAL_HEIGHT / 2f, 0);
+
         // HUD Stage
         hudStage = new Stage(new FitViewport(Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT));
         
@@ -51,9 +60,14 @@ public class PlayScreen implements Screen {
         // Cập nhật Logic
         TimeManager.getInstance().update(delta);
         GameManager.getInstance().update(delta);
+        camera.update();
 
         // Xóa màn hình với màu xanh lá cây tượng trưng cho bãi cỏ (Map placeholder)
         ScreenUtils.clear(0.3f, 0.7f, 0.3f, 1);
+
+        // Đặt ma trận chiếu cho game map
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        batch.setProjectionMatrix(camera.combined);
 
         // Render "Map" placeholder bằng ShapeRenderer (Đường đi, v.v.)
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -77,6 +91,7 @@ public class PlayScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
+        viewport.update(width, height, false);
         hudStage.getViewport().update(width, height, true);
     }
 
