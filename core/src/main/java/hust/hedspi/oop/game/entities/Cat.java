@@ -6,8 +6,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import hust.hedspi.oop.game.components.ICatState;
 import hust.hedspi.oop.game.components.IdleState;
+import hust.hedspi.oop.game.utils.IObserver;
+import hust.hedspi.oop.game.utils.ISubject;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class Cat extends Entity {
+public abstract class Cat extends Entity implements ISubject {
     // Encapsulation: Dữ liệu được đóng gói private, chỉ có thể sửa đổi qua hàm
     private int hp;
     private int hunger;
@@ -22,6 +26,9 @@ public abstract class Cat extends Entity {
 
     // State Pattern: Quản lý hành vi của Mèo
     private ICatState currentState;
+    
+    // Observer Pattern: Danh sách những màn hình/UI đang theo dõi Mèo này
+    private List<IObserver> observers = new ArrayList<>();
 
     public Cat(float x, float y, float width, float height) {
         super(x, y, width, height);
@@ -87,17 +94,17 @@ public abstract class Cat extends Entity {
 
     // --- Getters & Setters an toàn ---
     public int getHp() { return hp; }
-    public void setHp(int hp) { this.hp = Math.max(0, hp); }
-    public void decreaseHp(int amount) { this.hp = Math.max(0, this.hp - amount); }
-    public void increaseHp(int amount) { this.hp = Math.min(100, this.hp + amount); }
+    public void setHp(int hp) { this.hp = Math.max(0, hp); notifyObservers(); }
+    public void decreaseHp(int amount) { this.hp = Math.max(0, this.hp - amount); notifyObservers(); }
+    public void increaseHp(int amount) { this.hp = Math.min(100, this.hp + amount); notifyObservers(); }
 
     public int getHunger() { return hunger; }
-    public void decreaseHunger(int amount) { this.hunger = Math.max(0, this.hunger - amount); }
-    public void increaseHunger(int amount) { this.hunger = Math.min(100, this.hunger + amount); }
+    public void decreaseHunger(int amount) { this.hunger = Math.max(0, this.hunger - amount); notifyObservers(); }
+    public void increaseHunger(int amount) { this.hunger = Math.min(100, this.hunger + amount); notifyObservers(); }
 
     public int getEnergy() { return energy; }
-    public void decreaseEnergy(int amount) { this.energy = Math.max(0, this.energy - amount); }
-    public void increaseEnergy(int amount) { this.energy = Math.min(100, this.energy + amount); }
+    public void decreaseEnergy(int amount) { this.energy = Math.max(0, this.energy - amount); notifyObservers(); }
+    public void increaseEnergy(int amount) { this.energy = Math.min(100, this.energy + amount); notifyObservers(); }
 
     public float getSpeed() { return speed; }
     public void setSpeed(float speed) { this.speed = speed; }
@@ -106,4 +113,24 @@ public abstract class Cat extends Entity {
     public void setAttackPower(int attackPower) { this.attackPower = attackPower; }
 
     public Texture getTexture() { return texture; }
+
+    // --- ISubject Implementation ---
+    @Override
+    public void addObserver(IObserver observer) {
+        if (!observers.contains(observer)) {
+            observers.add(observer);
+        }
+    }
+
+    @Override
+    public void removeObserver(IObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(Object... args) {
+        for (IObserver observer : observers) {
+            observer.onNotify(args);
+        }
+    }
 }
