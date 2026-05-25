@@ -46,4 +46,11 @@ public class Constants {
     public static final float BATH_SPAWN_INTERVAL   = 0.4f;  // giây giữa hai lần spawn bong bóng
     public static final int   BATH_BUBBLE_SCALE     = 2;     // scale bong bóng (24px → 48px)
     public static final float BATH_CURSOR_SCALE     = 1.5f;  // scale con trỏ chuột mèo
+
+    // Minigame: Tìm Tiểu Tam (LOVE_DETECTIVE)
+    public static final int   TTT_QUESTION_COUNT    = 5;     // số câu hỏi
+    public static final float TTT_QUESTION_DURATION = 5f;    // giây mỗi câu
+    public static final int   TTT_OPTIONS_PER_Q     = 3;     // 1 đúng + 2 sai
+    public static final float TTT_FEEDBACK_DURATION = 0.5f;  // giây hiện flash sau khi chọn
+    public static final int   TTT_CARD_PADDING      = 10;    // khoảng cách px giữa/xung quanh các card
 }
