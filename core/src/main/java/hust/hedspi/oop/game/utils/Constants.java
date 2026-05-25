@@ -38,4 +38,12 @@ public class Constants {
     public static final float THOAT_CONG_MAZE_SCALE       = 0.75f;  // 768px hiển thị: cuộn ngang 128px, cuộn dọc 288px
     public static final float THOAT_CONG_SPRITE_SCALE    = 1.0f;  // hệ số nhân lên trên mazeScale để tính kích thước mèo
     public static final float THOAT_CONG_DARK_FADE       = 1.2f;  // alpha/giây fade-in bóng tối
+
+    // Minigame: Tắm Mèo (PET_BATH)
+    public static final float BATH_DURATION         = 30f;   // giây
+    public static final int   BATH_WIN_THRESHOLD    = 60;    // số bong bóng cần bấm để thắng
+    public static final float BATH_BUBBLE_SPEED     = 50f;   // pixel/giây bong bóng bay lên
+    public static final float BATH_SPAWN_INTERVAL   = 0.4f;  // giây giữa hai lần spawn bong bóng
+    public static final int   BATH_BUBBLE_SCALE     = 2;     // scale bong bóng (24px → 48px)
+    public static final float BATH_CURSOR_SCALE     = 1.5f;  // scale con trỏ chuột mèo
 }

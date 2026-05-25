@@ -13,6 +13,7 @@ import hust.hedspi.oop.game.managers.TimeManager;
 import hust.hedspi.oop.game.managers.ScreenManager;
 import hust.hedspi.oop.game.managers.ResourceManager;
 import hust.hedspi.oop.game.minigames.RhythmMinigame;
+import hust.hedspi.oop.game.minigames.bath_game.BathGameMinigame;
 import hust.hedspi.oop.game.minigames.cao_mong.CaoMongMinigame;
 import hust.hedspi.oop.game.minigames.thoat_khoi_cong.ThoatKhoiCongMinigame;
 import hust.hedspi.oop.game.utils.IObserver;
@@ -65,6 +66,10 @@ public class TestScreen implements Screen, IObserver {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             ScreenManager.getInstance().pushScreen(new MinigameScreen(new ThoatKhoiCongMinigame()));
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
+            ScreenManager.getInstance().pushScreen(new MinigameScreen(new BathGameMinigame()));
             return;
         }
 
