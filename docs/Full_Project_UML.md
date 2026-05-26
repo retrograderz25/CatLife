@@ -409,6 +409,33 @@ package "hust.hedspi.oop.game" {
                 - renderGameOver(batch: SpriteBatch): void
             }
         }
+
+        package "tron_kim_tiem" {
+            class TronKimTiemMinigame {
+                - catX: float
+                - catY: float
+                - bossX: float
+                - bossY: float
+                - bossRadius: float
+                - bossRotation: float
+                - bossShootFlash: float
+                - timer: float
+                - gameOver: boolean
+                - won: boolean
+                - exitRequested: boolean
+                - poisonBalls: ArrayList
+                - spawnTimer: float
+                - animState: AnimState
+                + start(): void
+                + update(dt: float): void
+                + render(batch: SpriteBatch): void
+                + isFinished(): boolean
+                + isWon(): boolean
+                + dispose(): void
+                - endGame(playerWon: boolean): void
+                - renderGameOver(batch: SpriteBatch): void
+            }
+        }
     }
 
     package "screens" {
@@ -477,6 +504,7 @@ BaseSkill <|-- ScratchSkill
 IMinigameStrategy <|.. RhythmMinigame
 IMinigameStrategy <|.. CaoMongMinigame
 IMinigameStrategy <|.. ThoatKhoiCongMinigame
+IMinigameStrategy <|.. TronKimTiemMinigame
 MinigameScreen *--> IMinigameStrategy : strategy
 
 @enduml
