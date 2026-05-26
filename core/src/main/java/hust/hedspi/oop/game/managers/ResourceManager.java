@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.utils.I18NBundle;
 import hust.hedspi.oop.game.utils.Constants;
 
 public class ResourceManager {
@@ -15,10 +16,14 @@ public class ResourceManager {
     public BitmapFont nameFont;
     public BitmapFont hudFont;
 
+    // Bundle ngôn ngữ
+    private I18NBundle bundle;
+
     private ResourceManager() {
         // Chỉ gọi generateFonts nếu ứng dụng LibGDX đã khởi tạo
         if (Gdx.files != null) {
             generateFonts();
+            loadBundle();
         }
     }
     
@@ -33,6 +38,20 @@ public class ResourceManager {
         if (dialogFont == null) {
             generateFonts();
         }
+        if (bundle == null) {
+            loadBundle();
+        }
+    }
+
+    private void loadBundle() {
+        bundle = I18NBundle.createBundle(Gdx.files.internal("i18n/dialogues_vi"));
+    }
+
+    public I18NBundle getBundle() {
+        if (bundle == null) {
+            loadBundle();
+        }
+        return bundle;
     }
 
     private void generateFonts() {

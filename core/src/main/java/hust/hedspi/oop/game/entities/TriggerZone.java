@@ -29,6 +29,10 @@ public class TriggerZone extends Entity implements IInteractable {
         this.linkedMinigame = minigame;
     }
 
+    public String getZoneName() {
+        return zoneName;
+    }
+
     @Override
     public void onInteract(Cat player) {
         // Kiểm tra xem có điều kiện thời gian không và thời gian có hợp lệ không

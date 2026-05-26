@@ -15,6 +15,8 @@ import hust.hedspi.oop.game.entities.TriggerZone;
 import hust.hedspi.oop.game.managers.GameManager;
 import hust.hedspi.oop.game.managers.MapManager;
 import hust.hedspi.oop.game.managers.TimeManager;
+import com.badlogic.gdx.graphics.Texture;
+import hust.hedspi.oop.game.screens.hud.InteractionUI;
 import hust.hedspi.oop.game.screens.hud.PlayerHUD;
 import hust.hedspi.oop.game.screens.hud.TimeHUD;
 import hust.hedspi.oop.game.utils.Constants;
@@ -23,59 +25,62 @@ public class PlayScreen implements Screen {
     private OrthographicCamera gameCamera;
     private Viewport gamePort;
     private SpriteBatch batch;
-    private TriggerZone currentTrigger = null; // Tránh spam log
+    private TriggerZone currentTrigger = null; 
 
     // UI
     private Stage uiStage;
     private PlayerHUD playerHUD;
     private TimeHUD timeHUD;
+    private InteractionUI interactionUI;
+    
+    // Icon
+    private Texture hasTaskIcon;
 
     public PlayScreen() {
         batch = new SpriteBatch();
         
-        // Khởi tạo Camera và Viewport
         gameCamera = new OrthographicCamera();
-        // Dùng ExtendViewport để xóa 2 dải đen (Letterboxing) khi thu phóng màn hình
         gamePort = new ExtendViewport(Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT, gameCamera);
         
-        // Đặt camera ở trung tâm
         gameCamera.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
-        gameCamera.zoom = 0.20f; // Zoom in mạnh hơn để tạo cảm giác bản đồ rộng lớn
+        gameCamera.zoom = 0.20f; 
 
-        // Load Map (street.tmx)
         MapManager.getInstance().loadMap("images/HUD/street.tmx");
         
-        // Start game session (Player là StrayCat)
         GameManager.getInstance().startNewGame(true);
-        // Tạm thời đặt mèo ở giữa màn hình
         GameManager.getInstance().getPlayer().setPosition(Constants.VIRTUAL_WIDTH / 2, Constants.VIRTUAL_HEIGHT / 2);
 
-        // Khởi tạo UI Stage với ScreenViewport để UI không bị scale theo game camera
         uiStage = new Stage(new ScreenViewport(), batch);
         playerHUD = new PlayerHUD();
         timeHUD = new TimeHUD();
+        interactionUI = new InteractionUI(GameManager.getInstance().getPlayer());
+        
         uiStage.addActor(playerHUD.getTable());
         uiStage.addActor(timeHUD.getTable());
+        uiStage.addActor(interactionUI.getTable());
+        
+        hasTaskIcon = new Texture(Gdx.files.internal("images/HUD/Cat/has_task(stack_with_cat).png"));
     }
 
     @Override
     public void show() {
-        // Tương tự hàm start, gọi khi Screen được hiển thị
-        // Gdx.input.setInputProcessor(uiStage); // Bật dòng này nếu UI cần nhận click chuột
+        // Nhận event click và bàn phím cho UI
+        Gdx.input.setInputProcessor(uiStage); 
     }
 
     @Override
     public void render(float delta) {
-        // 1. UPDATE LOGIC
-        TimeManager.getInstance().update(delta);
-        GameManager.getInstance().update(delta);
+        // Nếu UI hội thoại đang mở, dừng update logic game (hoặc chỉ cho phép thao tác UI)
+        if (!interactionUI.isVisible()) {
+            TimeManager.getInstance().update(delta);
+            GameManager.getInstance().update(delta);
+        }
         
         uiStage.act(delta);
 
-        // F11: Chuyển đổi Fullscreen / Windowed 3:4
         if (Gdx.input.isKeyJustPressed(Input.Keys.F11)) {
             if (Gdx.graphics.isFullscreen()) {
-                Gdx.graphics.setWindowedMode(768, 1024); // Kích thước 3:4
+                Gdx.graphics.setWindowedMode(768, 1024);
             } else {
                 Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
             }
@@ -83,23 +88,19 @@ public class PlayScreen implements Screen {
 
         Cat player = GameManager.getInstance().getPlayer();
 
-        // Camera bám theo Player và check TriggerZone
-        if (player != null) {
+        if (player != null && !interactionUI.isVisible()) {
             float playerX = player.getX();
             float playerY = player.getY();
             
-            // Lerp camera (di chuyển mượt)
             gameCamera.position.x += (playerX - gameCamera.position.x) * 0.1f;
             gameCamera.position.y += (playerY - gameCamera.position.y) * 0.1f;
             
-            // Giới hạn (Clamp) Camera không đi ra ngoài biên của Map
             float camHalfWidth = gamePort.getWorldWidth() * gameCamera.zoom / 2f;
             float camHalfHeight = gamePort.getWorldHeight() * gameCamera.zoom / 2f;
             
             float mapWidth = MapManager.getInstance().getMapPixelWidth();
             float mapHeight = MapManager.getInstance().getMapPixelHeight();
             
-            // Tính toán biên
             float minX = camHalfWidth;
             float maxX = mapWidth - camHalfWidth;
             float minY = camHalfHeight;
@@ -119,42 +120,43 @@ public class PlayScreen implements Screen {
 
             gameCamera.update();
 
-            // Kiểm tra va chạm Trigger
             boolean isTouchingAny = false;
             for (TriggerZone zone : MapManager.getInstance().getTriggerZones()) {
                 if (player.getHitbox().overlaps(zone.getHitbox())) {
                     isTouchingAny = true;
-                    if (currentTrigger != zone) { // Chỉ in log 1 lần khi mới chạm vào
+                    if (currentTrigger != zone) {
                         currentTrigger = zone;
-                        System.out.println("Đã chạm vào Trigger: Mời nhấn [E] (Mô phỏng gọi onInteract)");
-                        zone.onInteract(player); // Tự động gọi tương tác luôn để test
+                        interactionUI.show(zone); // Hiện hội thoại
                     }
                     break;
                 }
             }
             if (!isTouchingAny) {
-                currentTrigger = null; // Rời khỏi trigger
+                currentTrigger = null;
+                interactionUI.hide();
             }
         }
 
-        // 2. RENDER GRAPHICS
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Vẽ Map nền trước
         MapManager.getInstance().render(gameCamera);
 
-        // Bật batch để vẽ Entity (Player, NPC)
         batch.setProjectionMatrix(gameCamera.combined);
         batch.begin();
         
         if (player != null) {
             player.render(batch);
+            
+            // Vẽ icon trên đầu mèo nếu đang đứng ở trigger
+            if (currentTrigger != null) {
+                // Kích thước icon tự chỉnh (VD: 16x16)
+                batch.draw(hasTaskIcon, player.getX() + player.getWidth() / 2f - 8, player.getY() + player.getHeight() + 25, 16, 16);
+            }
         }
         
         batch.end();
         
-        // Vẽ UI (HUD) sau cùng để nằm trên trên cùng
         uiStage.draw();
     }
 
@@ -180,6 +182,8 @@ public class PlayScreen implements Screen {
         uiStage.dispose();
         playerHUD.dispose();
         timeHUD.dispose();
+        interactionUI.dispose();
+        if (hasTaskIcon != null) hasTaskIcon.dispose();
         if (GameManager.getInstance().getPlayer() != null) {
             GameManager.getInstance().getPlayer().dispose();
         }
