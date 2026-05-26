@@ -495,6 +495,38 @@ package "hust.hedspi.oop.game" {
                 - renderGameOver(batch: SpriteBatch): void
             }
         }
+
+        package "combat_don" {
+            class CombatDonMinigame {
+                - bgTexture: Texture
+                - frameTexture: Texture
+                - catHandTexture: Texture
+                - timeFrameTexture: Texture
+                - dimTexture: Texture
+                - opponentTexture: Texture
+                - handTexture: Texture
+                - screenW: int
+                - screenH: int
+                - laneX: float[]
+                - fallingHands: ArrayList
+                - spawnTimer: float
+                - timer: float
+                - missCount: int
+                - gameOver: boolean
+                - won: boolean
+                - exitRequested: boolean
+                - catHandActiveTimer: float[]
+                + start(): void
+                + update(dt: float): void
+                + render(batch: SpriteBatch): void
+                + isFinished(): boolean
+                + isWon(): boolean
+                + dispose(): void
+                - handleBlock(lane: int): void
+                - endGame(playerWon: boolean): void
+                - renderGameOver(batch: SpriteBatch): void
+            }
+        }
     }
 
     package "screens" {
@@ -566,6 +598,7 @@ IMinigameStrategy <|.. ThoatKhoiCongMinigame
 IMinigameStrategy <|.. TronKimTiemMinigame
 IMinigameStrategy <|.. TromMeoMinigame
 IMinigameStrategy <|.. CombatMinigame
+IMinigameStrategy <|.. CombatDonMinigame
 MinigameScreen *--> IMinigameStrategy : strategy
 
 @enduml
