@@ -436,6 +436,65 @@ package "hust.hedspi.oop.game" {
                 - renderGameOver(batch: SpriteBatch): void
             }
         }
+
+        package "trom_meo" {
+            class TromMeoMinigame {
+                - catX: float
+                - catY: float
+                - bossX: float
+                - bossY: float
+                - bossRadius: float
+                - bossRotation: float
+                - bossShootFlash: float
+                - timer: float
+                - gameOver: boolean
+                - won: boolean
+                - exitRequested: boolean
+                - traps: ArrayList
+                - spawnTimer: float
+                - animState: AnimState
+                + start(): void
+                + update(dt: float): void
+                + render(batch: SpriteBatch): void
+                + isFinished(): boolean
+                + isWon(): boolean
+                + dispose(): void
+                - endGame(playerWon: boolean): void
+                - renderGameOver(batch: SpriteBatch): void
+            }
+        }
+
+        package "combat" {
+            class CombatMinigame {
+                - bgTexture: Texture
+                - frameTexture: Texture
+                - catHandTexture: Texture
+                - timeFrameTexture: Texture
+                - dimTexture: Texture
+                - opponentTextures: Texture[]
+                - handTextures: Texture[]
+                - screenW: int
+                - screenH: int
+                - laneX: float[]
+                - fallingHands: ArrayList
+                - spawnTimer: float
+                - timer: float
+                - missCount: int
+                - gameOver: boolean
+                - won: boolean
+                - exitRequested: boolean
+                - catHandActiveTimer: float[]
+                + start(): void
+                + update(dt: float): void
+                + render(batch: SpriteBatch): void
+                + isFinished(): boolean
+                + isWon(): boolean
+                + dispose(): void
+                - handleBlock(lane: int): void
+                - endGame(playerWon: boolean): void
+                - renderGameOver(batch: SpriteBatch): void
+            }
+        }
     }
 
     package "screens" {
@@ -505,6 +564,8 @@ IMinigameStrategy <|.. RhythmMinigame
 IMinigameStrategy <|.. CaoMongMinigame
 IMinigameStrategy <|.. ThoatKhoiCongMinigame
 IMinigameStrategy <|.. TronKimTiemMinigame
+IMinigameStrategy <|.. TromMeoMinigame
+IMinigameStrategy <|.. CombatMinigame
 MinigameScreen *--> IMinigameStrategy : strategy
 
 @enduml
