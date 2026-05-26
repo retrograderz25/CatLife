@@ -21,23 +21,31 @@ import java.util.Iterator;
  * Minigame "Võ Mèo Lang Thang" / "Combat" (DAILY_FIGHT_STRAY).
  *
  * Người chơi đối diện 3 đối thủ mèo tung các cú đấm (hand) rơi dọc 3 làn đường.
- * Điều khiển: A (Trái), S (Giữa), D (Phải) để đỡ cú đấm khi nó rơi vào vùng của frame.png.
+ * Điều khiển: A (Trái), S (Giữa), D (Phải) để đỡ cú đấm khi nó rơi vào vùng của
+ * frame.png.
  * Không được hụt quá 4 cú đấm trong vòng 45 giây.
  */
 public class CombatMinigame implements IMinigameStrategy {
 
     private static final String ASSET_BASE = "minigames/combat/";
     private static final float GAME_DURATION = 45f;
-    private static final float TARGET_Y = 150f; // Vị trí Y của khung đỡ đòn (frame.png)
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // BẠN CÓ THỂ ĐỔI VỊ TRÍ Y CỦA KHUNG ĐỠ VÀ ĐỐI THỦ TẠI ĐÂY / ADJUST Y POSITIONS
+    // HERE:
+    // ──────────────────────────────────────────────────────────────────────────
+    private static final float TARGET_Y = 75f; // Vị trí Y của khung đỡ đòn (frame.png) - Hãy tăng/giảm số này để chỉnh
+    // khung đỡ
     private static final float TOLERANCE = 45f; // Sai số khoảng cách cho phép để đỡ đòn thành công
-    private static final float OPPONENT_Y = 480f; // Vị trí Y của 3 đối thủ ở trên cùng
+    private static final float OPPONENT_Y = 350f; // Vị trí Y của 3 đối thủ ở trên cùng - Hãy tăng/giảm số này để chỉnh
+                                                  // đối thủ mèo
 
     // ── Cú đấm (Falling Hand Struct) ──────────────────────────────────────────
     private static class FallingHand {
-        int lane;      // 0: Trái, 1: Giữa, 2: Phải
-        float y;       // Vị trí Y hiện tại
-        float speed;   // Tốc độ rơi (pixels/giây)
-        boolean hit;   // Đã đỡ thành công
+        int lane; // 0: Trái, 1: Giữa, 2: Phải
+        float y; // Vị trí Y hiện tại
+        float speed; // Tốc độ rơi (pixels/giây)
+        boolean hit; // Đã đỡ thành công
         boolean missed;// Bị hụt (vượt quá khung đỡ)
 
         FallingHand(int lane, float y, float speed) {
@@ -206,8 +214,8 @@ public class CombatMinigame implements IMinigameStrategy {
                 }
             }
 
-            // Xóa cú đấm khi rơi ra khỏi màn hình
-            if (hand.y < 50f || hand.hit) {
+            // Xóa cú đấm khi rơi ra khỏi màn hình (Đặt -50f để không bị xóa trước khi vượt qua TARGET_Y - TOLERANCE)
+            if (hand.y < -50f || hand.hit) {
                 it.remove();
             }
         }
