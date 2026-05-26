@@ -6,13 +6,17 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import hust.hedspi.oop.game.entities.Cat;
 import hust.hedspi.oop.game.entities.TriggerZone;
 import hust.hedspi.oop.game.managers.GameManager;
 import hust.hedspi.oop.game.managers.MapManager;
 import hust.hedspi.oop.game.managers.TimeManager;
+import hust.hedspi.oop.game.screens.hud.PlayerHUD;
+import hust.hedspi.oop.game.screens.hud.TimeHUD;
 import hust.hedspi.oop.game.utils.Constants;
 
 public class PlayScreen implements Screen {
@@ -20,6 +24,11 @@ public class PlayScreen implements Screen {
     private Viewport gamePort;
     private SpriteBatch batch;
     private TriggerZone currentTrigger = null; // Tránh spam log
+
+    // UI
+    private Stage uiStage;
+    private PlayerHUD playerHUD;
+    private TimeHUD timeHUD;
 
     public PlayScreen() {
         batch = new SpriteBatch();
@@ -40,11 +49,19 @@ public class PlayScreen implements Screen {
         GameManager.getInstance().startNewGame(true);
         // Tạm thời đặt mèo ở giữa màn hình
         GameManager.getInstance().getPlayer().setPosition(Constants.VIRTUAL_WIDTH / 2, Constants.VIRTUAL_HEIGHT / 2);
+
+        // Khởi tạo UI Stage với ScreenViewport để UI không bị scale theo game camera
+        uiStage = new Stage(new ScreenViewport(), batch);
+        playerHUD = new PlayerHUD();
+        timeHUD = new TimeHUD();
+        uiStage.addActor(playerHUD.getTable());
+        uiStage.addActor(timeHUD.getTable());
     }
 
     @Override
     public void show() {
         // Tương tự hàm start, gọi khi Screen được hiển thị
+        // Gdx.input.setInputProcessor(uiStage); // Bật dòng này nếu UI cần nhận click chuột
     }
 
     @Override
@@ -52,6 +69,8 @@ public class PlayScreen implements Screen {
         // 1. UPDATE LOGIC
         TimeManager.getInstance().update(delta);
         GameManager.getInstance().update(delta);
+        
+        uiStage.act(delta);
 
         // F11: Chuyển đổi Fullscreen / Windowed 3:4
         if (Gdx.input.isKeyJustPressed(Input.Keys.F11)) {
@@ -135,12 +154,14 @@ public class PlayScreen implements Screen {
         
         batch.end();
         
-        // TODO: Vẽ UI (HUD) sau cùng
+        // Vẽ UI (HUD) sau cùng để nằm trên trên cùng
+        uiStage.draw();
     }
 
     @Override
     public void resize(int width, int height) {
         gamePort.update(width, height);
+        uiStage.getViewport().update(width, height, true);
     }
 
     @Override
@@ -156,6 +177,9 @@ public class PlayScreen implements Screen {
     public void dispose() {
         batch.dispose();
         MapManager.getInstance().dispose();
+        uiStage.dispose();
+        playerHUD.dispose();
+        timeHUD.dispose();
         if (GameManager.getInstance().getPlayer() != null) {
             GameManager.getInstance().getPlayer().dispose();
         }
