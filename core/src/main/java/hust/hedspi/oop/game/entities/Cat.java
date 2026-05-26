@@ -79,16 +79,45 @@ public abstract class Cat extends Entity implements ISubject {
         Texture texture = new Texture(Gdx.files.internal(filePath));
         rawTextures.put(animName, texture);
         
+        if (!texture.getTextureData().isPrepared()) {
+            texture.getTextureData().prepare();
+        }
+        Pixmap pixmap = texture.getTextureData().consumePixmap();
+        
         int frameHeight = texture.getHeight();
-        int frameWidth = frameHeight; 
+        int frameWidth = 80; // Thực tế ảnh được chia thành các block rộng 80px thay vì vuông
         int cols = texture.getWidth() / frameWidth;
         
-        TextureRegion[][] tmp = TextureRegion.split(texture, frameWidth, frameHeight);
-        TextureRegion[] frames = new TextureRegion[cols];
+        List<TextureRegion> validFrames = new ArrayList<>();
+        
         for (int i = 0; i < cols; i++) {
-            frames[i] = tmp[0][i];
+            int minX = frameWidth;
+            int maxX = -1;
+            
+            // Quét alpha để tìm bounding box ôm sát con mèo trong ô 80x64 này
+            for (int y = 0; y < frameHeight; y++) {
+                for (int x = 0; x < frameWidth; x++) {
+                    int pixelX = i * frameWidth + x;
+                    int color = pixmap.getPixel(pixelX, y);
+                    int alpha = color & 0x000000ff; // Lấy kênh Alpha
+                    
+                    if (alpha > 0) {
+                        if (x < minX) minX = x;
+                        if (x > maxX) maxX = x;
+                    }
+                }
+            }
+            
+            if (minX <= maxX) { // Nếu frame này có ảnh con mèo
+                int startX = i * frameWidth + minX;
+                int tightWidth = maxX - minX + 1;
+                validFrames.add(new TextureRegion(texture, startX, 0, tightWidth, frameHeight));
+            }
         }
         
+        pixmap.dispose();
+        
+        TextureRegion[] frames = validFrames.toArray(new TextureRegion[0]);
         Animation<TextureRegion> animation = new Animation<>(frameDuration, frames);
         animation.setPlayMode(Animation.PlayMode.LOOP);
         animations.put(animName, animation);
@@ -135,13 +164,27 @@ public abstract class Cat extends Entity implements ISubject {
         if (anim != null) {
             TextureRegion currentFrame = anim.getKeyFrame(stateTimer, true);
             
-            if ((!facingRight && !currentFrame.isFlipX()) || (facingRight && currentFrame.isFlipX())) {
-                currentFrame.flip(true, false);
-            }
-            
             batch.setColor(Color.WHITE);
-            // Giả sử vẽ to gấp đôi để nhìn rõ hơn
-            batch.draw(currentFrame, x, y, width * 2, height * 2); 
+            // Ảnh gốc (sprite sheet) vẽ con mèo quay mặt sang TRÁI. 
+            // Do đó, nếu mèo đang đi sang phải (facingRight = true) thì ta cần lật ảnh (flipX = true).
+            boolean flipX = facingRight;
+            
+            // Giữ nguyên tỷ lệ khung hình (Aspect Ratio) của ảnh gốc thay vì ép thành ô vuông width x height
+            // height * 2 là chiều cao hiển thị trên màn hình hiện tại (12 * 2 = 24)
+            float scale = (height * 2f) / currentFrame.getRegionHeight(); 
+            float drawWidth = currentFrame.getRegionWidth() * scale;
+            float drawHeight = currentFrame.getRegionHeight() * scale;
+            
+            // Căn giữa hình ảnh theo hitbox hiện tại để không bị giật lùi khi frame to/nhỏ đi
+            float drawX = x + (width - drawWidth) / 2f;
+            float drawY = y;
+
+            batch.draw(currentFrame.getTexture(), 
+                       drawX, drawY, 
+                       drawWidth, drawHeight, 
+                       currentFrame.getRegionX(), currentFrame.getRegionY(), 
+                       currentFrame.getRegionWidth(), currentFrame.getRegionHeight(), 
+                       flipX, false);
         }
     }
 

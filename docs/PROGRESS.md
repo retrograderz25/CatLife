@@ -29,6 +29,7 @@
 
 ## 🟥 PHASE 3: CONTENT & ĐÁNH BÓNG (Tương Lai)
 - [x] Vẽ / Tích hợp toàn bộ Sprite Animation (Đã tích hợp cơ chế load SpriteSheet và chuyển đổi trạng thái Animation cho Cat).
+- [x] Sửa mượt animation và di chuyển (Fix UV mutation glitch bằng Scene2D draw flip, chuẩn hóa vector di chuyển chéo, và fix flickering state).
 - [ ] Code logic cho các Minigame cụ thể.
 - [ ] Tích hợp âm thanh, BGM.
 - [ ] Cân bằng game (Chỉ số hồi/tiêu hao năng lượng, độ khó minigame).

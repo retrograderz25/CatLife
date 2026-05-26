@@ -21,17 +21,29 @@ public class RunState implements ICatState {
         float y = cat.getY();
         float speed = cat.getSpeed();
 
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) { y += speed * dt; isMoving = true; }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) { y -= speed * dt; isMoving = true; }
+        float dx = 0;
+        float dy = 0;
+
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) { dy += 1; }
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) { dy -= 1; }
         if (Gdx.input.isKeyPressed(Input.Keys.A)) { 
-            x -= speed * dt; 
-            isMoving = true;
+            dx -= 1; 
             cat.setFacingRight(false);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D)) { 
-            x += speed * dt; 
-            isMoving = true;
+            dx += 1; 
             cat.setFacingRight(true);
+        }
+
+        if (dx != 0 || dy != 0) {
+            isMoving = true;
+            // Normalize for diagonal movement
+            float length = (float) Math.sqrt(dx * dx + dy * dy);
+            dx /= length;
+            dy /= length;
+            
+            x += dx * speed * dt;
+            y += dy * speed * dt;
         }
 
         // Giới hạn (Clamp) nhân vật không chạy ra khỏi viền Map
