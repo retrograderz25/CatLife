@@ -33,11 +33,7 @@ public class SleepState implements ICatState {
 
     @Override
     public void render(Cat cat, SpriteBatch batch) {
-        if (cat.getTexture() != null) {
-            batch.setColor(Color.LIGHT_GRAY); // Chỉnh màu tối lại để thể hiện đang ngủ
-            batch.draw(cat.getTexture(), cat.getX(), cat.getY(), cat.getWidth(), cat.getHeight() * 0.5f); // Ép lùn xuống
-            batch.setColor(Color.WHITE); // Reset màu sau khi vẽ
-        }
+        cat.renderAnimation(batch, "IDLE", Gdx.graphics.getDeltaTime());
     }
 
     @Override

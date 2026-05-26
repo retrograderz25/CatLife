@@ -28,10 +28,7 @@ public class IdleState implements ICatState {
 
     @Override
     public void render(Cat cat, SpriteBatch batch) {
-        if (cat.getTexture() != null) {
-            batch.setColor(Color.WHITE); // Reset color
-            batch.draw(cat.getTexture(), cat.getX(), cat.getY(), cat.getWidth(), cat.getHeight());
-        }
+        cat.renderAnimation(batch, "IDLE", Gdx.graphics.getDeltaTime());
     }
 
     @Override

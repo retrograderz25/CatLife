@@ -19,15 +19,16 @@
 ## 🟨 PHASE 2: GAMEPLAY & TÍNH NĂNG (Đang Chuẩn Bị)
 *Giai đoạn thiết kế Bản đồ, va chạm vật lý, giao diện chi tiết và hệ thống NPC.*
 
-- [ ] Tích hợp thư viện Map (TiledMap `*.tmx`).
+- [x] Tích hợp thư viện Map (TiledMap `*.tmx`). Cài đặt `PlayScreen` và `MapManager`.
 - [ ] Khởi tạo Box2D hoặc hệ thống xử lý va chạm cơ bản.
-- [ ] Giao diện (Scene2D UI) cho Main Menu, Inventory và Hộp thoại.
+- [x] Giao diện (Scene2D UI) cho Main Menu, Inventory và Hộp thoại. (Đã bổ sung tính năng F11 chuyển đổi Windowed/Fullscreen thông minh).
+- [x] Hoàn thiện Map rendering: Tích hợp `ExtendViewport` xóa viền đen (Letterboxing), Fix lỗi lệch trục Y của TiledMap (`offsety`).
 - [ ] Hệ thống hộp thoại RPG (Dialogue System với Typewriter Effect).
 - [ ] Gắn kết AssetManager đầy đủ cho SoundManager.
 - [ ] Phát triển công cụ F12 (Developer Debug Kit).
 
 ## 🟥 PHASE 3: CONTENT & ĐÁNH BÓNG (Tương Lai)
-- [ ] Vẽ / Tích hợp toàn bộ Sprite Animation.
+- [x] Vẽ / Tích hợp toàn bộ Sprite Animation (Đã tích hợp cơ chế load SpriteSheet và chuyển đổi trạng thái Animation cho Cat).
 - [ ] Code logic cho các Minigame cụ thể.
 - [ ] Tích hợp âm thanh, BGM.
 - [ ] Cân bằng game (Chỉ số hồi/tiêu hao năng lượng, độ khó minigame).

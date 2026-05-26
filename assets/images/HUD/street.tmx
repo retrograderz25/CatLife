@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="47" height="26" tilewidth="16" tileheight="16" infinite="1" nextlayerid="6" nextobjectid="46">
+ <imagelayer id="2" name="Image Layer 1" offsetx="0" offsety="0">
+  <image source="street.png" width="750" height="415"/>
+ </imagelayer>
+ <objectgroup id="4" name="Collision" locked="1">
+  <object id="1" name="Car" type="Collision" x="3" y="249.022" width="14" height="23.9556"/>
+  <object id="19" name="Car" type="Collision" x="2.99716" y="217.017" width="14" height="23.9556"/>
+  <object id="12" name="Car" type="Collision" x="83.0171" y="248.981" width="14" height="23.9556"/>
+  <object id="24" name="Car" type="Collision" x="83.0143" y="216.976" width="14" height="23.9556"/>
+  <object id="2" name="Car" type="Collision" x="18.9688" y="248.991" width="14" height="23.9556"/>
+  <object id="23" name="Car" type="Collision" x="18.9659" y="216.985" width="14" height="23.9556"/>
+  <object id="15" name="Car" type="Collision" x="98.9859" y="248.95" width="14" height="23.9556"/>
+  <object id="27" name="Car" type="Collision" x="98.9831" y="216.944" width="14" height="23.9556"/>
+  <object id="3" name="Car" type="Collision" x="35" y="248.991" width="14" height="23.9556"/>
+  <object id="22" name="Car" type="Collision" x="34.9972" y="216.985" width="14" height="23.9556"/>
+  <object id="14" name="Car" type="Collision" x="115.017" y="248.95" width="14" height="23.9556"/>
+  <object id="26" name="Car" type="Collision" x="115.014" y="216.944" width="14" height="23.9556"/>
+  <object id="4" name="Car" type="Collision" x="51.0078" y="249.022" width="14" height="23.9556"/>
+  <object id="20" name="Car" type="Collision" x="51.005" y="217.017" width="14" height="23.9556"/>
+  <object id="13" name="Car" type="Collision" x="131.025" y="248.981" width="14" height="23.9556"/>
+  <object id="25" name="Car" type="Collision" x="131.022" y="216.976" width="14" height="23.9556"/>
+  <object id="5" name="Car" type="Collision" x="66.9022" y="249.044" width="14" height="23.9556"/>
+  <object id="17" name="Car" type="Collision" x="66.8993" y="217.038" width="14" height="23.9556"/>
+  <object id="11" name="Car" type="Collision" x="146.919" y="249.003" width="14" height="23.9556"/>
+  <object id="21" name="Car" type="Collision" x="146.916" y="216.997" width="14" height="23.9556"/>
+  <object id="16" name="Car" type="Collision" x="162.998" y="249.035" width="14" height="23.9556"/>
+  <object id="18" name="Car" type="Collision" x="162.996" y="217.03" width="14" height="23.9556"/>
+  <object id="29" name="Car" type="Collision" x="129.906" y="325.906" width="29.0625" height="16.0938"/>
+  <object id="32" name="Car" type="Collision" x="212.953" y="293.925" width="29.0625" height="16.0938"/>
+  <object id="33" name="Car" type="Collision" x="341.105" y="294.226" width="29.0625" height="16.0938"/>
+  <object id="34" name="Car" type="Collision" x="468.986" y="294.01" width="29.0625" height="16.0938"/>
+  <object id="35" name="Car" type="Collision" x="337.904" y="21.8661" width="29.0625" height="16.0938"/>
+  <object id="36" name="Car" type="Collision" x="513.972" y="21.7369" width="29.0625" height="16.0938"/>
+  <object id="37" name="Car" type="Collision" x="719.531" y="179.953" width="29.0625" height="16.0938"/>
+  <object id="38" name="Car" type="Collision" x="644.116" y="128.913" width="29.0625" height="16.0938"/>
+ </objectgroup>
+ <objectgroup id="5" name="Trigger" locked="1">
+  <object id="39" name="Sewage" type="Trigger" x="404.063" y="293.875" width="12.0313" height="5.0625"/>
+  <object id="40" name="Hotel Gate" type="Trigger" x="370.063" y="277.813" width="15.9375" height="8.1875"/>
+  <object id="44" name="Office Gate" type="Trigger" x="242" y="200.031" width="16" height="7.4375"/>
+ </objectgroup>
+</map>

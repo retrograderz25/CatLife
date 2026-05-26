@@ -4,13 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import hust.hedspi.oop.game.entities.Cat;
+import hust.hedspi.oop.game.managers.MapManager;
 
 public class RunState implements ICatState {
 
     @Override
     public void enter(Cat cat) {
-        // System.out.println("Cat enters Run State.");
     }
 
     @Override
@@ -22,12 +23,26 @@ public class RunState implements ICatState {
 
         if (Gdx.input.isKeyPressed(Input.Keys.W)) { y += speed * dt; isMoving = true; }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) { y -= speed * dt; isMoving = true; }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) { x -= speed * dt; isMoving = true; }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) { x += speed * dt; isMoving = true; }
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) { 
+            x -= speed * dt; 
+            isMoving = true;
+            cat.setFacingRight(false);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) { 
+            x += speed * dt; 
+            isMoving = true;
+            cat.setFacingRight(true);
+        }
+
+        // Giới hạn (Clamp) nhân vật không chạy ra khỏi viền Map
+        float mapWidth = MapManager.getInstance().getMapPixelWidth();
+        float mapHeight = MapManager.getInstance().getMapPixelHeight();
+        
+        x = MathUtils.clamp(x, 0, mapWidth - cat.getWidth());
+        y = MathUtils.clamp(y, 0, mapHeight - cat.getHeight());
 
         cat.setPosition(x, y);
 
-        // Nếu không bấm phím nào, tự động chuyển về trạng thái Đứng yên (IdleState)
         if (!isMoving) {
             cat.changeState(new IdleState());
         }
@@ -35,11 +50,7 @@ public class RunState implements ICatState {
 
     @Override
     public void render(Cat cat, SpriteBatch batch) {
-        if (cat.getTexture() != null) {
-            batch.setColor(Color.WHITE); // Reset color
-            // Thêm hiệu ứng bóp méo nhẹ hoặc rung để thể hiện chạy nếu muốn, tạm thời vẽ bình thường
-            batch.draw(cat.getTexture(), cat.getX(), cat.getY(), cat.getWidth(), cat.getHeight());
-        }
+        cat.renderAnimation(batch, "RUN", Gdx.graphics.getDeltaTime());
     }
 
     @Override

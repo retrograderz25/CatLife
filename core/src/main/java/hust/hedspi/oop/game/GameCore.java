@@ -3,7 +3,7 @@ package hust.hedspi.oop.game;
 import com.badlogic.gdx.Game;
 import hust.hedspi.oop.game.managers.ScreenManager;
 import hust.hedspi.oop.game.managers.ResourceManager;
-import hust.hedspi.oop.game.screens.MainMenuScreen;
+import hust.hedspi.oop.game.screens.PlayScreen;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class GameCore extends Game {
@@ -11,9 +11,9 @@ public class GameCore extends Game {
     public void create() {
         ResourceManager.getInstance().initialize(); // Load fonts
         ScreenManager.getInstance().initialize(this);
-        ScreenManager.getInstance().clearAndSetScreen(new MainMenuScreen());
+        ScreenManager.getInstance().clearAndSetScreen(new PlayScreen());
     }
-    
+
     @Override
     public void dispose() {
         super.dispose();
