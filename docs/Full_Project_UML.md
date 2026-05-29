@@ -527,6 +527,48 @@ package "hust.hedspi.oop.game" {
                 - renderGameOver(batch: SpriteBatch): void
             }
         }
+
+        package "nhay_hip_hop" {
+            class NhayHipHopMinigame {
+                - bgTexture: Texture
+                - frameTexture: Texture
+                - idleTexture: Texture
+                - spin1Texture: Texture
+                - spin2Texture: Texture
+                - spin3Texture: Texture
+                - timeFrameTexture: Texture
+                - dimTexture: Texture
+                - arrowTextures: Texture[]
+                - screenW: int
+                - screenH: int
+                - currentRound: int
+                - successfulRounds: int
+                - roundTimer: float
+                - roundOver: boolean
+                - roundWon: boolean
+                - gameOver: boolean
+                - won: boolean
+                - exitRequested: boolean
+                - currentArrows: ArrayList
+                - activeArrowIndex: int
+                - dancerState: DancerState
+                - spinTimer: float
+                - stateTime: float
+                - feedbackTimer: float
+                - feedbackText: String
+                - feedbackColor: Color
+                + start(): void
+                + update(dt: float): void
+                + render(batch: SpriteBatch): void
+                + isFinished(): boolean
+                + isWon(): boolean
+                + dispose(): void
+                - loadAssets(): void
+                - startRound(roundNum: int): void
+                - endGame(): void
+                - renderGameOver(batch: SpriteBatch): void
+            }
+        }
     }
 
     package "screens" {
@@ -599,6 +641,7 @@ IMinigameStrategy <|.. TronKimTiemMinigame
 IMinigameStrategy <|.. TromMeoMinigame
 IMinigameStrategy <|.. CombatMinigame
 IMinigameStrategy <|.. CombatDonMinigame
+IMinigameStrategy <|.. NhayHipHopMinigame
 MinigameScreen *--> IMinigameStrategy : strategy
 
 @enduml
