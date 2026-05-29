@@ -22,6 +22,7 @@ import hust.hedspi.oop.game.minigames.trom_meo.TromMeoMinigame;
 import hust.hedspi.oop.game.minigames.combat.CombatMinigame;
 import hust.hedspi.oop.game.minigames.combat_don.CombatDonMinigame;
 import hust.hedspi.oop.game.minigames.nhay_hip_hop.NhayHipHopMinigame;
+import hust.hedspi.oop.game.minigames.thoat_khoi_long.ThoatKhoiLongMinigame;
 import hust.hedspi.oop.game.utils.IObserver;
 
 public class TestScreen implements Screen, IObserver {
@@ -102,6 +103,10 @@ public class TestScreen implements Screen, IObserver {
             ScreenManager.getInstance().pushScreen(new MinigameScreen(new NhayHipHopMinigame()));
             return;
         }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
+            ScreenManager.getInstance().pushScreen(new MinigameScreen(new ThoatKhoiLongMinigame()));
+            return;
+        }
 
 
         // UI update based on flags
@@ -135,7 +140,7 @@ public class TestScreen implements Screen, IObserver {
             dialogFont.draw(batch, "Máu: " + GameManager.getInstance().getPlayer().getHp() + " Năng lượng: " + GameManager.getInstance().getPlayer().getEnergy() + " Hành vi: " + GameManager.getInstance().getPlayer().getCurrentState().getClass().getSimpleName(), 50, Gdx.graphics.getHeight() - 350);
         }
 
-        dialogFont.draw(batch, "Nhấn [M] Rhythm | [C] CaoMong | [E] ThoatCong | [B] BathGame | [T] TimTieuTam | [V] TronKimTiem | [H] TromMeo | [F] Combat | [J] CombatDon | [N] NhayHipHop | [WASD] Di chuyển", 50, 100);
+        dialogFont.draw(batch, "Nhấn [M] Rhythm | [C] CaoMong | [E] ThoatCong | [B] BathGame | [T] TimTieuTam | [V] TronKimTiem | [H] TromMeo | [F] Combat | [J] CombatDon | [N] NhayHipHop | [G] ThoatLong | [WASD] Di chuyển", 50, 100);
         
         batch.end();
     }

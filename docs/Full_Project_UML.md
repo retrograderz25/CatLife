@@ -569,6 +569,39 @@ package "hust.hedspi.oop.game" {
                 - renderGameOver(batch: SpriteBatch): void
             }
         }
+
+        package "thoat_khoi_long" {
+            class ThoatKhoiLongMinigame {
+                - bgTexture: Texture
+                - decorCloveTexture: Texture
+                - decorOmenTexture: Texture
+                - puzzleTexture: Texture
+                - puzzleFrameTexture: Texture
+                - timeFrameTexture: Texture
+                - dimTexture: Texture
+                - originalRegions: TextureRegion[][]
+                - grid: int[][]
+                - emptyRow: int
+                - emptyCol: int
+                - screenW: int
+                - screenH: int
+                - timer: float
+                - gameOver: boolean
+                - won: boolean
+                - exitRequested: boolean
+                + start(): void
+                + update(dt: float): void
+                + render(batch: SpriteBatch): void
+                + isFinished(): boolean
+                + isWon(): boolean
+                + dispose(): void
+                - loadAssets(): void
+                - shufflePuzzle(): void
+                - slideTile(nr: int, nc: int): void
+                - checkWinCondition(): void
+                - renderGameOver(batch: SpriteBatch): void
+            }
+        }
     }
 
     package "screens" {
@@ -642,6 +675,7 @@ IMinigameStrategy <|.. TromMeoMinigame
 IMinigameStrategy <|.. CombatMinigame
 IMinigameStrategy <|.. CombatDonMinigame
 IMinigameStrategy <|.. NhayHipHopMinigame
+IMinigameStrategy <|.. ThoatKhoiLongMinigame
 MinigameScreen *--> IMinigameStrategy : strategy
 
 @enduml
