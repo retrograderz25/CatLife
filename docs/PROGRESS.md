@@ -20,7 +20,7 @@
 *Giai đoạn thiết kế Bản đồ, va chạm vật lý, giao diện chi tiết và hệ thống NPC.*
 
 - [x] Tích hợp thư viện Map (TiledMap `*.tmx`). Cài đặt `PlayScreen` và `MapManager`.
-- [ ] Khởi tạo Box2D hoặc hệ thống xử lý va chạm cơ bản.
+- [x] Khởi tạo hệ thống xử lý va chạm cơ bản (AABB Wall Sliding trong `RunState`).
 - [x] Giao diện (Scene2D UI) cho Main Menu, Inventory và Hộp thoại. (Đã bổ sung tính năng F11 chuyển đổi Windowed/Fullscreen thông minh).
 - [x] Hoàn thiện Map rendering: Tích hợp `ExtendViewport` xóa viền đen (Letterboxing), Fix lỗi lệch trục Y của TiledMap (`offsety`).
 - [x] Hoàn thiện giao diện HUD: `PlayerHUD` (chỉ số sinh tồn) và `TimeHUD` (đồng hồ thời gian) sử dụng cấu trúc UI Observer và khung `NinePatch` co giãn chuẩn xác.

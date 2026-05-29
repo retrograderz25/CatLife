@@ -56,6 +56,10 @@ public abstract class Cat extends Entity implements ISubject {
         this.stateTimer = 0f;
         this.facingRight = true;
         
+        // Thu nhỏ hitbox vật lý để luồn lách dễ hơn
+        this.hitbox.width = width / 2f;
+        this.hitbox.height = height / 2f;
+        
         this.animations = new HashMap<>();
         this.rawTextures = new HashMap<>();
         loadAnimations();
@@ -175,9 +179,14 @@ public abstract class Cat extends Entity implements ISubject {
             float drawWidth = currentFrame.getRegionWidth() * scale;
             float drawHeight = currentFrame.getRegionHeight() * scale;
             
-            // Căn giữa hình ảnh theo hitbox hiện tại để không bị giật lùi khi frame to/nhỏ đi
-            float drawX = x + (width - drawWidth) / 2f;
-            float drawY = y;
+            // Căn giữa chiều ngang theo Hitbox thực tế
+            float drawX = x - (drawWidth - hitbox.width) / 2f;
+            
+            // Dải sprite 64x64 có khoảng trống ở dưới chân mèo khoảng 16 pixel.
+            // Khi scale xuống, khoảng trống này là: 16 * scale.
+            // Để bàn chân Mèo chạm đúng cạnh dưới của Hitbox (tọa độ y), ta cần kéo toàn bộ ảnh lùi xuống dưới.
+            float emptyBottomSpace = 16f * scale;
+            float drawY = y - emptyBottomSpace;
 
             batch.draw(currentFrame.getTexture(), 
                        drawX, drawY, 

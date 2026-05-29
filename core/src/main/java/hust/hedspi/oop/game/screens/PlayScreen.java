@@ -48,7 +48,7 @@ public class PlayScreen implements Screen {
         MapManager.getInstance().loadMap("images/HUD/street.tmx");
         
         GameManager.getInstance().startNewGame(true);
-        GameManager.getInstance().getPlayer().setPosition(Constants.VIRTUAL_WIDTH / 2, Constants.VIRTUAL_HEIGHT / 2);
+        GameManager.getInstance().getPlayer().setPosition(250f, 150f);
 
         uiStage = new Stage(new ScreenViewport(), batch);
         playerHUD = new PlayerHUD();
