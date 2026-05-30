@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import hust.hedspi.oop.game.entities.Cat;
 import hust.hedspi.oop.game.entities.TriggerZone;
+import hust.hedspi.oop.game.entities.NPC;
 import hust.hedspi.oop.game.managers.GameManager;
 import hust.hedspi.oop.game.managers.MapManager;
 import hust.hedspi.oop.game.managers.TimeManager;
@@ -145,6 +146,11 @@ public class PlayScreen implements Screen {
         batch.setProjectionMatrix(gameCamera.combined);
         batch.begin();
         
+        // Vẽ NPCs
+        for (NPC npc : MapManager.getInstance().getNpcs()) {
+            npc.render(batch);
+        }
+
         if (player != null) {
             player.render(batch);
             
@@ -178,6 +184,11 @@ public class PlayScreen implements Screen {
     @Override
     public void dispose() {
         batch.dispose();
+        
+        for (NPC npc : MapManager.getInstance().getNpcs()) {
+            npc.dispose();
+        }
+        
         MapManager.getInstance().dispose();
         uiStage.dispose();
         playerHUD.dispose();

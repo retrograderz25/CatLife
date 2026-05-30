@@ -199,6 +199,25 @@ package "hust.hedspi.oop.game" {
             + setBGMVolume(volume: float): void
             + setSFXVolume(volume: float): void
         }
+
+        class MapManager <<Singleton>> {
+            - static instance: MapManager
+            - currentMap: TiledMap
+            - mapRenderer: OrthogonalTiledMapRenderer
+            - collisionRectangles: List<Rectangle>
+            - triggerZones: List<TriggerZone>
+            - npcs: List<NPC>
+            - MapManager()
+            + static getInstance(): MapManager
+            + loadMap(filePath: String): void
+            - loadCollisions(): void
+            - loadTriggers(): void
+            + render(camera: OrthographicCamera): void
+            + getCollisionRectangles(): List<Rectangle>
+            + getTriggerZones(): List<TriggerZone>
+            + getNpcs(): List<NPC>
+            + dispose(): void
+        }
     }
 
     package "entities" {
@@ -252,6 +271,15 @@ package "hust.hedspi.oop.game" {
         class HouseCat {
             + HouseCat(x: float, y: float, width: float, height: float)
             + applyPassiveSkill(dt: float): void
+        }
+
+        class NPC {
+            - npcName: String
+            + NPC(x: float, y: float, w: float, h: float, color: CatColor, name: String)
+            + applyPassiveSkill(dt: float): void
+            + update(dt: float): void
+            + render(batch: SpriteBatch): void
+            + getNpcName(): String
         }
 
         class TriggerZone {
@@ -381,6 +409,28 @@ package "hust.hedspi.oop.game" {
             + MinigameScreen(strategy: IMinigameStrategy)
             + render(delta: float): void
         }
+
+        class PlayScreen {
+            - gameCamera: OrthographicCamera
+            - gamePort: Viewport
+            - batch: SpriteBatch
+            - interactionUI: InteractionUI
+            + PlayScreen()
+            + render(delta: float): void
+        }
+
+        package "hud" {
+            class InteractionUI {
+                - rootTable: Table
+                - dialogLabel: Label
+                - nameLabel: Label
+                - player: Cat
+                + InteractionUI(player: Cat)
+                + show(zone: TriggerZone): void
+                + hide(): void
+                + getTable(): Table
+            }
+        }
     }
 }
 
@@ -404,9 +454,15 @@ TimeManager --> Phase : currentPhase
 Entity <|-- Cat
 Cat <|-- StrayCat
 Cat <|-- HouseCat
+Cat <|-- NPC
 Entity <|-- TriggerZone
 
 TriggerZone ..|> IInteractable
+
+InteractionUI --> Cat : observes
+PlayScreen --> InteractionUI : uses
+MapManager "1" o--> "many" NPC : npcs
+MapManager "1" o--> "many" TriggerZone : triggerZones
 
 ICatState <|.. IdleState
 ICatState <|.. RunState

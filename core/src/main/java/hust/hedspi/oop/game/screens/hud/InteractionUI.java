@@ -3,6 +3,7 @@ package hust.hedspi.oop.game.screens.hud;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -19,12 +20,14 @@ import hust.hedspi.oop.game.managers.ResourceManager;
 public class InteractionUI {
     private Table rootTable;
     private Label dialogLabel;
+    private Label nameLabel;
     private TextButton btnYes;
     private TextButton btnNo;
     
     private Texture panelTex;
     private Texture btnTex;
     private Texture btnPressedTex;
+    private Texture overlayTex;
     
     private TriggerZone currentZone;
     private Cat player;
@@ -36,8 +39,16 @@ public class InteractionUI {
         
         rootTable = new Table();
         rootTable.setFillParent(true);
-        rootTable.bottom().padBottom(50); // Đặt ở dưới cùng màn hình
         rootTable.setVisible(false);
+
+        // Tạo overlay đen mờ cho toàn màn hình
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(0, 0, 0, 0.6f); // 60% alpha
+        pixmap.fill();
+        overlayTex = new Texture(pixmap);
+        pixmap.dispose();
+        
+        rootTable.setBackground(new NinePatchDrawable(new NinePatch(overlayTex)));
 
         panelTex = new Texture(Gdx.files.internal("images/HUD/ui/panel/panel.png"));
         NinePatch panelPatch = new NinePatch(panelTex, 8, 8, 8, 8);
@@ -57,21 +68,30 @@ public class InteractionUI {
 
         Table dialogTable = new Table();
         dialogTable.setBackground(panelBg);
-        dialogTable.pad(20);
+        dialogTable.pad(30);
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle(ResourceManager.getInstance().dialogFont, Color.WHITE);
+        // Label tên NPC
+        Label.LabelStyle nameStyle = new Label.LabelStyle(ResourceManager.getInstance().nameFont, Color.GOLD);
+        nameLabel = new Label("NPC Name", nameStyle);
+        dialogTable.add(nameLabel).left().padBottom(10).row();
+
+        Label.LabelStyle labelStyle = new Label.LabelStyle(ResourceManager.getInstance().dialogFont, Color.BLACK);
         dialogLabel = new Label("", labelStyle);
         dialogLabel.setWrap(true);
         
-        dialogTable.add(dialogLabel).width(600).colspan(2).padBottom(20).center().row();
+        dialogTable.add(dialogLabel).width(700).colspan(2).padBottom(30).center().row();
         
+        Table buttonTable = new Table();
         btnYes = new TextButton(ResourceManager.getInstance().getBundle().get("btn_yes"), btnStyle);
         btnNo = new TextButton(ResourceManager.getInstance().getBundle().get("btn_no"), btnStyle);
         
-        dialogTable.add(btnYes).width(150).height(50).padRight(50);
-        dialogTable.add(btnNo).width(150).height(50);
+        buttonTable.add(btnYes).width(180).height(60).padRight(60);
+        buttonTable.add(btnNo).width(180).height(60);
         
-        rootTable.add(dialogTable);
+        dialogTable.add(buttonTable).colspan(2).center();
+        
+        rootTable.center(); // Đưa khung thoại ra giữa màn hình cho dễ nhìn
+        rootTable.add(dialogTable).width(800);
 
         // Bắt sự kiện Click chuột
         btnYes.addListener(new ClickListener() {
@@ -131,12 +151,21 @@ public class InteractionUI {
         
         String zoneKey = "task_" + zone.getZoneName().replace(" ", "_");
         String text = ResourceManager.getInstance().getBundle().get("task_default");
+        String npcName = "Mèo lạ"; // Tên mặc định
+        
         try {
             text = ResourceManager.getInstance().getBundle().get(zoneKey);
         } catch (Exception e) {
-            // Fallback to default
+            // Fallback to default text already set
+        }
+
+        try {
+            npcName = ResourceManager.getInstance().getBundle().get(zoneKey + "_npc");
+        } catch (Exception e) {
+            // Fallback to default npcName already set
         }
         
+        nameLabel.setText(npcName);
         dialogLabel.setText(text);
         rootTable.setVisible(true);
         selectedButtonIndex = 0;
@@ -175,5 +204,6 @@ public class InteractionUI {
         if (panelTex != null) panelTex.dispose();
         if (btnTex != null) btnTex.dispose();
         if (btnPressedTex != null) btnPressedTex.dispose();
+        if (overlayTex != null) overlayTex.dispose();
     }
 }

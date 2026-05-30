@@ -9,6 +9,8 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import hust.hedspi.oop.game.entities.TriggerZone;
+import hust.hedspi.oop.game.entities.NPC;
+import hust.hedspi.oop.game.entities.Cat.CatColor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +21,12 @@ public class MapManager {
     private OrthogonalTiledMapRenderer mapRenderer;
     private List<Rectangle> collisionRectangles;
     private List<TriggerZone> triggerZones;
+    private List<NPC> npcs;
 
     private MapManager() {
         collisionRectangles = new ArrayList<>();
         triggerZones = new ArrayList<>();
+        npcs = new ArrayList<>();
     }
 
     public static MapManager getInstance() {
@@ -61,15 +65,29 @@ public class MapManager {
 
     private void loadTriggers() {
         triggerZones.clear();
+        for (NPC npc : npcs) {
+            npc.dispose();
+        }
+        npcs.clear();
         MapLayer triggerLayer = currentMap.getLayers().get("Trigger");
         
         if (triggerLayer != null) {
+            CatColor[] colors = CatColor.values();
+            int colorIndex = 0;
+            
             for (MapObject object : triggerLayer.getObjects()) {
                 if (object instanceof RectangleMapObject) {
                     Rectangle rect = ((RectangleMapObject) object).getRectangle();
                     String name = object.getName() != null ? object.getName() : "Unknown Trigger";
+                    
                     TriggerZone zone = new TriggerZone(rect.x, rect.y, rect.width, rect.height, name);
                     triggerZones.add(zone);
+                    
+                    // Thêm NPC đứng tại vị trí trigger
+                    CatColor color = colors[colorIndex % colors.length];
+                    NPC npc = new NPC(rect.x, rect.y, 12, 12, color, "NPC " + name);
+                    npcs.add(npc);
+                    colorIndex++;
                 }
             }
         }
@@ -88,6 +106,10 @@ public class MapManager {
 
     public List<TriggerZone> getTriggerZones() {
         return triggerZones;
+    }
+
+    public List<hust.hedspi.oop.game.entities.NPC> getNpcs() {
+        return npcs;
     }
 
     public float getMapPixelWidth() {
@@ -109,5 +131,9 @@ public class MapManager {
             currentMap.dispose();
             mapRenderer.dispose();
         }
+        for (hust.hedspi.oop.game.entities.NPC npc : npcs) {
+            npc.dispose();
+        }
+        npcs.clear();
     }
 }

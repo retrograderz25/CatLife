@@ -25,6 +25,8 @@
 - [x] Hoàn thiện Map rendering: Tích hợp `ExtendViewport` xóa viền đen (Letterboxing), Fix lỗi lệch trục Y của TiledMap (`offsety`).
 - [x] Hoàn thiện giao diện HUD: `PlayerHUD` (chỉ số sinh tồn) và `TimeHUD` (đồng hồ thời gian) sử dụng cấu trúc UI Observer và khung `NinePatch` co giãn chuẩn xác.
 - [x] Hệ thống InteractionUI: Hiển thị icon trên đầu Mèo khi đứng vào TriggerZone, hiện popup xác nhận nhiệm vụ (load text từ `I18NBundle`) và cho phép điều khiển bằng chuột/bàn phím.
+- [x] **NPC System:** Thêm NPC đứng tại các vị trí Trigger trên bản đồ, hỗ trợ hiển thị tên và lời thoại riêng biệt.
+- [x] **UI Polish:** Cải thiện `InteractionUI` với Overlay làm mờ màn hình, bố cục tập trung và hiển thị tên NPC.
 - [ ] Hệ thống hộp thoại RPG (Dialogue System với Typewriter Effect).
 - [ ] Gắn kết AssetManager đầy đủ cho SoundManager.
 - [ ] Phát triển công cụ F12 (Developer Debug Kit).

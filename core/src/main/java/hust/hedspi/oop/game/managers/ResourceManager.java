@@ -56,7 +56,7 @@ public class ResourceManager {
 
     private void generateFonts() {
         // Trỏ tới file font tải về để trong thư mục assets/fonts/
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/zpix.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Arimo-Regular.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 
         // 1. CHUẨN BỊ KÝ TỰ TIẾNG VIỆT
