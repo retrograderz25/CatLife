@@ -154,10 +154,12 @@ public class PlayScreen implements Screen {
         if (player != null) {
             player.render(batch);
             
-            // Vẽ icon trên đầu mèo nếu đang đứng ở trigger
+            // Vẽ icon nhiệm vụ trên đầu mèo (kích thước và vị trí bám sát hitbox)
             if (currentTrigger != null) {
-                // Kích thước icon tự chỉnh (VD: 16x16)
-                batch.draw(hasTaskIcon, player.getX() + player.getWidth() / 2f - 8, player.getY() + player.getHeight() + 25, 16, 16);
+                float iconSize = 10f;
+                float iconX = player.getHitbox().x + (player.getHitbox().width - iconSize) / 2f;
+                float iconY = player.getY() + 22f; // Đỉnh đầu của sprite mèo rơi vào khoảng y + 18
+                batch.draw(hasTaskIcon, iconX, iconY, iconSize, iconSize);
             }
         }
         
