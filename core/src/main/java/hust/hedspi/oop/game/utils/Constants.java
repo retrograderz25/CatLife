@@ -35,7 +35,7 @@ public class Constants {
     public static final int   THOAT_CONG_GOAL_AREA       = 150;   // pixel vùng đích góc dưới-trái
     public static final float THOAT_CONG_CAT_SPEED       = 100f;  // pixel/giây (đi bộ)
     public static final float THOAT_CONG_CAT_RUN_SPEED   = 180f;  // pixel/giây (chạy – giữ Shift)
-    public static final float THOAT_CONG_MAZE_SCALE       = 0.75f;  // 768px hiển thị: cuộn ngang 128px, cuộn dọc 288px
+    public static final float THOAT_CONG_MAZE_SCALE       = 1.5f;  // Scale lớn hơn cho màn hình 1280x720
     public static final float THOAT_CONG_SPRITE_SCALE    = 1.0f;  // hệ số nhân lên trên mazeScale để tính kích thước mèo
     public static final float THOAT_CONG_DARK_FADE       = 1.2f;  // alpha/giây fade-in bóng tối
 
