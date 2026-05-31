@@ -12,6 +12,18 @@ import hust.hedspi.oop.game.entities.TriggerZone;
 import hust.hedspi.oop.game.entities.NPC;
 import hust.hedspi.oop.game.entities.Cat.CatColor;
 
+import hust.hedspi.oop.game.minigames.bath_game.BathGameMinigame;
+import hust.hedspi.oop.game.minigames.cao_mong.CaoMongMinigame;
+import hust.hedspi.oop.game.minigames.combat.CombatMinigame;
+import hust.hedspi.oop.game.minigames.combat_don.CombatDonMinigame;
+import hust.hedspi.oop.game.minigames.nhay_hip_hop.NhayHipHopMinigame;
+import hust.hedspi.oop.game.minigames.thoat_khoi_cong.ThoatKhoiCongMinigame;
+import hust.hedspi.oop.game.minigames.thoat_khoi_long.ThoatKhoiLongMinigame;
+import hust.hedspi.oop.game.minigames.tim_tieu_tam.TimTieuTamMinigame;
+import hust.hedspi.oop.game.minigames.trom_meo.TromMeoMinigame;
+import hust.hedspi.oop.game.minigames.tron_kim_tiem.TronKimTiemMinigame;
+import hust.hedspi.oop.game.minigames.ComingSoonMinigame;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,6 +93,41 @@ public class MapManager {
                     String name = object.getName() != null ? object.getName() : "Unknown Trigger";
                     
                     TriggerZone zone = new TriggerZone(rect.x, rect.y, rect.width, rect.height, name);
+                    
+                    // Auto-Hooking Minigames based on trigger names
+                    switch (name) {
+                        case "Sewage":
+                            zone.setLinkedMinigame(new ThoatKhoiCongMinigame());
+                            break;
+                        case "Warzone1":
+                            zone.setLinkedMinigame(new CombatDonMinigame());
+                            break;
+                        case "Warzone2":
+                            zone.setLinkedMinigame(new CombatMinigame());
+                            break;
+                        case "Caomong":
+                            zone.setLinkedMinigame(new CaoMongMinigame());
+                            break;
+                        case "Exciter":
+                            zone.setLinkedMinigame(new TromMeoMinigame());
+                            break;
+                        case "Hotel Gate":
+                            zone.setLinkedMinigame(new TimTieuTamMinigame());
+                            break;
+                        case "Bubble":
+                            zone.setLinkedMinigame(new BathGameMinigame());
+                            break;
+                        case "Office Gate":
+                            zone.setLinkedMinigame(new TronKimTiemMinigame());
+                            break;
+                        case "Le-nin":
+                            zone.setLinkedMinigame(new NhayHipHopMinigame());
+                            break;
+                        default:
+                            zone.setLinkedMinigame(new ComingSoonMinigame());
+                            break;
+                    }
+                    
                     triggerZones.add(zone);
                     
                     // Thêm NPC đứng tại vị trí trigger
