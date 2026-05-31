@@ -158,11 +158,37 @@ public class ThoatKhoiCongMinigame implements IMinigameStrategy {
     }
 
     private Animation<TextureRegion> buildAnim(Texture tex, int frameCount, float frameDur) {
-        int frameH = tex.getHeight();
-        TextureRegion[] frames = new TextureRegion[frameCount];
-        for (int i = 0; i < frameCount; i++) {
-            frames[i] = new TextureRegion(tex, i * FRAME_CELL, 0, FRAME_CELL, frameH);
+        if (!tex.getTextureData().isPrepared()) {
+            tex.getTextureData().prepare();
         }
+        Pixmap pixmap = tex.getTextureData().consumePixmap();
+        
+        int frameH = tex.getHeight();
+        java.util.List<TextureRegion> validFrames = new java.util.ArrayList<>();
+        
+        for (int i = 0; i < frameCount; i++) {
+            int minX = FRAME_CELL;
+            int maxX = -1;
+            
+            for (int y = 0; y < frameH; y++) {
+                for (int x = 0; x < FRAME_CELL; x++) {
+                    int pixelX = i * FRAME_CELL + x;
+                    int color = pixmap.getPixel(pixelX, y);
+                    int alpha = color & 0x000000ff;
+                    if (alpha > 0) {
+                        if (x < minX) minX = x;
+                        if (x > maxX) maxX = x;
+                    }
+                }
+            }
+            if (minX <= maxX) {
+                int tightWidth = maxX - minX + 1;
+                validFrames.add(new TextureRegion(tex, i * FRAME_CELL + minX, 0, tightWidth, frameH));
+            }
+        }
+        pixmap.dispose();
+        
+        TextureRegion[] frames = validFrames.toArray(new TextureRegion[0]);
         Animation<TextureRegion> anim = new Animation<>(frameDur, frames);
         anim.setPlayMode(Animation.PlayMode.LOOP);
         return anim;
@@ -278,11 +304,24 @@ public class ThoatKhoiCongMinigame implements IMinigameStrategy {
                                              : (animState == AnimState.WALK) ? walkAnim : idleAnim;
         TextureRegion frame = currentAnim.getKeyFrame(stateTime);
 
-        // Sprite mặc định quay trái; flip sang phải khi cần
-        if (!facingLeft && !frame.isFlipX()) frame.flip(true, false);
-        if (facingLeft  &&  frame.isFlipX()) frame.flip(true, false);
+        // Sprite mặc định quay TRÁI. Nếu facingLeft = false thì flipX = true để quay phải.
+        boolean flipX = !facingLeft;
 
-        batch.draw(frame, catCX - hs, catCY - hs, catDisplaySize, catDisplaySize);
+        // Tính tỷ lệ hiển thị
+        float scale = catDisplaySize / frame.getRegionHeight();
+        float drawWidth = frame.getRegionWidth() * scale;
+        float drawHeight = frame.getRegionHeight() * scale;
+        
+        // catCX, catCY là tâm của khung hình vẽ. Điều chỉnh drawX, drawY ôm sát tâm
+        float drawX = catCX - drawWidth / 2f;
+        float drawY = catCY - hs;
+
+        batch.draw(frame.getTexture(), 
+                   drawX, drawY, 
+                   drawWidth, drawHeight, 
+                   frame.getRegionX(), frame.getRegionY(), 
+                   frame.getRegionWidth(), frame.getRegionHeight(), 
+                   flipX, false);
 
         // ── 4. Bóng tối ───────────────────────────────────────────────────────
         if (darkAlpha > 0f) {
