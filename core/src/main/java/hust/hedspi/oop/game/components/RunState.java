@@ -10,8 +10,11 @@ import hust.hedspi.oop.game.managers.MapManager;
 
 public class RunState implements ICatState {
 
+    private boolean isRunning = false;
+
     @Override
     public void enter(Cat cat) {
+        isRunning = false;
     }
 
     @Override
@@ -19,7 +22,12 @@ public class RunState implements ICatState {
         boolean isMoving = false;
         float x = cat.getX();
         float y = cat.getY();
-        float speed = cat.getSpeed();
+        
+        // Kiểm tra xem người chơi có đang giữ phím Shift không
+        isRunning = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT);
+        
+        // Nếu chạy thì dùng tốc độ gốc, nếu đi bộ thì giảm còn 60%
+        float currentSpeed = isRunning ? cat.getSpeed() : cat.getSpeed() * 0.6f;
 
         float dx = 0;
         float dy = 0;
@@ -42,8 +50,8 @@ public class RunState implements ICatState {
             dx /= length;
             dy /= length;
             
-            float moveX = dx * speed * dt;
-            float moveY = dy * speed * dt;
+            float moveX = dx * currentSpeed * dt;
+            float moveY = dy * currentSpeed * dt;
 
             // Map boundaries
             float mapWidth = MapManager.getInstance().getMapPixelWidth();
@@ -90,7 +98,8 @@ public class RunState implements ICatState {
 
     @Override
     public void render(Cat cat, SpriteBatch batch) {
-        cat.renderAnimation(batch, "RUN", Gdx.graphics.getDeltaTime());
+        String animToPlay = isRunning ? "RUN" : "WALK";
+        cat.renderAnimation(batch, animToPlay, Gdx.graphics.getDeltaTime());
     }
 
     @Override
