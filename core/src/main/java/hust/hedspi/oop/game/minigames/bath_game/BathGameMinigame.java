@@ -124,7 +124,7 @@ public class BathGameMinigame implements IMinigameStrategy {
     @Override
     public void update(float dt) {
         if (gameOver) {
-            if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) exitRequested = true;
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) exitRequested = true;
             return;
         }
 

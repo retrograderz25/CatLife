@@ -27,7 +27,7 @@ public class ComingSoonMinigame implements IMinigameStrategy {
     @Override
     public void update(float dt) {
         // Nhấn phím bất kỳ (phổ biến) để thoát
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) || 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || 
             Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || 
             Gdx.input.isKeyJustPressed(Input.Keys.SPACE) ||
             Gdx.input.isKeyJustPressed(Input.Keys.E)) {

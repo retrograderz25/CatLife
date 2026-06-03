@@ -1,0 +1,174 @@
+package hust.hedspi.oop.game.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import hust.hedspi.oop.game.managers.GameManager;
+import hust.hedspi.oop.game.managers.ResourceManager;
+import hust.hedspi.oop.game.managers.SaveManager;
+import hust.hedspi.oop.game.managers.ScreenManager;
+import hust.hedspi.oop.game.utils.Constants;
+import hust.hedspi.oop.game.utils.EndingCondition;
+
+public class EndingScreen implements Screen {
+    private Stage stage;
+    private Viewport viewport;
+    private SpriteBatch batch;
+    
+    private String endingName;
+    private String endingDescription;
+
+    public EndingScreen(EndingCondition ending) {
+        batch = new SpriteBatch();
+        viewport = new FitViewport(Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT);
+        stage = new Stage(viewport, batch);
+
+        if (ending != null) {
+            endingName = ending.getEndingName();
+            endingDescription = "Bạn đã đạt được kết cục: " + endingName + "\nXin chúc mừng!";
+            SaveManager.unlockEnding(endingName);
+        } else {
+            endingName = "Sống sót ngoài đường";
+            endingDescription = "Bạn tiếp tục cuộc sống lang bạt kỳ hồ...";
+            SaveManager.unlockEnding(endingName);
+        }
+
+        buildUI();
+    }
+    
+    public EndingScreen(String forcedEndingKey) {
+        batch = new SpriteBatch();
+        viewport = new FitViewport(Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT);
+        stage = new Stage(viewport, batch);
+
+        endingName = forcedEndingKey;
+        endingDescription = "Kết cục: " + forcedEndingKey;
+        SaveManager.unlockEnding(endingName);
+
+        buildUI();
+    }
+
+    private void buildUI() {
+        Table rootTable = new Table();
+        rootTable.setFillParent(true);
+
+        Texture panelTex = new Texture(Gdx.files.internal("images/HUD/ui/panel/panel.png"));
+        NinePatch panelPatch = new NinePatch(panelTex, 8, 8, 8, 8);
+        NinePatchDrawable panelBg = new NinePatchDrawable(panelPatch);
+
+        Texture btnTex = new Texture(Gdx.files.internal("images/HUD/ui/button/button_blue.png"));
+        Texture btnPressedTex = new Texture(Gdx.files.internal("images/HUD/ui/button/button_blue_pressed.png"));
+        
+        TextButton.TextButtonStyle btnStyle = new TextButton.TextButtonStyle();
+        btnStyle.up = new NinePatchDrawable(new NinePatch(btnTex, 4, 4, 4, 4));
+        btnStyle.down = new NinePatchDrawable(new NinePatch(btnPressedTex, 4, 4, 4, 4));
+        btnStyle.font = ResourceManager.getInstance().dialogFont;
+        btnStyle.fontColor = Color.WHITE;
+
+        Table dialogTable = new Table();
+        dialogTable.setBackground(panelBg);
+        dialogTable.pad(40);
+
+        BitmapFont font = ResourceManager.getInstance().hudFont;
+        BitmapFont dialogFont = ResourceManager.getInstance().dialogFont;
+
+        Label.LabelStyle titleStyle = new Label.LabelStyle(font, Color.YELLOW);
+        Label titleLabel = new Label("KẾT CỤC: " + endingName.toUpperCase(), titleStyle);
+        titleLabel.setAlignment(Align.center);
+        
+        Label.LabelStyle descStyle = new Label.LabelStyle(dialogFont, Color.WHITE);
+        Label descLabel = new Label(endingDescription, descStyle);
+        descLabel.setAlignment(Align.center);
+        descLabel.setWrap(true);
+
+        Label unlockLabel = new Label("Đã mở khóa: " + SaveManager.getUnlockedEndingsCount() + " / " + SaveManager.TOTAL_ENDINGS + " Endings", descStyle);
+        unlockLabel.setAlignment(Align.center);
+        unlockLabel.setColor(Color.LIGHT_GRAY);
+
+        dialogTable.add(titleLabel).padBottom(30).row();
+        dialogTable.add(descLabel).width(600).padBottom(40).row();
+        dialogTable.add(unlockLabel).padBottom(40).row();
+
+        TextButton btnNewLife = new TextButton("Bắt Đầu Cuộc Sống Mới", btnStyle);
+        btnNewLife.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                GameManager.getInstance().startNewGame(true); 
+                ScreenManager.getInstance().clearAndSetScreen(new PlayScreen());
+            }
+        });
+
+        TextButton btnContinue = new TextButton("Tiếp Tục Khám Phá", btnStyle);
+        btnContinue.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ScreenManager.getInstance().popScreen(); 
+                if (GameManager.getInstance().getPlayer().getHp() <= 0) {
+                    GameManager.getInstance().getPlayer().setHp(100); // Hồi sinh
+                }
+                GameManager.getInstance().resumeGame();
+            }
+        });
+
+        Table btnTable = new Table();
+        btnTable.add(btnNewLife).width(300).height(60).padRight(30);
+        btnTable.add(btnContinue).width(300).height(60);
+
+        dialogTable.add(btnTable);
+        rootTable.add(dialogTable);
+
+        stage.addActor(rootTable);
+        Gdx.input.setInputProcessor(stage);
+    }
+
+    @Override
+    public void show() {
+    }
+
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        stage.act(delta);
+        stage.draw();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height, true);
+    }
+
+    @Override
+    public void pause() {
+    }
+
+    @Override
+    public void resume() {
+    }
+
+    @Override
+    public void hide() {
+    }
+
+    @Override
+    public void dispose() {
+        batch.dispose();
+        stage.dispose();
+    }
+}
