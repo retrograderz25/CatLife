@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -123,9 +124,15 @@ public class EndingScreen implements Screen {
         unlockLabel.setAlignment(Align.center);
         unlockLabel.setColor(Color.GRAY);
 
-        dialogTable.add(titleLabel).padBottom(30).row();
-        dialogTable.add(descLabel).width(600).padBottom(40).row();
-        dialogTable.add(unlockLabel).padBottom(40).row();
+        dialogTable.add(titleLabel).padBottom(20).row();
+        
+        if (endingBgTexture != null) {
+            Image endingImg = new Image(endingBgTexture);
+            dialogTable.add(endingImg).width(480).height(262).padBottom(20).row();
+        }
+        
+        dialogTable.add(descLabel).width(600).padBottom(30).row();
+        dialogTable.add(unlockLabel).padBottom(30).row();
 
         TextButton btnNewLife = new TextButton("Bắt Đầu Cuộc Sống Mới", btnStyle);
         btnNewLife.addListener(new ClickListener() {
@@ -172,13 +179,6 @@ public class EndingScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        if (endingBgTexture != null) {
-            batch.setProjectionMatrix(viewport.getCamera().combined);
-            batch.begin();
-            batch.draw(endingBgTexture, 0, 0, Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT);
-            batch.end();
-        }
 
         stage.act(delta);
         stage.draw();
