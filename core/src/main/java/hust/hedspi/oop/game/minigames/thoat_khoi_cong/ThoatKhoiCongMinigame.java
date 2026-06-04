@@ -226,10 +226,10 @@ public class ThoatKhoiCongMinigame implements IMinigameStrategy {
         float speed = running ? CAT_RUN_SPEED : CAT_SPEED;
 
         float dx = 0f, dy = 0f;
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT))  { dx -= speed * dt; facingLeft = true; }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) { dx += speed * dt; facingLeft = false; }
-        if (Gdx.input.isKeyPressed(Input.Keys.UP))    dy -= speed * dt;
-        if (Gdx.input.isKeyPressed(Input.Keys.DOWN))  dy += speed * dt;
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A))  { dx -= speed * dt; facingLeft = true; }
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) { dx += speed * dt; facingLeft = false; }
+        if (Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W))    dy -= speed * dt;
+        if (Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S))  dy += speed * dt;
 
         boolean moving = (dx != 0 || dy != 0);
         if (dx != 0 && canMoveTo(catImgX + dx, catImgY)) catImgX += dx;

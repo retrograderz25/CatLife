@@ -164,13 +164,13 @@ public class CombatDonMinigame implements IMinigameStrategy {
             }
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+        if ((Gdx.input.isKeyJustPressed(Input.Keys.A) || Gdx.input.isKeyJustPressed(Input.Keys.LEFT))) {
             handleBlock(0);
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+        if ((Gdx.input.isKeyJustPressed(Input.Keys.S) || Gdx.input.isKeyJustPressed(Input.Keys.DOWN))) {
             handleBlock(1);
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+        if ((Gdx.input.isKeyJustPressed(Input.Keys.D) || Gdx.input.isKeyJustPressed(Input.Keys.RIGHT))) {
             handleBlock(2);
         }
 

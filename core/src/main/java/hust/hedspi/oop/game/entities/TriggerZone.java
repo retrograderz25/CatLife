@@ -49,11 +49,10 @@ public class TriggerZone extends Entity implements IInteractable {
     public void onInteract(Cat player) {
         // Nếu hợp lệ và có Minigame được liên kết, mở Minigame
         if (linkedMinigame != null) {
-            System.out.println("TriggerZone [" + zoneName + "]: Kích hoạt Minigame!");
+            System.out.println("TriggerZone [" + zoneName + "]: Trigger Minigame!");
             ScreenManager.getInstance().pushScreen(new MinigameScreen(linkedMinigame));
         } else {
-            System.out.println("TriggerZone [" + zoneName + "]: Tương tác thành công (Story Event)!");
-            // TODO: Kích hoạt thoại hoặc sự kiện cốt truyện
+            System.out.println("TriggerZone [" + zoneName + "]: Story Event!");
         }
     }
 
