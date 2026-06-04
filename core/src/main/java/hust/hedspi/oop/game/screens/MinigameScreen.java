@@ -21,6 +21,8 @@ import hust.hedspi.oop.game.managers.GameManager;
 import hust.hedspi.oop.game.utils.Constants;
 import hust.hedspi.oop.game.debug.DebugMenu;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.Input;
 
 public class MinigameScreen implements Screen {
     private IMinigameStrategy strategy;
@@ -39,6 +41,19 @@ public class MinigameScreen implements Screen {
     // --- DEBUG MENU ---
     private Stage debugStage;
     private DebugMenu debugMenu;
+
+    // --- TUTORIAL / INSTRUCTIONS POPUP ---
+    private boolean showTutorial = true;
+    private Texture tfTex;
+    private Texture btnTex;
+    private Texture btnPressedTex;
+    private NinePatch panelPatch;
+    private NinePatch btnPatch;
+    private NinePatch btnPressedPatch;
+
+    public static NinePatch staticPanelPatch;
+    public static NinePatch staticBtnPatch;
+    public static NinePatch staticBtnPressedPatch;
 
     public MinigameScreen(IMinigameStrategy strategy) {
         this.strategy = strategy;
@@ -60,6 +75,19 @@ public class MinigameScreen implements Screen {
 
         font = ResourceManager.getInstance().dialogFont;
         
+        // Khởi tạo tài nguyên cho Tutorial Popup
+        tfTex = new Texture(Gdx.files.internal("images/HUD/ui/panel/timeframe.png"));
+        btnTex = new Texture(Gdx.files.internal("images/HUD/ui/button/button_blue.png"));
+        btnPressedTex = new Texture(Gdx.files.internal("images/HUD/ui/button/button_blue_pressed.png"));
+
+        panelPatch = new NinePatch(tfTex, 8, 8, 8, 8);
+        btnPatch = new NinePatch(btnTex, 4, 4, 4, 4);
+        btnPressedPatch = new NinePatch(btnPressedTex, 4, 4, 4, 4);
+
+        staticPanelPatch = panelPatch;
+        staticBtnPatch = btnPatch;
+        staticBtnPressedPatch = btnPressedPatch;
+
         // Khởi tạo Debug Menu
         debugStage = new Stage(viewport, batch);
         debugMenu = new DebugMenu();
@@ -124,6 +152,20 @@ public class MinigameScreen implements Screen {
                     shouldExit = true;
                 }
             }
+        } else if (showTutorial) {
+            // Handle tutorial input
+            if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.SPACE)) {
+                showTutorial = false;
+            } else if (Gdx.input.justTouched()) {
+                Vector2 mousePos = unproject(Gdx.input.getX(), Gdx.input.getY());
+                float btnW = 180f;
+                float btnH = 60f;
+                float btnX = (Constants.VIRTUAL_WIDTH - btnW) / 2f;
+                float btnY = ((Constants.VIRTUAL_HEIGHT - 450f) / 2f) + 40f;
+                if (mousePos.x >= btnX && mousePos.x <= btnX + btnW && mousePos.y >= btnY && mousePos.y <= btnY + btnH) {
+                    showTutorial = false;
+                }
+            }
         } else if (!debugMenu.isVisible()) {
             // Cập nhật logic game nếu không Pause và không mở Debug
             strategy.update(delta);
@@ -139,7 +181,62 @@ public class MinigameScreen implements Screen {
         // Luôn vẽ minigame bên dưới
         strategy.render(batch);
         
-        // Vẽ lớp Pause Menu đè lên trên
+        // Vẽ lớp Tutorial đè lên trên minigame
+        if (showTutorial) {
+            // Dim background
+            batch.setColor(0f, 0f, 0f, 0.7f);
+            batch.draw(dimTexture, 0, 0, Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT);
+            batch.setColor(Color.WHITE);
+            
+            // Draw timeframe panel (NinePatch)
+            float panelW = 750f;
+            float panelH = 420f;
+            float panelX = (Constants.VIRTUAL_WIDTH - panelW) / 2f;
+            float panelY = (Constants.VIRTUAL_HEIGHT - panelH) / 2f;
+            panelPatch.draw(batch, panelX, panelY, panelW, panelH);
+            
+            // Draw title
+            String titleText = getMinigameTitle();
+            font.getData().setScale(1.8f);
+            font.setColor(Color.YELLOW);
+            font.draw(batch, titleText, panelX, panelY + panelH - 50f, panelW, Align.center, false);
+            
+            // Draw instructions text (wrapped)
+            String instrText = getMinigameInstruction();
+            font.getData().setScale(1.2f);
+            font.setColor(Color.WHITE);
+            font.draw(batch, instrText, panelX + 50f, panelY + panelH - 120f, panelW - 100f, Align.center, true);
+            
+            // Draw "Đã hiểu" button
+            float btnW = 180f;
+            float btnH = 60f;
+            float btnX = (Constants.VIRTUAL_WIDTH - btnW) / 2f;
+            float btnY = panelY + 40f;
+            
+            // Check if mouse is hovering/pressing inside button bounds to draw pressed texture
+            boolean isHoveredOrPressed = false;
+            Vector2 mousePos = unproject(Gdx.input.getX(), Gdx.input.getY());
+            if (mousePos.x >= btnX && mousePos.x <= btnX + btnW && mousePos.y >= btnY && mousePos.y <= btnY + btnH) {
+                isHoveredOrPressed = true;
+            }
+            
+            if (isHoveredOrPressed && Gdx.input.isTouched()) {
+                btnPressedPatch.draw(batch, btnX, btnY, btnW, btnH);
+            } else {
+                btnPatch.draw(batch, btnX, btnY, btnW, btnH);
+            }
+            
+            // Draw button text
+            font.getData().setScale(1.1f);
+            font.setColor(isHoveredOrPressed ? Color.YELLOW : Color.WHITE);
+            font.draw(batch, "Đã hiểu", btnX, btnY + btnH / 2f + 8f, btnW, Align.center, false);
+            
+            // Reset scale and color
+            font.getData().setScale(1.0f);
+            font.setColor(Color.WHITE);
+        }
+        
+        // Vẽ lớp Pause Menu đè lên trên cùng
         if (isPaused) {
             batch.setColor(0f, 0f, 0f, 0.7f);
             batch.draw(dimTexture, 0, 0, Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT);
@@ -187,12 +284,61 @@ public class MinigameScreen implements Screen {
     @Override
     public void hide() {}
 
+    private String getMinigameTitle() {
+        if (strategy == null) return "TRÒ CHƠI PHỤ";
+        String className = strategy.getClass().getSimpleName();
+        switch (className) {
+            case "ThoatKhoiLongMinigame": return "THOÁT KHỎI LỒNG";
+            case "ThoatKhoiCongMinigame": return "TRỐN THOÁT KHỎI CỐNG NGẦM";
+            case "BathGameMinigame": return "TẮM RỬA SẠCH SẼ";
+            case "CaoMongMinigame": return "THỬ THÁCH CÀO MÓNG";
+            case "CombatMinigame": return "ĐÁNH HỘI ĐỒNG";
+            case "CombatDonMinigame": return "THÁCH ĐẤU 1VS1";
+            case "NhayHipHopMinigame": return "BATTLE DANCE HIPHOP";
+            case "TromMeoMinigame": return "NÉ TRÁNH KẺ TRỘM MÈO";
+            case "TronKimTiemMinigame": return "TRỐN KHỎI KIM TIÊM";
+            case "TimTieuTamMinigame": return "BẮT GIAN TIỂU TAM";
+            case "RhythmMinigame": return "THỬ THÁCH NHỊP ĐIỆU";
+            case "PetBegMinigame": return "NHẬN NUÔI";
+            default: return "HƯỚNG DẪN CHƠI";
+        }
+    }
+
+    private String getMinigameInstruction() {
+        if (strategy == null) return "";
+        String className = strategy.getClass().getSimpleName();
+        String key;
+        switch (className) {
+            case "ThoatKhoiLongMinigame": key = "cage_ctrl_hint"; break;
+            case "ThoatKhoiCongMinigame": key = "thoat_cong_ctrl_hint"; break;
+            case "BathGameMinigame": key = "bath_ctrl_hint"; break;
+            case "CaoMongMinigame": key = "cao_mong_ctrl_hint"; break;
+            case "CombatMinigame": key = "combat_ctrl_hint"; break;
+            case "CombatDonMinigame": key = "combat_don_ctrl_hint"; break;
+            case "NhayHipHopMinigame": key = "hiphop_ctrl_hint"; break;
+            case "TromMeoMinigame": key = "trom_meo_ctrl_hint"; break;
+            case "TronKimTiemMinigame": key = "tron_kim_tiem_ctrl_hint"; break;
+            case "TimTieuTamMinigame": key = "ttt_ctrl_hint"; break;
+            case "RhythmMinigame": key = "rhythm_ctrl_hint"; break;
+            case "PetBegMinigame": key = "pet_beg_ctrl_hint"; break;
+            default: return "Nhấn nút để bắt đầu trò chơi!";
+        }
+        try {
+            return ResourceManager.getInstance().getBundle().get(key);
+        } catch (Exception e) {
+            return "Nhấn nút để bắt đầu trò chơi!";
+        }
+    }
+
     @Override
     public void dispose() {
         batch.dispose();
         if (dimTexture != null) {
             dimTexture.dispose();
         }
+        if (tfTex != null) tfTex.dispose();
+        if (btnTex != null) btnTex.dispose();
+        if (btnPressedTex != null) btnPressedTex.dispose();
         if (debugStage != null) {
             debugStage.dispose();
         }

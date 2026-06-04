@@ -138,8 +138,18 @@ public class ThoatKhoiLongMinigame implements IMinigameStrategy {
     @Override
     public void update(float dt) {
         if (gameOver) {
-            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) || Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
                 exitRequested = true;
+            }
+            if (Gdx.input.justTouched()) {
+                com.badlogic.gdx.math.Vector2 mousePos = hust.hedspi.oop.game.screens.MinigameScreen.unproject(Gdx.input.getX(), Gdx.input.getY());
+                float btnW = 160f;
+                float btnH = 50f;
+                float btnX = (screenW - btnW) / 2f;
+                float btnY = ((screenH - screenH * 0.45f) / 2f) + 40f;
+                if (mousePos.x >= btnX && mousePos.x <= btnX + btnW && mousePos.y >= btnY && mousePos.y <= btnY + btnH) {
+                    exitRequested = true;
+                }
             }
             return;
         }
@@ -289,13 +299,6 @@ public class ThoatKhoiLongMinigame implements IMinigameStrategy {
         hudFont.setColor(Color.YELLOW);
         hudFont.draw(batch, "THOÁT KHỎI LỒNG", 30f, screenH - 30f);
 
-        // Hướng dẫn ở góc dưới chính giữa (thu nhỏ chữ và đã được tách 2 dòng từ file I18N)
-        dialogFont.setColor(Color.LIGHT_GRAY);
-        dialogFont.getData().setScale(0.72f); // Thu nhỏ font chữ hướng dẫn
-        dialogFont.draw(batch, bundle.get("cage_ctrl_hint"), 0f, 65f, (float)screenW, com.badlogic.gdx.utils.Align.center, false);
-        dialogFont.getData().setScale(1.0f); // Reset scale
-        dialogFont.setColor(Color.WHITE);
-
         // 7. Vẽ Màn hình Kết thúc Game Over
         if (gameOver) {
             renderGameOver(batch);
@@ -313,14 +316,39 @@ public class ThoatKhoiLongMinigame implements IMinigameStrategy {
         float panelX = (screenW - panelW) / 2f;
         float panelY = (screenH - panelH) / 2f;
 
-        batch.draw(timeFrameTexture, panelX, panelY, panelW, panelH);
+        hust.hedspi.oop.game.screens.MinigameScreen.staticPanelPatch.draw(batch, panelX, panelY, panelW, panelH);
 
         hudFont.setColor(won ? Color.GREEN : Color.RED);
         String resultText = bundle.get(won ? "cage_win" : "cage_lose");
-        hudFont.draw(batch, resultText, panelX + 30f, panelY + panelH * 0.8f);
-
+        hudFont.draw(batch, resultText, panelX, panelY + panelH * 0.76f, panelW, com.badlogic.gdx.utils.Align.center, false);
         hudFont.setColor(Color.WHITE);
-        dialogFont.draw(batch, bundle.get("cage_exit_hint"), panelX + 30f, panelY + panelH * 0.45f);
+
+        dialogFont.getData().setScale(0.8f);
+        dialogFont.setColor(Color.LIGHT_GRAY);
+        dialogFont.draw(batch, bundle.get("cage_exit_hint"), panelX, panelY + panelH * 0.55f, panelW, com.badlogic.gdx.utils.Align.center, false);
+        dialogFont.getData().setScale(1.0f);
+        dialogFont.setColor(Color.WHITE);
+
+        float btnW = 160f;
+        float btnH = 50f;
+        float btnX = (screenW - btnW) / 2f;
+        float btnY = panelY + 40f;
+
+        boolean isHoveredOrPressed = false;
+        com.badlogic.gdx.math.Vector2 mousePos = hust.hedspi.oop.game.screens.MinigameScreen.unproject(Gdx.input.getX(), Gdx.input.getY());
+        if (mousePos.x >= btnX && mousePos.x <= btnX + btnW && mousePos.y >= btnY && mousePos.y <= btnY + btnH) {
+            isHoveredOrPressed = true;
+        }
+
+        if (isHoveredOrPressed && Gdx.input.isTouched()) {
+            hust.hedspi.oop.game.screens.MinigameScreen.staticBtnPressedPatch.draw(batch, btnX, btnY, btnW, btnH);
+        } else {
+            hust.hedspi.oop.game.screens.MinigameScreen.staticBtnPatch.draw(batch, btnX, btnY, btnW, btnH);
+        }
+
+        dialogFont.setColor(isHoveredOrPressed ? Color.YELLOW : Color.WHITE);
+        dialogFont.draw(batch, "Quay lại", btnX, btnY + btnH / 2f + 6f, btnW, com.badlogic.gdx.utils.Align.center, false);
+        dialogFont.setColor(Color.WHITE);
     }
 
     @Override
