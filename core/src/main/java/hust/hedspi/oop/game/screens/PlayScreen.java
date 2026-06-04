@@ -147,37 +147,37 @@ public class PlayScreen implements Screen {
             }
         }
 
-        // F1-F8: Trực quan hóa kết thúc nhanh (Debug Ending screens)
+        // F1-F8: Trực quan hóa kết thúc nhanh (Debug Ending screens - pass shouldSave=false)
         if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
-            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Thánh Đổ Vỏ", 0).build()));
+            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Thánh Đổ Vỏ", 0).build(), false));
             return;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
-            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Gia Đình Hạnh Phúc", 0).build()));
+            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Gia Đình Hạnh Phúc", 0).build(), false));
             return;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
-            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Mãi Mãi Kiếp Culi", 0).build()));
+            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Mãi Mãi Kiếp Culi", 0).build(), false));
             return;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F4)) {
-            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Làm Đại Ca Mèo", 0).build()));
+            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Làm Đại Ca Mèo", 0).build(), false));
             return;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F5)) {
-            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Hoàng Thượng Có Hoàng Hậu", 0).build()));
+            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Hoàng Thượng Có Hoàng Hậu", 0).build(), false));
             return;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F6)) {
-            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Hoàng Thượng Thái Giám", 0).build()));
+            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Hoàng Thượng Thái Giám", 0).build(), false));
             return;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F7)) {
-            ScreenManager.getInstance().pushScreen(new EndingScreen("Quán Thịt Hổ"));
+            ScreenManager.getInstance().pushScreen(new EndingScreen("Quán Thịt Hổ", false));
             return;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.F8)) {
-            ScreenManager.getInstance().pushScreen(new EndingScreen((EndingCondition) null));
+            ScreenManager.getInstance().pushScreen(new EndingScreen((EndingCondition) null, false));
             return;
         }
 

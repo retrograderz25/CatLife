@@ -36,6 +36,10 @@ public class EndingScreen implements Screen {
     private Texture endingBgTexture;
 
     public EndingScreen(EndingCondition ending) {
+        this(ending, true);
+    }
+
+    public EndingScreen(EndingCondition ending, boolean shouldSave) {
         batch = new SpriteBatch();
         viewport = new FitViewport(Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT);
         stage = new Stage(viewport, batch);
@@ -43,7 +47,9 @@ public class EndingScreen implements Screen {
         if (ending != null) {
             endingName = ending.getEndingName();
             endingDescription = "Bạn đã đạt được kết cục: " + endingName + "\nXin chúc mừng!";
-            SaveManager.unlockEnding(endingName);
+            if (shouldSave) {
+                SaveManager.unlockEnding(endingName);
+            }
         } else {
             endingName = "Sống sót ngoài đường";
             endingDescription = "Bạn tiếp tục cuộc sống lang bạt kỳ hồ...";
@@ -55,13 +61,19 @@ public class EndingScreen implements Screen {
     }
     
     public EndingScreen(String forcedEndingKey) {
+        this(forcedEndingKey, true);
+    }
+
+    public EndingScreen(String forcedEndingKey, boolean shouldSave) {
         batch = new SpriteBatch();
         viewport = new FitViewport(Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT);
         stage = new Stage(viewport, batch);
 
         endingName = forcedEndingKey;
         endingDescription = "Kết cục: " + forcedEndingKey;
-        SaveManager.unlockEnding(endingName);
+        if (shouldSave) {
+            SaveManager.unlockEnding(endingName);
+        }
 
         loadBackground();
         buildUI();
