@@ -208,8 +208,8 @@ public class PlayScreen implements Screen {
             batch.begin();
             batch.draw(darkLayerTexture, 0, 0, mapWidth, mapHeight);
 
-            float haloW = 120f;
-            float haloH = 75f;
+            float haloW = 72f;
+            float haloH = 45f;
             float haloX = player.getX() + player.getHitbox().width / 2f - haloW / 2f;
             float haloY = player.getY() + player.getHitbox().height / 2f - haloH / 2f;
 
@@ -260,8 +260,8 @@ public class PlayScreen implements Screen {
             batch.draw(fboTexture, 0, 0, mapWidth, mapHeight, 0, 0, fboTexture.getWidth(), fboTexture.getHeight(), false, true);
 
             if (player != null) {
-                float glowW = 120f;
-                float glowH = 75f;
+                float glowW = 72f;
+                float glowH = 45f;
                 float glowX = player.getX() + player.getHitbox().width / 2f - glowW / 2f;
                 float glowY = player.getY() + player.getHitbox().height / 2f - glowH / 2f;
 
