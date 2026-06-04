@@ -16,7 +16,10 @@ import hust.hedspi.oop.game.entities.NPC;
 import hust.hedspi.oop.game.managers.GameManager;
 import hust.hedspi.oop.game.managers.MapManager;
 import hust.hedspi.oop.game.managers.TimeManager;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import hust.hedspi.oop.game.screens.hud.InteractionUI;
 import hust.hedspi.oop.game.screens.hud.PlayerHUD;
 import hust.hedspi.oop.game.screens.hud.TimeHUD;
@@ -38,6 +41,14 @@ public class PlayScreen implements Screen {
     
     // Icon
     private Texture hasTaskIcon;
+
+    // Darkness / Lighting overlay
+    private Texture darkLayerTexture;
+    private Texture haloTexture;
+    private FrameBuffer fbo;
+    private OrthographicCamera fboCamera;
+    private float mapWidth;
+    private float mapHeight;
 
     public PlayScreen() {
         batch = new SpriteBatch();
@@ -65,22 +76,59 @@ public class PlayScreen implements Screen {
         uiStage.addActor(debugMenu.getTable());
         
         hasTaskIcon = new Texture(Gdx.files.internal("images/HUD/Cat/has_task(stack_with_cat).png"));
+
+        // Setup darkness overlay & light halo
+        mapWidth = MapManager.getInstance().getMapPixelWidth();
+        mapHeight = MapManager.getInstance().getMapPixelHeight();
+        
+        darkLayerTexture = new Texture(Gdx.files.internal("images/HUD/dark_layer.png"));
+        haloTexture = createLightHaloTexture(256, 256);
+        fbo = new FrameBuffer(Pixmap.Format.RGBA8888, (int)mapWidth, (int)mapHeight, false);
+        fboCamera = new OrthographicCamera(mapWidth, mapHeight);
+        fboCamera.position.set(mapWidth / 2f, mapHeight / 2f, 0);
+        fboCamera.update();
+    }
+
+    private Texture createLightHaloTexture(int width, int height) {
+        Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
+        float centerX = width / 2f;
+        float centerY = height / 2f;
+        
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                float dx = (x - centerX) / (width / 2f);
+                float dy = (y - centerY) / (height / 2f);
+                float distSq = dx * dx + dy * dy;
+                
+                if (distSq < 1f) {
+                    float alpha = 1f - distSq;
+                    alpha = alpha * alpha; 
+                    alpha = Math.max(0f, Math.min(1f, alpha));
+                    
+                    pixmap.setColor(1f, 1f, 1f, alpha);
+                    pixmap.drawPixel(x, y);
+                } else {
+                    pixmap.setColor(0f, 0f, 0f, 0f);
+                    pixmap.drawPixel(x, y);
+                }
+            }
+        }
+        Texture tex = new Texture(pixmap);
+        pixmap.dispose();
+        return tex;
     }
 
     @Override
     public void show() {
-        // Nhận event click và bàn phím cho UI
         Gdx.input.setInputProcessor(uiStage); 
     }
 
     @Override
     public void render(float delta) {
-        // F12: Bật tắt Debug Menu
         if (Gdx.input.isKeyJustPressed(Input.Keys.F12)) {
             debugMenu.toggle();
         }
 
-        // Nếu UI hội thoại đang mở hoặc Debug Menu đang mở, dừng update logic game
         if (!interactionUI.isVisible() && !debugMenu.isVisible()) {
             TimeManager.getInstance().update(delta);
             GameManager.getInstance().update(delta);
@@ -108,9 +156,6 @@ public class PlayScreen implements Screen {
             float camHalfWidth = gamePort.getWorldWidth() * gameCamera.zoom / 2f;
             float camHalfHeight = gamePort.getWorldHeight() * gameCamera.zoom / 2f;
             
-            float mapWidth = MapManager.getInstance().getMapPixelWidth();
-            float mapHeight = MapManager.getInstance().getMapPixelHeight();
-            
             float minX = camHalfWidth;
             float maxX = mapWidth - camHalfWidth;
             float minY = camHalfHeight;
@@ -137,7 +182,7 @@ public class PlayScreen implements Screen {
                         isTouchingAny = true;
                         if (currentTrigger != zone) {
                             currentTrigger = zone;
-                            interactionUI.show(zone); // Hiện hội thoại
+                            interactionUI.show(zone);
                         }
                         break;
                     }
@@ -149,6 +194,33 @@ public class PlayScreen implements Screen {
             }
         }
 
+        // Determine if it is dark (18h to 5h)
+        int hour = TimeManager.getInstance().getInGameHour();
+        boolean isDark = (hour >= 18 || hour < 5);
+
+        if (isDark && player != null) {
+            fboCamera.update();
+            fbo.begin();
+            Gdx.gl.glClearColor(0, 0, 0, 0);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+            batch.setProjectionMatrix(fboCamera.combined);
+            batch.begin();
+            batch.draw(darkLayerTexture, 0, 0, mapWidth, mapHeight);
+
+            float haloW = 120f;
+            float haloH = 75f;
+            float haloX = player.getX() + player.getHitbox().width / 2f - haloW / 2f;
+            float haloY = player.getY() + player.getHitbox().height / 2f - haloH / 2f;
+
+            batch.setBlendFunction(GL20.GL_ZERO, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            batch.draw(haloTexture, haloX, haloY, haloW, haloH);
+            batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+            batch.end();
+            fbo.end();
+        }
+
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -157,9 +229,8 @@ public class PlayScreen implements Screen {
         batch.setProjectionMatrix(gameCamera.combined);
         batch.begin();
         
-        // Vẽ NPCs (Chỉ vẽ khi TriggerZone tương ứng được phép hoạt động)
         for (NPC npc : MapManager.getInstance().getNpcs()) {
-            String zoneName = npc.getNpcName().substring(4); // Cắt bỏ chữ "NPC " để lấy tên Zone
+            String zoneName = npc.getNpcName().substring(4);
             boolean isVisible = false;
             for (TriggerZone zone : MapManager.getInstance().getTriggerZones()) {
                 if (zone.getZoneName().equals(zoneName)) {
@@ -175,15 +246,33 @@ public class PlayScreen implements Screen {
         if (player != null) {
             player.render(batch);
             
-            // Vẽ icon nhiệm vụ trên đầu mèo (kích thước và vị trí bám sát hitbox)
             if (currentTrigger != null) {
                 float iconSize = 10f;
                 float iconX = player.getHitbox().x + (player.getHitbox().width - iconSize) / 2f;
-                float iconY = player.getY() + 22f; // Đỉnh đầu của sprite mèo rơi vào khoảng y + 18
+                float iconY = player.getY() + 22f;
                 batch.draw(hasTaskIcon, iconX, iconY, iconSize, iconSize);
             }
         }
         
+        // Draw night overlay
+        if (isDark) {
+            Texture fboTexture = fbo.getColorBufferTexture();
+            batch.draw(fboTexture, 0, 0, mapWidth, mapHeight, 0, 0, fboTexture.getWidth(), fboTexture.getHeight(), false, true);
+
+            if (player != null) {
+                float glowW = 120f;
+                float glowH = 75f;
+                float glowX = player.getX() + player.getHitbox().width / 2f - glowW / 2f;
+                float glowY = player.getY() + player.getHitbox().height / 2f - glowH / 2f;
+
+                batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+                batch.setColor(1f, 0.9f, 0.6f, 0.15f);
+                batch.draw(haloTexture, glowX, glowY, glowW, glowH);
+                batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+                batch.setColor(Color.WHITE);
+            }
+        }
+
         batch.end();
         
         uiStage.draw();
@@ -213,7 +302,8 @@ public class PlayScreen implements Screen {
         if (interactionUI != null) interactionUI.dispose();
         if (debugMenu != null) debugMenu.dispose();
         if (hasTaskIcon != null) hasTaskIcon.dispose();
-        // Không gọi MapManager.dispose() hay GameManager.getPlayer().dispose() ở đây
-        // vì chúng là Singleton dùng chung, có thể đã được khởi tạo mới bởi Screen khác.
+        if (darkLayerTexture != null) darkLayerTexture.dispose();
+        if (haloTexture != null) haloTexture.dispose();
+        if (fbo != null) fbo.dispose();
     }
 }
