@@ -6,6 +6,16 @@ import com.badlogic.gdx.Preferences;
 public class SaveManager {
     private static final String SAVE_FILE = "CatLife_Endings";
     public static final int TOTAL_ENDINGS = 7; // Tổng số ending trong game
+
+    public static final String[] OFFICIAL_ENDINGS = {
+        "Thánh Đổ Vỏ",
+        "Gia Đình Hạnh Phúc",
+        "Mãi Mãi Kiếp Culi",
+        "Làm Đại Ca Mèo",
+        "Hoàng Thượng Có Hoàng Hậu",
+        "Hoàng Thượng Thái Giám",
+        "Quán Thịt Hổ"
+    };
     
     // Lưu một ending vừa đạt được
     public static void unlockEnding(String endingKey) {
@@ -18,8 +28,8 @@ public class SaveManager {
     public static int getUnlockedEndingsCount() {
         Preferences prefs = Gdx.app.getPreferences(SAVE_FILE);
         int count = 0;
-        // Kiểm tra tất cả các key ending
-        for (String key : prefs.get().keySet()) {
+        // Chỉ đếm các ending nằm trong danh sách chính thức
+        for (String key : OFFICIAL_ENDINGS) {
             if (prefs.getBoolean(key, false)) {
                 count++;
             }
