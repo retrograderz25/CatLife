@@ -91,14 +91,14 @@ public class EndingScreen implements Screen {
         Label titleLabel = new Label("KẾT CỤC: " + endingName.toUpperCase(), titleStyle);
         titleLabel.setAlignment(Align.center);
         
-        Label.LabelStyle descStyle = new Label.LabelStyle(dialogFont, Color.WHITE);
+        Label.LabelStyle descStyle = new Label.LabelStyle(dialogFont, Color.BLACK);
         Label descLabel = new Label(endingDescription, descStyle);
         descLabel.setAlignment(Align.center);
         descLabel.setWrap(true);
 
         Label unlockLabel = new Label("Đã mở khóa: " + SaveManager.getUnlockedEndingsCount() + " / " + SaveManager.TOTAL_ENDINGS + " Endings", descStyle);
         unlockLabel.setAlignment(Align.center);
-        unlockLabel.setColor(Color.LIGHT_GRAY);
+        unlockLabel.setColor(Color.GRAY);
 
         dialogTable.add(titleLabel).padBottom(30).row();
         dialogTable.add(descLabel).width(600).padBottom(40).row();
@@ -126,8 +126,13 @@ public class EndingScreen implements Screen {
         });
 
         Table btnTable = new Table();
-        btnTable.add(btnNewLife).width(300).height(60).padRight(30);
-        btnTable.add(btnContinue).width(300).height(60);
+        if ("Quán Thịt Hổ".equals(endingName)) {
+            // Ending "Quán Thịt Hổ" là Instant Death vĩnh viễn, vô hiệu hóa nút Tiếp Tục
+            btnTable.add(btnNewLife).width(300).height(60);
+        } else {
+            btnTable.add(btnNewLife).width(300).height(60).padRight(30);
+            btnTable.add(btnContinue).width(300).height(60);
+        }
 
         dialogTable.add(btnTable);
         rootTable.add(dialogTable);

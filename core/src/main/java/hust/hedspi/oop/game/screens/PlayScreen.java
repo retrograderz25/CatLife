@@ -185,20 +185,13 @@ public class PlayScreen implements Screen {
 
     @Override
     public void dispose() {
-        batch.dispose();
-        
-        for (NPC npc : MapManager.getInstance().getNpcs()) {
-            npc.dispose();
-        }
-        
-        MapManager.getInstance().dispose();
-        uiStage.dispose();
-        playerHUD.dispose();
-        timeHUD.dispose();
-        interactionUI.dispose();
+        if (batch != null) batch.dispose();
+        if (uiStage != null) uiStage.dispose();
+        if (playerHUD != null) playerHUD.dispose();
+        if (timeHUD != null) timeHUD.dispose();
+        if (interactionUI != null) interactionUI.dispose();
         if (hasTaskIcon != null) hasTaskIcon.dispose();
-        if (GameManager.getInstance().getPlayer() != null) {
-            GameManager.getInstance().getPlayer().dispose();
-        }
+        // Không gọi MapManager.dispose() hay GameManager.getPlayer().dispose() ở đây
+        // vì chúng là Singleton dùng chung, có thể đã được khởi tạo mới bởi Screen khác.
     }
 }
