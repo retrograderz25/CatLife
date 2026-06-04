@@ -32,6 +32,7 @@ public class EndingScreen implements Screen {
     
     private String endingName;
     private String endingDescription;
+    private Texture endingBgTexture;
 
     public EndingScreen(EndingCondition ending) {
         batch = new SpriteBatch();
@@ -45,9 +46,10 @@ public class EndingScreen implements Screen {
         } else {
             endingName = "Sống sót ngoài đường";
             endingDescription = "Bạn tiếp tục cuộc sống lang bạt kỳ hồ...";
-            SaveManager.unlockEnding(endingName);
+            // Fallback ending is not counted in TOTAL_ENDINGS (7)
         }
 
+        loadBackground();
         buildUI();
     }
     
@@ -60,7 +62,28 @@ public class EndingScreen implements Screen {
         endingDescription = "Kết cục: " + forcedEndingKey;
         SaveManager.unlockEnding(endingName);
 
+        loadBackground();
         buildUI();
+    }
+
+    private void loadBackground() {
+        String bgPath = getEndingBgPath(endingName);
+        if (bgPath != null && Gdx.files.internal(bgPath).exists()) {
+            endingBgTexture = new Texture(Gdx.files.internal(bgPath));
+        }
+    }
+
+    private String getEndingBgPath(String name) {
+        switch (name) {
+            case "Thánh Đổ Vỏ": return "ending/thanh_do_vo.png";
+            case "Gia Đình Hạnh Phúc": return "ending/gia_dinh_hanh_phuc.png";
+            case "Mãi Mãi Kiếp Culi": return "ending/mai_mai_kiep_cu_li.png";
+            case "Làm Đại Ca Mèo": return "ending/lam_dai_ca_meo.png";
+            case "Hoàng Thượng Có Hoàng Hậu": return "ending/hoang_thuong_family.png";
+            case "Hoàng Thượng Thái Giám": return "ending/hoang_thuong_alone.png";
+            case "Quán Thịt Hổ": return "ending/quan_thit_ho.png";
+            default: return null;
+        }
     }
 
     private void buildUI() {
@@ -150,6 +173,13 @@ public class EndingScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        if (endingBgTexture != null) {
+            batch.setProjectionMatrix(viewport.getCamera().combined);
+            batch.begin();
+            batch.draw(endingBgTexture, 0, 0, Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT);
+            batch.end();
+        }
+
         stage.act(delta);
         stage.draw();
     }
@@ -175,5 +205,8 @@ public class EndingScreen implements Screen {
     public void dispose() {
         batch.dispose();
         stage.dispose();
+        if (endingBgTexture != null) {
+            endingBgTexture.dispose();
+        }
     }
 }
