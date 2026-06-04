@@ -21,7 +21,8 @@ public class MainMenuScreen implements Screen {
     private enum State {
         MAIN_MENU,
         CREDITS,
-        HOW_TO_PLAY
+        HOW_TO_PLAY,
+        ACHIEVEMENTS
     }
 
     private State currentState = State.MAIN_MENU;
@@ -120,6 +121,9 @@ public class MainMenuScreen implements Screen {
             case HOW_TO_PLAY:
                 renderHowToPlay(batch, mouseX, mouseY);
                 break;
+            case ACHIEVEMENTS:
+                renderAchievements(batch, mouseX, mouseY);
+                break;
         }
 
         batch.end();
@@ -169,10 +173,10 @@ public class MainMenuScreen implements Screen {
             currentState = State.HOW_TO_PLAY;
         }
 
-        // 3. Achievement (Does nothing when clicked, as requested)
+        // 3. Achievement
         float y2 = y3 + h3 + spacing;
         if (handleButton(batch, achievementTex, btnX, y2, w2, h2, mouseX, mouseY, true)) {
-            // Temporarily does nothing (will add code here when assets are ready)
+            currentState = State.ACHIEVEMENTS;
         }
 
         // 2. Continue (Enabled only if active session exists in memory)
@@ -273,6 +277,102 @@ public class MainMenuScreen implements Screen {
         float btnH = 60f;
         float btnX = (Constants.VIRTUAL_WIDTH - btnW) / 2f;
         float btnY = panelY + 40f;
+
+        boolean hovered = (mouseX >= btnX && mouseX <= btnX + btnW && mouseY >= btnY && mouseY <= btnY + btnH);
+        boolean pressed = hovered && Gdx.input.isTouched();
+
+        if (pressed) {
+            btnPressedPatch.draw(batch, btnX, btnY, btnW, btnH);
+        } else {
+            btnPatch.draw(batch, btnX, btnY, btnW, btnH);
+        }
+
+        font.setColor(hovered ? Color.YELLOW : Color.WHITE);
+        font.draw(batch, "Quay lại", btnX, btnY + btnH / 2f + 8f, btnW, Align.center, false);
+        font.setColor(Color.WHITE);
+
+        if (hovered && Gdx.input.justTouched()) {
+            currentState = State.MAIN_MENU;
+        }
+    }
+
+    private void renderAchievements(SpriteBatch batch, float mouseX, float mouseY) {
+        // Draw background
+        batch.draw(bgSubScreen, 0, 0, Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT);
+
+        // Draw NinePatch timeframe panel
+        float panelW = 850f;
+        float panelH = 480f;
+        float panelX = (Constants.VIRTUAL_WIDTH - panelW) / 2f;
+        float panelY = (Constants.VIRTUAL_HEIGHT - panelH) / 2f;
+        timeframePatch.draw(batch, panelX, panelY, panelW, panelH);
+
+        // Draw Title
+        titleFont.setColor(Color.YELLOW);
+        titleFont.draw(batch, "DANH SÁCH THÀNH TỰU", panelX, panelY + panelH - 45f, panelW, Align.center, false);
+        titleFont.setColor(Color.WHITE);
+
+        // Draw Headers: STT, Tên Kết Cục, Checkbox
+        font.getData().setScale(1.1f);
+        font.setColor(Color.GOLD);
+        font.draw(batch, "STT", panelX + 80f, panelY + panelH - 95f);
+        font.draw(batch, "Tên Kết Cục", panelX + 220f, panelY + panelH - 95f);
+        font.draw(batch, "Mở Khóa", panelX + 620f, panelY + panelH - 95f);
+        font.setColor(Color.WHITE);
+
+        com.badlogic.gdx.Preferences prefs = Gdx.app.getPreferences("CatLife_Endings");
+
+        // Render each ending row
+        for (int i = 0; i < 7; i++) {
+            float y = panelY + panelH - 145f - i * 40f;
+            String endingName = hust.hedspi.oop.game.managers.SaveManager.OFFICIAL_ENDINGS[i];
+            boolean unlocked = prefs.getBoolean(endingName, false);
+
+            // STT
+            font.draw(batch, String.valueOf(i + 1), panelX + 80f, y + 20f);
+
+            // Tên Kết Cục
+            if (unlocked) {
+                font.setColor(Color.WHITE);
+                font.draw(batch, endingName, panelX + 220f, y + 20f);
+            } else {
+                // Build red question marks string preserving spaces
+                StringBuilder sb = new StringBuilder();
+                for (int k = 0; k < endingName.length(); k++) {
+                    if (endingName.charAt(k) == ' ') {
+                        sb.append(' ');
+                    } else {
+                        sb.append('?');
+                    }
+                }
+                font.setColor(Color.RED);
+                font.draw(batch, sb.toString(), panelX + 220f, y + 20f);
+            }
+            font.setColor(Color.WHITE);
+
+            // Checkbox: boxSize = 24
+            float boxSize = 24f;
+            float boxX = panelX + 650f;
+            float boxY = y + 2f;
+
+            if (unlocked) {
+                // Checked: active blue button with a yellow 'X' in the center
+                btnPatch.draw(batch, boxX, boxY, boxSize, boxSize);
+                font.setColor(Color.YELLOW);
+                font.draw(batch, "X", boxX, boxY + boxSize / 2f + 7f, boxSize, Align.center, false);
+                font.setColor(Color.WHITE);
+            } else {
+                // Unchecked: dark blue/pressed empty box
+                btnPressedPatch.draw(batch, boxX, boxY, boxSize, boxSize);
+            }
+        }
+        font.getData().setScale(1.0f);
+
+        // Draw "Quay lại" button inside timeframe frame
+        float btnW = 180f;
+        float btnH = 60f;
+        float btnX = (Constants.VIRTUAL_WIDTH - btnW) / 2f;
+        float btnY = panelY + 25f;
 
         boolean hovered = (mouseX >= btnX && mouseX <= btnX + btnW && mouseY >= btnY && mouseY <= btnY + btnH);
         boolean pressed = hovered && Gdx.input.isTouched();
