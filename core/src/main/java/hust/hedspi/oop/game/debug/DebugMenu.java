@@ -24,6 +24,8 @@ public class DebugMenu {
     private Label hourLabel, minLabel, hpLabel, energyLabel, hungerLabel;
     private boolean isVisible = false;
     
+    private TextButton winBtn, loseBtn, unadoptBtn;
+
     public DebugMenu() {
         rootTable = new Table();
         rootTable.setFillParent(true);
@@ -140,9 +142,20 @@ public class DebugMenu {
         contentTable.add(hungerLabel).width(150).align(Align.center);
         contentTable.add(addHuBtn).width(40).height(40).pad(5).row();
 
-        // 6. Force Minigame Result
-        TextButton winBtn = new TextButton("Thắng Game", btnStyle);
-        TextButton loseBtn = new TextButton("Thua Game", btnStyle);
+        // 6. Adopt / Unadopt
+        unadoptBtn = new TextButton("Bỏ Nhận Nuôi", btnStyle);
+        unadoptBtn.addListener(new ClickListener() {
+            public void clicked(InputEvent e, float x, float y) {
+                hust.hedspi.oop.game.managers.StoryManager.getInstance().recordResult(hust.hedspi.oop.game.utils.MinigameID.PET_BEG, false);
+                Cat p = GameManager.getInstance().getPlayer();
+                if(p != null) { p.notifyObservers(); }
+            }
+        });
+        contentTable.add(unadoptBtn).width(150).height(40).pad(5).colspan(3).center().row();
+
+        // 7. Force Minigame Result
+        winBtn = new TextButton("Thắng Game", btnStyle);
+        loseBtn = new TextButton("Thua Game", btnStyle);
         winBtn.addListener(new ClickListener() {
             public void clicked(InputEvent e, float x, float y) {
                 if (hust.hedspi.oop.game.managers.ScreenManager.getInstance().getCurrentScreen() instanceof hust.hedspi.oop.game.screens.MinigameScreen) {
@@ -176,6 +189,11 @@ public class DebugMenu {
             energyLabel.setText("Năng lượng: " + p.getEnergy());
             hungerLabel.setText("Độ đói: " + p.getHunger());
         }
+        
+        // Hide minigame buttons if not in minigame
+        boolean isMinigame = hust.hedspi.oop.game.managers.ScreenManager.getInstance().getCurrentScreen() instanceof hust.hedspi.oop.game.screens.MinigameScreen;
+        winBtn.setVisible(isMinigame);
+        loseBtn.setVisible(isMinigame);
     }
 
     public void toggle() {
