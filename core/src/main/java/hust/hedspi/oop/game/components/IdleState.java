@@ -17,10 +17,10 @@ public class IdleState implements ICatState {
         float dx = 0;
         float dy = 0;
 
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) { dy += 1; }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) { dy -= 1; }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) { dx -= 1; }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) { dx += 1; }
+        if ((Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP))) { dy += 1; }
+        if ((Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN))) { dy -= 1; }
+        if ((Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT))) { dx -= 1; }
+        if ((Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT))) { dx += 1; }
 
         // Chuyển sang trạng thái Chạy (RunState) nếu người chơi có hướng di chuyển thực sự
         if (dx != 0 || dy != 0) {
