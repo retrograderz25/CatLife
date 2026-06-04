@@ -118,7 +118,6 @@ public class PetBegMinigame implements IMinigameStrategy {
     public void forceEnd(boolean win) {
         this.won = win;
         this.finished = true;
-        this.exitRequested = true;
         StoryManager.getInstance().recordResult(MinigameID.PET_BEG, win);
     }
 }
