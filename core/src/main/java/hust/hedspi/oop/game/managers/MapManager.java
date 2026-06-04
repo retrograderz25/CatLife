@@ -22,7 +22,7 @@ import hust.hedspi.oop.game.minigames.thoat_khoi_long.ThoatKhoiLongMinigame;
 import hust.hedspi.oop.game.minigames.tim_tieu_tam.TimTieuTamMinigame;
 import hust.hedspi.oop.game.minigames.trom_meo.TromMeoMinigame;
 import hust.hedspi.oop.game.minigames.tron_kim_tiem.TronKimTiemMinigame;
-import hust.hedspi.oop.game.minigames.ComingSoonMinigame;
+import hust.hedspi.oop.game.minigames.pet_beg.PetBegMinigame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,8 +132,8 @@ public class MapManager {
                         case "Le-nin":
                             zone.setLinkedMinigame(new NhayHipHopMinigame());
                             break;
-                        default:
-                            zone.setLinkedMinigame(new ComingSoonMinigame());
+                        case "Adopt":
+                            // No linked minigame, handled directly by InteractionUI
                             break;
                     }
                     

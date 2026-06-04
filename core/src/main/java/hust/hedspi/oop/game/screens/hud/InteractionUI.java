@@ -191,7 +191,13 @@ public class InteractionUI {
 
     private void acceptTask() {
         if (currentZone != null) {
-            currentZone.onInteract(player);
+            if ("Adopt".equals(currentZone.getZoneName())) {
+                hust.hedspi.oop.game.managers.StoryManager.getInstance().recordResult(hust.hedspi.oop.game.utils.MinigameID.PET_BEG, true);
+                // Force UI update to show the adopted icon
+                hust.hedspi.oop.game.managers.GameManager.getInstance().getPlayer().notifyObservers();
+            } else {
+                currentZone.onInteract(player);
+            }
         }
         hide();
     }
