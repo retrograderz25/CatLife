@@ -54,6 +54,10 @@ public class PlayScreen implements Screen {
     private float mapHeight;
 
     public PlayScreen() {
+        this(false);
+    }
+
+    public PlayScreen(boolean isContinue) {
         batch = new SpriteBatch();
         
         gameCamera = new OrthographicCamera();
@@ -64,8 +68,12 @@ public class PlayScreen implements Screen {
 
         MapManager.getInstance().loadMap("images/HUD/street.tmx");
         
-        GameManager.getInstance().startNewGame(true);
-        GameManager.getInstance().getPlayer().setPosition(250f, 150f);
+        if (!isContinue || GameManager.getInstance().getPlayer() == null) {
+            GameManager.getInstance().startNewGame(true);
+            GameManager.getInstance().getPlayer().setPosition(250f, 150f);
+        } else {
+            GameManager.getInstance().resumeGame();
+        }
 
         uiStage = new Stage(new ScreenViewport(), batch);
         playerHUD = new PlayerHUD();
