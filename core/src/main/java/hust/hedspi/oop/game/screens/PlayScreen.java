@@ -16,6 +16,7 @@ import hust.hedspi.oop.game.entities.NPC;
 import hust.hedspi.oop.game.managers.GameManager;
 import hust.hedspi.oop.game.managers.MapManager;
 import hust.hedspi.oop.game.managers.TimeManager;
+import hust.hedspi.oop.game.managers.ScreenManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -24,6 +25,8 @@ import hust.hedspi.oop.game.screens.hud.InteractionUI;
 import hust.hedspi.oop.game.screens.hud.PlayerHUD;
 import hust.hedspi.oop.game.screens.hud.TimeHUD;
 import hust.hedspi.oop.game.debug.DebugMenu;
+import hust.hedspi.oop.game.screens.EndingScreen;
+import hust.hedspi.oop.game.utils.EndingCondition;
 import hust.hedspi.oop.game.utils.Constants;
 
 public class PlayScreen implements Screen {
@@ -142,6 +145,40 @@ public class PlayScreen implements Screen {
             } else {
                 Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
             }
+        }
+
+        // F1-F8: Trực quan hóa kết thúc nhanh (Debug Ending screens)
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
+            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Thánh Đổ Vỏ", 0).build()));
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
+            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Gia Đình Hạnh Phúc", 0).build()));
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
+            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Mãi Mãi Kiếp Culi", 0).build()));
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F4)) {
+            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Làm Đại Ca Mèo", 0).build()));
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F5)) {
+            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Hoàng Thượng Có Hoàng Hậu", 0).build()));
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F6)) {
+            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Hoàng Thượng Thái Giám", 0).build()));
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F7)) {
+            ScreenManager.getInstance().pushScreen(new EndingScreen("Quán Thịt Hổ"));
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F8)) {
+            ScreenManager.getInstance().pushScreen(new EndingScreen((EndingCondition) null));
+            return;
         }
 
         Cat player = GameManager.getInstance().getPlayer();
