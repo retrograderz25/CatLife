@@ -20,7 +20,10 @@ import hust.hedspi.oop.game.managers.ScreenManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import hust.hedspi.oop.game.screens.MainMenuScreen;
 import hust.hedspi.oop.game.screens.hud.InteractionUI;
 import hust.hedspi.oop.game.screens.hud.PlayerHUD;
 import hust.hedspi.oop.game.screens.hud.TimeHUD;
@@ -44,6 +47,12 @@ public class PlayScreen implements Screen {
     
     // Icon
     private Texture hasTaskIcon;
+
+    // --- PAUSE MENU ---
+    private boolean isPaused = false;
+    private Texture dimTexture;
+    private BitmapFont font;
+    private int selectedOption = 0; // 0: Chơi tiếp, 1: Quay lại Menu
 
     // Darkness / Lighting overlay
     private Texture darkLayerTexture;
@@ -87,6 +96,14 @@ public class PlayScreen implements Screen {
         uiStage.addActor(debugMenu.getTable());
         
         hasTaskIcon = new Texture(Gdx.files.internal("images/HUD/Cat/has_task(stack_with_cat).png"));
+
+        // Setup Pause Menu
+        Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pix.setColor(Color.WHITE);
+        pix.fill();
+        dimTexture = new Texture(pix);
+        pix.dispose();
+        font = hust.hedspi.oop.game.managers.ResourceManager.getInstance().dialogFont;
 
         // Setup darkness overlay & light halo
         mapWidth = MapManager.getInstance().getMapPixelWidth();
@@ -140,7 +157,29 @@ public class PlayScreen implements Screen {
             debugMenu.toggle();
         }
 
-        if (!interactionUI.isVisible() && !debugMenu.isVisible()) {
+        // Bắt phím ESC để bật/tắt Pause Menu
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !interactionUI.isVisible() && !debugMenu.isVisible()) {
+            isPaused = !isPaused;
+            selectedOption = 0; // Trỏ vào nút đầu tiên
+        }
+
+        if (isPaused) {
+            // Điều khiển Menu Pause
+            if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W)) {
+                selectedOption = 0;
+            } else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+                selectedOption = 1;
+            } else if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                if (selectedOption == 0) {
+                    isPaused = false;
+                } else {
+                    ScreenManager.getInstance().clearAndSetScreen(new MainMenuScreen());
+                    return;
+                }
+            }
+        }
+
+        if (!interactionUI.isVisible() && !debugMenu.isVisible() && !isPaused) {
             TimeManager.getInstance().update(delta);
             GameManager.getInstance().update(delta);
         }
@@ -191,7 +230,7 @@ public class PlayScreen implements Screen {
 
         Cat player = GameManager.getInstance().getPlayer();
 
-        if (player != null && !interactionUI.isVisible()) {
+        if (player != null && !interactionUI.isVisible() && !isPaused) {
             float playerX = player.getX();
             float playerY = player.getY();
             
@@ -321,6 +360,33 @@ public class PlayScreen implements Screen {
         batch.end();
         
         uiStage.draw();
+
+        if (isPaused) {
+            // Draw Pause Menu using the UI stage's camera projection for physical screen mapping
+            batch.setProjectionMatrix(uiStage.getViewport().getCamera().combined);
+            batch.begin();
+            batch.setColor(0f, 0f, 0f, 0.7f);
+            batch.draw(dimTexture, 0, 0, uiStage.getViewport().getWorldWidth(), uiStage.getViewport().getWorldHeight());
+            batch.setColor(Color.WHITE);
+            
+            float vw = uiStage.getViewport().getWorldWidth();
+            float vh = uiStage.getViewport().getWorldHeight();
+
+            font.getData().setScale(1.5f);
+            font.setColor(Color.YELLOW);
+            font.draw(batch, "BẠN CÓ MUỐN QUAY LẠI MENU?", 0, vh / 2f + 100, vw, Align.center, false);
+            
+            font.getData().setScale(1.2f);
+            font.setColor(selectedOption == 0 ? Color.YELLOW : Color.WHITE);
+            font.draw(batch, selectedOption == 0 ? "> Chơi tiếp <" : "Chơi tiếp", 0, vh / 2f + 20, vw, Align.center, false);
+            
+            font.setColor(selectedOption == 1 ? Color.YELLOW : Color.WHITE);
+            font.draw(batch, selectedOption == 1 ? "> Quay lại Menu <" : "Quay lại Menu", 0, vh / 2f - 40, vw, Align.center, false);
+            
+            font.getData().setScale(1.0f);
+            font.setColor(Color.WHITE);
+            batch.end();
+        }
     }
 
     @Override
@@ -350,5 +416,6 @@ public class PlayScreen implements Screen {
         if (darkLayerTexture != null) darkLayerTexture.dispose();
         if (haloTexture != null) haloTexture.dispose();
         if (fbo != null) fbo.dispose();
+        if (dimTexture != null) dimTexture.dispose();
     }
 }
