@@ -49,6 +49,30 @@ public class TimeManager implements ISubject {
         notifyObservers();
     }
 
+    public void addTime(int minutes) {
+        if (minutes < 0) {
+            inGameMinute += minutes;
+            while (inGameMinute < 0) {
+                inGameMinute += 60;
+                inGameHour--;
+                if (inGameHour < 0) {
+                    inGameHour += 24;
+                }
+            }
+        } else {
+            inGameMinute += minutes;
+            while (inGameMinute >= 60) {
+                inGameMinute -= 60;
+                inGameHour++;
+                if (inGameHour >= 24) {
+                    inGameHour -= 24;
+                    currentDayOfWeek = currentDayOfWeek.next();
+                }
+            }
+        }
+        notifyObservers();
+    }
+
     public void update(float deltaTime) {
         timer += deltaTime;
         // Cập nhật mỗi 10 phút trong game (10 * 0.5s = 5s ngoài đời thực)

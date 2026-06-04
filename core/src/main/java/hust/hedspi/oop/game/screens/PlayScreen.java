@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.Texture;
 import hust.hedspi.oop.game.screens.hud.InteractionUI;
 import hust.hedspi.oop.game.screens.hud.PlayerHUD;
 import hust.hedspi.oop.game.screens.hud.TimeHUD;
+import hust.hedspi.oop.game.debug.DebugMenu;
 import hust.hedspi.oop.game.utils.Constants;
 
 public class PlayScreen implements Screen {
@@ -33,6 +34,7 @@ public class PlayScreen implements Screen {
     private PlayerHUD playerHUD;
     private TimeHUD timeHUD;
     private InteractionUI interactionUI;
+    private DebugMenu debugMenu;
     
     // Icon
     private Texture hasTaskIcon;
@@ -55,10 +57,12 @@ public class PlayScreen implements Screen {
         playerHUD = new PlayerHUD();
         timeHUD = new TimeHUD();
         interactionUI = new InteractionUI(GameManager.getInstance().getPlayer());
+        debugMenu = new DebugMenu();
         
         uiStage.addActor(playerHUD.getTable());
         uiStage.addActor(timeHUD.getTable());
         uiStage.addActor(interactionUI.getTable());
+        uiStage.addActor(debugMenu.getTable());
         
         hasTaskIcon = new Texture(Gdx.files.internal("images/HUD/Cat/has_task(stack_with_cat).png"));
     }
@@ -71,8 +75,13 @@ public class PlayScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        // Nếu UI hội thoại đang mở, dừng update logic game (hoặc chỉ cho phép thao tác UI)
-        if (!interactionUI.isVisible()) {
+        // F12: Bật tắt Debug Menu
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F12)) {
+            debugMenu.toggle();
+        }
+
+        // Nếu UI hội thoại đang mở hoặc Debug Menu đang mở, dừng update logic game
+        if (!interactionUI.isVisible() && !debugMenu.isVisible()) {
             TimeManager.getInstance().update(delta);
             GameManager.getInstance().update(delta);
         }
@@ -202,6 +211,7 @@ public class PlayScreen implements Screen {
         if (playerHUD != null) playerHUD.dispose();
         if (timeHUD != null) timeHUD.dispose();
         if (interactionUI != null) interactionUI.dispose();
+        if (debugMenu != null) debugMenu.dispose();
         if (hasTaskIcon != null) hasTaskIcon.dispose();
         // Không gọi MapManager.dispose() hay GameManager.getPlayer().dispose() ở đây
         // vì chúng là Singleton dùng chung, có thể đã được khởi tạo mới bởi Screen khác.
