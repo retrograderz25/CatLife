@@ -124,12 +124,14 @@ public class PlayScreen implements Screen {
             boolean isTouchingAny = false;
             for (TriggerZone zone : MapManager.getInstance().getTriggerZones()) {
                 if (player.getHitbox().overlaps(zone.getHitbox())) {
-                    isTouchingAny = true;
-                    if (currentTrigger != zone) {
-                        currentTrigger = zone;
-                        interactionUI.show(zone); // Hiện hội thoại
+                    if (zone.canTrigger()) {
+                        isTouchingAny = true;
+                        if (currentTrigger != zone) {
+                            currentTrigger = zone;
+                            interactionUI.show(zone); // Hiện hội thoại
+                        }
+                        break;
                     }
-                    break;
                 }
             }
             if (!isTouchingAny) {
@@ -146,9 +148,19 @@ public class PlayScreen implements Screen {
         batch.setProjectionMatrix(gameCamera.combined);
         batch.begin();
         
-        // Vẽ NPCs
+        // Vẽ NPCs (Chỉ vẽ khi TriggerZone tương ứng được phép hoạt động)
         for (NPC npc : MapManager.getInstance().getNpcs()) {
-            npc.render(batch);
+            String zoneName = npc.getNpcName().substring(4); // Cắt bỏ chữ "NPC " để lấy tên Zone
+            boolean isVisible = false;
+            for (TriggerZone zone : MapManager.getInstance().getTriggerZones()) {
+                if (zone.getZoneName().equals(zoneName)) {
+                    isVisible = zone.canTrigger();
+                    break;
+                }
+            }
+            if (isVisible) {
+                npc.render(batch);
+            }
         }
 
         if (player != null) {

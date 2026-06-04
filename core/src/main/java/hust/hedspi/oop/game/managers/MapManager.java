@@ -94,6 +94,15 @@ public class MapManager {
                     
                     TriggerZone zone = new TriggerZone(rect.x, rect.y, rect.width, rect.height, name);
                     
+                    // Add TimeCondition based on rules
+                    if (name.equals("Warzone1") || name.equals("Warzone2")) {
+                        zone.setTimeCondition(new hust.hedspi.oop.game.utils.TimeCondition(18, 24));
+                    } else if (name.equals("Adopt") || name.equals("Bubble") || name.equals("Office Gate")) {
+                        zone.setTimeCondition(new hust.hedspi.oop.game.utils.TimeCondition(17, 24));
+                    } else if (name.equals("Exciter")) {
+                        zone.setTimeCondition(new hust.hedspi.oop.game.utils.TimeCondition(20, 24));
+                    }
+                    
                     // Auto-Hooking Minigames based on trigger names
                     switch (name) {
                         case "Sewage":
