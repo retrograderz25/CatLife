@@ -70,7 +70,14 @@ public class MinigameScreen implements Screen {
     public void render(float delta) {
         if (shouldExit || strategy.isFinished()) {
             ScreenManager.getInstance().popScreen();
-            GameManager.getInstance().resumeGame();
+            
+            // Xử lý chuỗi sự kiện (Chain Minigames)
+            if (strategy instanceof hust.hedspi.oop.game.minigames.trom_meo.TromMeoMinigame && !strategy.isWon()) {
+                // Thua Trốn Trộm Mèo -> Bị bắt nhốt -> Tự động chuyển sang game Thoát Khỏi Lồng
+                ScreenManager.getInstance().pushScreen(new MinigameScreen(new hust.hedspi.oop.game.minigames.thoat_khoi_long.ThoatKhoiLongMinigame()));
+            } else {
+                GameManager.getInstance().resumeGame();
+            }
             return;
         }
 

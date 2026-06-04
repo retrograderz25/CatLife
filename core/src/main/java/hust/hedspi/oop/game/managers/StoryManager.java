@@ -116,7 +116,7 @@ public class StoryManager {
     private void triggerInstantGameOver(String reason) {
         System.out.println("INSTANT GAME OVER: " + reason);
         GameManager.getInstance().pauseGame();
-        // Set state directly or handle it
+        ScreenManager.getInstance().pushScreen(new hust.hedspi.oop.game.screens.EndingScreen(reason));
     }
 
     public boolean isMinigameUnlocked(MinigameID requestedGame) {
@@ -140,11 +140,11 @@ public class StoryManager {
     public EndingCondition evaluateFinalEnding(Cat player) {
         for (EndingCondition ending : endingsDatabase) {
             if (ending.isSatisfied(playerHistory)) {
-                System.out.println("ACHIEVED ENDING: " + ending.getEndingName());
+                ScreenManager.getInstance().pushScreen(new hust.hedspi.oop.game.screens.EndingScreen(ending));
                 return ending;
             }
         }
-        System.out.println("ACHIEVED ENDING: Sống sót ngoài đường (Default)");
+        ScreenManager.getInstance().pushScreen(new hust.hedspi.oop.game.screens.EndingScreen((EndingCondition) null));
         return null; 
     }
 }
