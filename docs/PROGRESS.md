@@ -28,6 +28,7 @@
 - [x] **Minigame Adopt (Nhận Nuôi):** Tạo hộp thoại tương tác (Đồng ý/Từ chối), tích hợp luồng StoryManager để mở khóa các minigame nhánh Pet. Đã xóa bỏ cơ chế Coming Soon.
 - [x] **NPC System:** Thêm NPC đứng tại các vị trí Trigger trên bản đồ, hỗ trợ hiển thị tên và lời thoại riêng biệt.
 - [x] **UI Polish:** Cải thiện `InteractionUI` với Overlay làm mờ màn hình, bố cục tập trung và hiển thị tên NPC.
+- [x] **Hiệu ứng Ngày/Đêm & Hào quang:** Phủ lớp bóng tối (`dark_layer.png`) lên bản đồ từ 18:00 đến 05:00 sáng. Sử dụng FrameBuffer (FBO) đục lỗ tạo hào quang elip dịu mắt di chuyển bám sát mèo, và thêm ánh sáng vàng ấm nhẹ (Additive Blending).
 - [ ] Hệ thống hộp thoại RPG (Dialogue System với Typewriter Effect).
 - [ ] Gắn kết AssetManager đầy đủ cho SoundManager.
 - [ ] Phát triển công cụ F12 (Developer Debug Kit).
