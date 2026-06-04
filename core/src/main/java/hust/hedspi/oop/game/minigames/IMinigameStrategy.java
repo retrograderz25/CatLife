@@ -9,4 +9,5 @@ public interface IMinigameStrategy {
     boolean isFinished();
     boolean isWon();
     void dispose();
+    default void forceEnd(boolean win) {}
 }

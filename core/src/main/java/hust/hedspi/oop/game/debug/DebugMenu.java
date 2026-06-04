@@ -140,6 +140,28 @@ public class DebugMenu {
         contentTable.add(hungerLabel).width(150).align(Align.center);
         contentTable.add(addHuBtn).width(40).height(40).pad(5).row();
 
+        // 6. Force Minigame Result
+        TextButton winBtn = new TextButton("Thắng Game", btnStyle);
+        TextButton loseBtn = new TextButton("Thua Game", btnStyle);
+        winBtn.addListener(new ClickListener() {
+            public void clicked(InputEvent e, float x, float y) {
+                if (hust.hedspi.oop.game.managers.ScreenManager.getInstance().getCurrentScreen() instanceof hust.hedspi.oop.game.screens.MinigameScreen) {
+                    ((hust.hedspi.oop.game.screens.MinigameScreen)hust.hedspi.oop.game.managers.ScreenManager.getInstance().getCurrentScreen()).forceEnd(true);
+                    toggle(); // Hide menu
+                }
+            }
+        });
+        loseBtn.addListener(new ClickListener() {
+            public void clicked(InputEvent e, float x, float y) {
+                if (hust.hedspi.oop.game.managers.ScreenManager.getInstance().getCurrentScreen() instanceof hust.hedspi.oop.game.screens.MinigameScreen) {
+                    ((hust.hedspi.oop.game.screens.MinigameScreen)hust.hedspi.oop.game.managers.ScreenManager.getInstance().getCurrentScreen()).forceEnd(false);
+                    toggle(); // Hide menu
+                }
+            }
+        });
+        contentTable.add(winBtn).width(150).height(40).pad(5).colspan(1).right();
+        contentTable.add(loseBtn).width(150).height(40).pad(5).colspan(2).left().row();
+
         rootTable.add(contentTable);
     }
 

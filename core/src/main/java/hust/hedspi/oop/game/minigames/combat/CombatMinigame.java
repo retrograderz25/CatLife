@@ -405,4 +405,12 @@ public class CombatMinigame implements IMinigameStrategy {
             t.dispose();
         }
     }
+
+    @Override
+    public void forceEnd(boolean win) {
+        this.won = win;
+        this.gameOver = true;
+        this.exitRequested = true;
+        hust.hedspi.oop.game.managers.StoryManager.getInstance().recordResult(MinigameID.DAILY_FIGHT_STRAY, win);
+    }
 }

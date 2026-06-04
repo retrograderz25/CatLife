@@ -19,6 +19,8 @@ import hust.hedspi.oop.game.managers.ResourceManager;
 import hust.hedspi.oop.game.managers.ScreenManager;
 import hust.hedspi.oop.game.managers.GameManager;
 import hust.hedspi.oop.game.utils.Constants;
+import hust.hedspi.oop.game.debug.DebugMenu;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class MinigameScreen implements Screen {
     private IMinigameStrategy strategy;
@@ -33,6 +35,10 @@ public class MinigameScreen implements Screen {
     private Texture dimTexture;
     private BitmapFont font;
     private int selectedOption = 0; // 0: Resume, 1: Exit
+    
+    // --- DEBUG MENU ---
+    private Stage debugStage;
+    private DebugMenu debugMenu;
 
     public MinigameScreen(IMinigameStrategy strategy) {
         this.strategy = strategy;
@@ -53,6 +59,17 @@ public class MinigameScreen implements Screen {
         pix.dispose();
 
         font = ResourceManager.getInstance().dialogFont;
+        
+        // Khởi tạo Debug Menu
+        debugStage = new Stage(viewport, batch);
+        debugMenu = new DebugMenu();
+        debugStage.addActor(debugMenu.getTable());
+    }
+
+    public void forceEnd(boolean win) {
+        if (strategy != null) {
+            strategy.forceEnd(win);
+        }
     }
 
     public static Vector2 unproject(int screenX, int screenY) {
@@ -64,6 +81,8 @@ public class MinigameScreen implements Screen {
     @Override
     public void show() {
         strategy.start();
+        // Để Stage bắt sự kiện click cho DebugMenu
+        Gdx.input.setInputProcessor(debugStage);
     }
 
     @Override
@@ -81,8 +100,13 @@ public class MinigameScreen implements Screen {
             return;
         }
 
-        // Bắt phím ESC để bật/tắt Pause Menu (chỉ khi game chưa kết thúc)
-        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ESCAPE) && !strategy.isFinished()) {
+        // Bật tắt DebugMenu
+        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.F12)) {
+            debugMenu.toggle();
+        }
+
+        // Bắt phím ESC để bật/tắt Pause Menu (chỉ khi game chưa kết thúc và debug menu đang đóng)
+        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ESCAPE) && !strategy.isFinished() && !debugMenu.isVisible()) {
             isPaused = !isPaused;
             selectedOption = 0; // Mặc định trỏ vào "Tiếp tục"
         }
@@ -100,8 +124,8 @@ public class MinigameScreen implements Screen {
                     shouldExit = true;
                 }
             }
-        } else {
-            // Cập nhật logic game nếu không Pause
+        } else if (!debugMenu.isVisible()) {
+            // Cập nhật logic game nếu không Pause và không mở Debug
             strategy.update(delta);
         }
 
@@ -137,12 +161,20 @@ public class MinigameScreen implements Screen {
         }
 
         batch.end();
+        
+        if (debugMenu.isVisible()) {
+            debugStage.act(delta);
+            debugStage.draw();
+        }
     }
 
     @Override
     public void resize(int width, int height) {
         if (viewport != null) {
             viewport.update(width, height, true);
+        }
+        if (debugStage != null) {
+            debugStage.getViewport().update(width, height, true);
         }
     }
 
@@ -160,6 +192,12 @@ public class MinigameScreen implements Screen {
         batch.dispose();
         if (dimTexture != null) {
             dimTexture.dispose();
+        }
+        if (debugStage != null) {
+            debugStage.dispose();
+        }
+        if (debugMenu != null) {
+            debugMenu.dispose();
         }
         strategy.dispose();
         viewport = null;

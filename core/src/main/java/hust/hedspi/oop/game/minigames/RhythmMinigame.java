@@ -59,4 +59,10 @@ public class RhythmMinigame implements IMinigameStrategy {
     public void dispose() {
         System.out.println("Disposing Rhythm Minigame resources.");
     }
+
+    @Override
+    public void forceEnd(boolean win) {
+        this.won = win;
+        this.finished = true;
+    }
 }
