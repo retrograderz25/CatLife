@@ -209,15 +209,10 @@ public class MainMenuScreen implements Screen {
         titleFont.draw(batch, "THÀNH VIÊN THỰC HIỆN", panelX, panelY + panelH - 50f, panelW, Align.center, false);
         titleFont.setColor(Color.WHITE);
 
-        // Draw member names placeholder (centered text)
+        // Draw member names 
         font.getData().setScale(1.1f);
-        // GHI CHÚ TRONG CODE: Thêm thông tin danh sách các thành viên thực hiện tại đây
         String membersText = "\n" +
-            "THÀNH VIÊN DỰ ÁN\n\n" +
-            "1. [Thành viên 1]\n" +
-            "2. [Thành viên 2]\n" +
-            "3. [Thành viên 3]\n\n" +
-            "(Hãy chỉnh sửa MainMenuScreen.java để cập nhật danh sách này)";
+            "coming soon";
         font.draw(batch, membersText, panelX + 50f, panelY + panelH - 120f, panelW - 100f, Align.center, true);
         font.getData().setScale(1.0f);
 
@@ -266,8 +261,8 @@ public class MainMenuScreen implements Screen {
         String guideText = "\n" +
             "- Di chuyển: Sử dụng các phím WASD hoặc Mũi Tên\n" +
             "- Tương tác (Nhiệm vụ/Minigame): Nhấn phím SPACE\n" +
-            "- Tạm dừng trò chơi: Nhấn phím ESC\n" +
-            "- Mở bảng điều khiển gỡ lỗi (Debug): Nhấn phím F12\n\n" +
+            "- Tạm dừng trò chơi: Nhấn phím ESC\n\n" +
+            // "- Mở bảng điều khiển gỡ lỗi (Debug): Nhấn phím F12\n\n" +
             "Hãy hoàn thành các minigame và thử thách sinh tồn để mở khóa đầy đủ 7 kết cục (Ending) của trò chơi!";
         font.draw(batch, guideText, panelX + 50f, panelY + panelH - 120f, panelW - 100f, Align.left, true);
         font.getData().setScale(1.0f);
