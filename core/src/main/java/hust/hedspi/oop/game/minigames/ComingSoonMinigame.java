@@ -62,4 +62,9 @@ public class ComingSoonMinigame implements IMinigameStrategy {
     public void dispose() {
         // Không dispose font của ResourceManager
     }
+
+    @Override
+    public void forceEnd(boolean win) {
+        this.finished = true;
+    }
 }

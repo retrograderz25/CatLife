@@ -369,4 +369,12 @@ public class TromMeoMinigame implements IMinigameStrategy {
     private void safeDispose(Texture t) {
         if (t != null) t.dispose();
     }
+
+    @Override
+    public void forceEnd(boolean win) {
+        this.won = win;
+        this.gameOver = true;
+        this.exitRequested = true;
+        hust.hedspi.oop.game.managers.StoryManager.getInstance().recordResult(MinigameID.THIEF_HIDE, win);
+    }
 }
