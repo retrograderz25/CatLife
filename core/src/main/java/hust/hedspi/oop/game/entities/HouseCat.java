@@ -1,5 +1,7 @@
 package hust.hedspi.oop.game.entities;
 
+import hust.hedspi.oop.game.utils.Constants;
+
 public class HouseCat extends Cat {
     
     private float energyRecoveryTimer = 0f;
@@ -14,13 +16,13 @@ public class HouseCat extends Cat {
 
     @Override
     public void applyPassiveSkill(float dt) {
-        // Tính Đa hình: Mèo nhà hồi phục thể lực nhanh khi ở trong nhà
+        // Tính Đa hình: Mèo nhà hồi phục thể lực chậm
         boolean isIndoors = true; // TODO: Lấy trạng thái map hiện tại từ GameManager/MapManager
         if (isIndoors) {
             energyRecoveryTimer += dt;
-            if (energyRecoveryTimer >= 5.0f) { // Cứ 5 giây hồi 1 Energy
+            if (energyRecoveryTimer >= Constants.HOUSE_CAT_ENERGY_RECOVERY_RATE) { 
                 increaseEnergy(1);
-                energyRecoveryTimer -= 5.0f;
+                energyRecoveryTimer -= Constants.HOUSE_CAT_ENERGY_RECOVERY_RATE;
             }
         } else {
             energyRecoveryTimer = 0f;

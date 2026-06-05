@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import hust.hedspi.oop.game.entities.Cat;
 
+import hust.hedspi.oop.game.utils.Constants;
+
 public class SleepState implements ICatState {
     private float sleepTimer;
 
@@ -19,14 +21,14 @@ public class SleepState implements ICatState {
     public void update(Cat cat, float dt) {
         sleepTimer += dt;
         
-        // Hồi phục 5 Energy mỗi giây thực
-        if (sleepTimer >= 1.0f) {
-            cat.increaseEnergy(5);
-            sleepTimer -= 1.0f;
+        // Hồi phục Energy
+        if (sleepTimer >= Constants.SLEEP_ENERGY_RECOVERY_RATE) {
+            cat.increaseEnergy(Constants.SLEEP_ENERGY_RECOVERY_AMOUNT);
+            sleepTimer -= Constants.SLEEP_ENERGY_RECOVERY_RATE;
         }
 
         // Tự động thức dậy nếu đầy Energy hoặc nhấn Space
-        if (cat.getEnergy() >= 100 || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+        if (cat.getEnergy() >= Constants.MAX_ENERGY || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             cat.changeState(new IdleState());
         }
     }
