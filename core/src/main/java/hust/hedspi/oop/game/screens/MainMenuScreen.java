@@ -47,6 +47,7 @@ public class MainMenuScreen implements Screen {
 
     // Achievement Screen specific textures
     private Texture boardTex;
+    private NinePatch boardPatch;
     private Texture catDecorTex;
     private Texture tittleTex;
 
@@ -84,6 +85,9 @@ public class MainMenuScreen implements Screen {
 
         // Load achievements specific assets
         boardTex = new Texture(Gdx.files.internal("menu/achievement/board.png"));
+        // TODO: Chỉnh sửa các thông số chia NinePatch của board.png ở đây để điều chỉnh bo viền/giãn góc
+        // Định dạng: new NinePatch(texture, left, right, top, bottom)
+        boardPatch = new NinePatch(boardTex, 12, 12, 12, 12);
         catDecorTex = new Texture(Gdx.files.internal("menu/achievement/cat_decor.png"));
         tittleTex = new Texture(Gdx.files.internal("menu/achievement/tittle.png"));
 
@@ -351,8 +355,8 @@ public class MainMenuScreen implements Screen {
         float decorX = boardX + boardW + gap;
         float decorY = panelY + padBottom;
 
-        // Draw Board (board.png) on the left
-        batch.draw(boardTex, boardX, boardY, boardW, contentH);
+        // Draw Board (board.png) on the left using NinePatch
+        boardPatch.draw(batch, boardX, boardY, boardW, contentH);
 
         // Draw Cat Decor (cat_decor.png) on the right (preserving aspect ratio)
         float decorImgW = catDecorTex.getWidth();
