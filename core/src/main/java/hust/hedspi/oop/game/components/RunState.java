@@ -19,17 +19,6 @@ public class RunState implements ICatState {
 
     @Override
     public void update(Cat cat, float dt) {
-        // Cập nhật cooldown của skill
-        if (dashSkill != null) {
-            dashSkill.update(dt);
-        }
-
-        // Giàng buộc: Cần có đủ thể lực (Energy > 0) mới được phép chạy
-        if (cat.getEnergy() <= 0) {
-            cat.changeState(new IdleState());
-            return;
-        }
-
         boolean isMoving = false;
         float x = cat.getX();
         float y = cat.getY();
@@ -85,10 +74,6 @@ public class RunState implements ICatState {
             }
             if (!collisionY) y = newY;
         }
-
-        // Giàng buộc: Không cho phép nhân vật đi ra ngoài bản đồ (màn hình)
-        x = Math.max(0, Math.min(x, Constants.VIRTUAL_WIDTH - cat.getWidth()));
-        y = Math.max(0, Math.min(y, Constants.VIRTUAL_HEIGHT - cat.getHeight()));
 
         cat.setPosition(x, y);
 
