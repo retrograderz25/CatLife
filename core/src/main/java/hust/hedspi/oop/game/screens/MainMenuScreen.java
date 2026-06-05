@@ -28,6 +28,35 @@ public class MainMenuScreen implements Screen {
     private State currentState = State.MAIN_MENU;
     private Screen nextScreen = null;
 
+    private static final String[] CREDIT_LINES = {
+        "CAT LIFE",
+        "",
+        "--- ĐỘI NGŨ PHÁT TRIỂN ---",
+        "// TODO: Nhập danh sách thành viên phát triển tại đây",
+        "coming soon",
+        "coming soon",
+        "coming soon",
+        "",
+        "--- HÌNH ẢNH & ĐỒ HỌA ---",
+        "// TODO: Nhập danh sách người thiết kế đồ họa tại đây",
+        "coming soon",
+        "coming soon",
+        "",
+        "--- ÂM NHẠC & ÂM THANH ---",
+        "// TODO: Nhập danh sách người phụ trách âm nhạc tại đây",
+        "coming soon",
+        "coming soon",
+        "",
+        "--- CÔNG NGHỆ SỬ DỤNG ---",
+        "LibGDX - Java Game Framework",
+        "Gradle Build System",
+        "",
+        "--- BẢN QUYỀN ---",
+        "Copyright 2026 Hedspi OOP Group",
+        "All Rights Reserved",
+        ""
+    };
+
     private SpriteBatch batch;
     private Viewport viewport;
 
@@ -50,6 +79,12 @@ public class MainMenuScreen implements Screen {
     private NinePatch boardPatch;
     private Texture catDecorTex;
     private Texture tittleTex;
+
+    // Credit Screen specific assets and states
+    private Texture creEndTex;
+    private float creditScrollY = 0f;
+    private boolean isAutoScrolling = true;
+    private boolean isDraggingScrollbar = false;
 
     // UI Buttons (Blue for Back button)
     private Texture btnTex;
@@ -90,6 +125,9 @@ public class MainMenuScreen implements Screen {
         boardPatch = new NinePatch(boardTex, 12, 12, 12, 12);
         catDecorTex = new Texture(Gdx.files.internal("menu/achievement/cat_decor.png"));
         tittleTex = new Texture(Gdx.files.internal("menu/achievement/tittle.png"));
+
+        // Load credit specific assets
+        creEndTex = new Texture(Gdx.files.internal("menu/cre_end.png"));
 
         // Load UI button textures for NinePatch return buttons
         btnTex = new Texture(Gdx.files.internal("images/HUD/ui/button/button_blue.png"));
@@ -181,6 +219,9 @@ public class MainMenuScreen implements Screen {
         float y4 = startY;
         if (handleButton(batch, creditTex, btnX, y4, w4, h4, mouseX, mouseY, true)) {
             currentState = State.CREDITS;
+            creditScrollY = 0f;
+            isAutoScrolling = true;
+            isDraggingScrollbar = false;
         }
 
         // 4. How To Play
@@ -229,23 +270,108 @@ public class MainMenuScreen implements Screen {
         float panelY = (Constants.VIRTUAL_HEIGHT - panelH) / 2f;
         timeframePatch.draw(batch, panelX, panelY, panelW, panelH);
 
-        // Draw Title
+        // Draw Title (Changed to "Credit")
         titleFont.setColor(Color.YELLOW);
-        titleFont.draw(batch, "THÀNH VIÊN THỰC HIỆN", panelX, panelY + panelH - 50f, panelW, Align.center, false);
+        titleFont.draw(batch, "Credit", panelX, panelY + panelH - 45f, panelW, Align.center, false);
         titleFont.setColor(Color.WHITE);
 
-        // Draw member names 
-        font.getData().setScale(1.1f);
-        String membersText = "\n" +
-            "coming soon";
-        font.draw(batch, membersText, panelX + 50f, panelY + panelH - 120f, panelW - 100f, Align.center, true);
-        font.getData().setScale(1.0f);
+        // Define bounds for clipping box inside timeframe panel
+        float clipX = panelX + 40f;
+        float clipY = panelY + 110f;
+        float clipW = panelW - 80f;
+        float clipH = panelH - 170f; // Leaves room for header and back button
+
+        // Calculate scroll bounds
+        float topSpace = clipH; // Start below the bottom of the clipping area
+        float lineSpacing = 35f;
+        float textH = CREDIT_LINES.length * lineSpacing;
+        float gap = 50f;
+        float creEndW = 200f;
+        float creEndH = creEndW * creEndTex.getHeight() / creEndTex.getWidth();
+
+        // We want the scroll to stop when cre_end.png is perfectly centered in the clipping box
+        float maxScrollY = (topSpace + textH + gap) - (clipH - creEndH) / 2f;
+        if (maxScrollY < 0f) maxScrollY = 0f;
+
+        // Drag handle dimensions
+        float trackX = panelX + panelW - 35f;
+        float trackY = clipY;
+        float trackW = 8f;
+        float trackH = clipH;
+
+        float handleH = 40f;
+        float handleRange = trackH - handleH;
+
+        // Update auto-scroll
+        float delta = Gdx.graphics.getDeltaTime();
+        if (isAutoScrolling) {
+            creditScrollY += delta * 45f; // scroll speed: 45 pixels per second
+            if (creditScrollY >= maxScrollY) {
+                creditScrollY = maxScrollY;
+                isAutoScrolling = false;
+            }
+        }
+
+        // Handle scrollbar dragging
+        if (Gdx.input.isTouched()) {
+            if (Gdx.input.justTouched()) {
+                // Check if user clicked on or near the scrollbar
+                if (mouseX >= trackX - 15f && mouseX <= trackX + trackW + 15f && mouseY >= trackY && mouseY <= trackY + trackH) {
+                    isDraggingScrollbar = true;
+                    isAutoScrolling = false;
+                }
+            }
+
+            if (isDraggingScrollbar) {
+                float relativeMouseY = mouseY - trackY - handleH / 2f;
+                float scrollRatio = 1f - (relativeMouseY / handleRange);
+                scrollRatio = Math.max(0f, Math.min(1f, scrollRatio));
+                creditScrollY = scrollRatio * maxScrollY;
+            }
+        } else {
+            isDraggingScrollbar = false;
+        }
+
+        // Clip drawing to the interior of the timeframe panel using ScissorStack
+        batch.flush();
+        com.badlogic.gdx.math.Rectangle clipBounds = new com.badlogic.gdx.math.Rectangle(clipX, clipY, clipW, clipH);
+        com.badlogic.gdx.math.Rectangle scissors = new com.badlogic.gdx.math.Rectangle();
+        com.badlogic.gdx.scenes.scene2d.utils.ScissorStack.calculateScissors(viewport.getCamera(), batch.getTransformMatrix(), clipBounds, scissors);
+        boolean scissorPushed = com.badlogic.gdx.scenes.scene2d.utils.ScissorStack.pushScissors(scissors);
+
+        if (scissorPushed) {
+            // Draw credit lines
+            font.getData().setScale(1.0f);
+            for (int i = 0; i < CREDIT_LINES.length; i++) {
+                float docY = topSpace + i * lineSpacing;
+                float drawY = (clipY + clipH) - (docY - creditScrollY);
+                // Centered inside clipW
+                font.draw(batch, CREDIT_LINES[i], clipX, drawY + 12f, clipW, Align.center, false);
+            }
+
+            // Draw cre_end.png at the bottom of the credits scroll
+            float imgDocY = topSpace + textH + gap;
+            float imgDrawY = (clipY + clipH) - (imgDocY - creditScrollY) - creEndH;
+            float imgDrawX = clipX + (clipW - creEndW) / 2f;
+            batch.draw(creEndTex, imgDrawX, imgDrawY, creEndW, creEndH);
+
+            batch.flush();
+            com.badlogic.gdx.scenes.scene2d.utils.ScissorStack.popScissors();
+        }
+
+        // Draw scrollbar background track (thin pressed button style)
+        btnPressedPatch.draw(batch, trackX, trackY, trackW, trackH);
+
+        // Draw scrollbar handle (blue button style)
+        float scrollRatio = maxScrollY > 0f ? creditScrollY / maxScrollY : 0f;
+        float handleY = (trackY + trackH - handleH) - scrollRatio * handleRange;
+        btnPatch.draw(batch, trackX - 2f, handleY, trackW + 4f, handleH);
 
         // Draw "Quay lại" button inside timeframe frame
-        float btnW = 180f;
-        float btnH = 60f;
+        float btnW = 160f;
+        float btnH = 45f;
         float btnX = (Constants.VIRTUAL_WIDTH - btnW) / 2f;
-        float btnY = panelY + 40f;
+        float btnY = panelY + 30f;
 
         boolean hovered = (mouseX >= btnX && mouseX <= btnX + btnW && mouseY >= btnY && mouseY <= btnY + btnH);
         boolean pressed = hovered && Gdx.input.isTouched();
@@ -257,7 +383,7 @@ public class MainMenuScreen implements Screen {
         }
 
         font.setColor(hovered ? Color.YELLOW : Color.WHITE);
-        font.draw(batch, "Quay lại", btnX, btnY + btnH / 2f + 8f, btnW, Align.center, false);
+        drawBoldText(batch, "Quay lại", btnX, btnY + btnH / 2f + 6f, btnW, Align.center, false);
         font.setColor(Color.WHITE);
 
         if (hovered && Gdx.input.justTouched()) {
@@ -518,6 +644,7 @@ public class MainMenuScreen implements Screen {
         boardTex.dispose();
         catDecorTex.dispose();
         tittleTex.dispose();
+        creEndTex.dispose();
 
         btnTex.dispose();
         btnPressedTex.dispose();
