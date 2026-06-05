@@ -383,9 +383,9 @@ public class MainMenuScreen implements Screen {
 
         com.badlogic.gdx.Preferences prefs = Gdx.app.getPreferences("CatLife_Endings");
 
-        // Render ending rows with wider vertical spacing (42f instead of 36f)
+        // Render ending rows with closer vertical spacing (38f)
         for (int i = 0; i < 7; i++) {
-            float y = boardY + contentH - boardPadTop - 65f - i * 42f;
+            float y = boardY + contentH - boardPadTop - 55f - i * 38f;
             String endingName = hust.hedspi.oop.game.managers.SaveManager.OFFICIAL_ENDINGS[i];
             boolean unlocked = prefs.getBoolean(endingName, false);
 
