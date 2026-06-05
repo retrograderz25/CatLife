@@ -316,9 +316,9 @@ public class MainMenuScreen implements Screen {
         // Draw background
         batch.draw(bgSubScreen, 0, 0, Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT);
 
-        // Draw NinePatch timeframe panel
-        float panelW = 850f;
-        float panelH = 480f;
+        // Draw NinePatch timeframe panel (enlarged to 1000x550)
+        float panelW = 1000f;
+        float panelH = 550f;
         float panelX = (Constants.VIRTUAL_WIDTH - panelW) / 2f;
         float panelY = (Constants.VIRTUAL_HEIGHT - panelH) / 2f;
         timeframePatch.draw(batch, panelX, panelY, panelW, panelH);
@@ -326,25 +326,25 @@ public class MainMenuScreen implements Screen {
         // Draw Title (tittle.png) at the top of the panel (scaled to fit nicely)
         float titleImgW = tittleTex.getWidth();
         float titleImgH = tittleTex.getHeight();
-        float titleScale = Math.min(panelW * 0.6f / titleImgW, 60f / titleImgH);
+        float titleScale = Math.min(panelW * 0.6f / titleImgW, 75f / titleImgH);
         float drawTitleW = titleImgW * titleScale;
         float drawTitleH = titleImgH * titleScale;
         float drawTitleX = panelX + (panelW - drawTitleW) / 2f;
-        float drawTitleY = panelY + panelH - drawTitleH - 18f;
+        float drawTitleY = panelY + panelH - drawTitleH - 22f;
         batch.draw(tittleTex, drawTitleX, drawTitleY, drawTitleW, drawTitleH);
 
         // Define content layout coordinates
-        float padLeft = 40f;
-        float padRight = 40f;
-        float padBottom = 65f; // Lowered to give more room for the board
-        float contentW = panelW - padLeft - padRight; // 770f
-        float contentH = 325f; // Heightened board & decor
-        float gap = 20f;
-        float usableW = contentW - gap; // 750f
+        float padLeft = 50f;
+        float padRight = 50f;
+        float padBottom = 75f; // Space for the back button
+        float contentW = panelW - padLeft - padRight; // 900f
+        float contentH = 370f; // Heightened board & decor
+        float gap = 25f;
+        float usableW = contentW - gap; // 875f
 
-        // Adjust layout: widen the board and narrow cat_decor (550:200)
-        float boardW = 550f;
-        float decorW = 200f;
+        // Adjust layout: widen the board and narrow cat_decor (650:225)
+        float boardW = 650f;
+        float decorW = 225f;
 
         float boardX = panelX + padLeft;
         float boardY = panelY + padBottom;
@@ -365,33 +365,33 @@ public class MainMenuScreen implements Screen {
         batch.draw(catDecorTex, drawDecorX, drawDecorY, drawDecorW, drawDecorH);
 
         // Draw Headers: STT, Tên Kết Cục, Mở Khóa inside the board
-        float boardPadLeft = 30f;
-        float boardPadRight = 30f;
-        float boardPadTop = 20f;
-        float headerY = boardY + contentH - boardPadTop - 12f;
+        float boardPadLeft = 40f;
+        float boardPadRight = 40f;
+        float boardPadTop = 25f;
+        float headerY = boardY + contentH - boardPadTop - 20f;
 
-        font.getData().setScale(0.80f);
+        font.getData().setScale(0.85f); // Set to 0.85f for better legibility on a larger board
         font.setColor(Color.GOLD);
         drawBoldText(batch, "STT", boardX + boardPadLeft, headerY);
-        drawBoldText(batch, "Tên Kết Cục", boardX + boardPadLeft + 50f, headerY);
-        drawBoldText(batch, "Mở Khóa", boardX + boardW - boardPadRight - 75f, headerY);
+        drawBoldText(batch, "Tên Kết Cục", boardX + boardPadLeft + 60f, headerY);
+        drawBoldText(batch, "Mở Khóa", boardX + boardW - boardPadRight - 85f, headerY);
         font.setColor(Color.WHITE);
 
         com.badlogic.gdx.Preferences prefs = Gdx.app.getPreferences("CatLife_Endings");
 
-        // Render ending rows with wider vertical spacing (36f instead of 32f)
+        // Render ending rows with wider vertical spacing (42f instead of 36f)
         for (int i = 0; i < 7; i++) {
-            float y = boardY + contentH - boardPadTop - 48f - i * 36f;
+            float y = boardY + contentH - boardPadTop - 65f - i * 42f;
             String endingName = hust.hedspi.oop.game.managers.SaveManager.OFFICIAL_ENDINGS[i];
             boolean unlocked = prefs.getBoolean(endingName, false);
 
             // STT
-            drawBoldText(batch, String.valueOf(i + 1), boardX + boardPadLeft, y + 18f);
+            drawBoldText(batch, String.valueOf(i + 1), boardX + boardPadLeft, y + 20f);
 
             // Tên Kết Cục
             if (unlocked) {
                 font.setColor(Color.WHITE);
-                drawBoldText(batch, endingName, boardX + boardPadLeft + 50f, y + 18f);
+                drawBoldText(batch, endingName, boardX + boardPadLeft + 60f, y + 20f);
             } else {
                 // Build red question marks string preserving spaces
                 StringBuilder sb = new StringBuilder();
@@ -403,14 +403,14 @@ public class MainMenuScreen implements Screen {
                     }
                 }
                 font.setColor(Color.RED);
-                drawBoldText(batch, sb.toString(), boardX + boardPadLeft + 50f, y + 18f);
+                drawBoldText(batch, sb.toString(), boardX + boardPadLeft + 60f, y + 20f);
             }
             font.setColor(Color.WHITE);
 
-            // Checkbox: boxSize = 24
-            float boxSize = 24f;
-            float boxX = boardX + boardW - boardPadRight - 54f;
-            float boxY = y;
+            // Checkbox: boxSize = 26
+            float boxSize = 26f;
+            float boxX = boardX + boardW - boardPadRight - 60f;
+            float boxY = y + 2f;
 
             if (unlocked) {
                 // Checked: active blue button with a yellow 'X' in the center
@@ -425,11 +425,11 @@ public class MainMenuScreen implements Screen {
         }
         font.getData().setScale(1.0f);
 
-        // Draw "Quay lại" button inside timeframe frame (shrunk to 140x40 and lowered)
-        float btnW = 140f;
-        float btnH = 40f;
+        // Draw "Quay lại" button inside timeframe frame (re-centered and scaled for 1000x550)
+        float btnW = 160f;
+        float btnH = 45f;
         float btnX = (Constants.VIRTUAL_WIDTH - btnW) / 2f;
-        float btnY = panelY + 15f;
+        float btnY = panelY + 18f;
 
         boolean hovered = (mouseX >= btnX && mouseX <= btnX + btnW && mouseY >= btnY && mouseY <= btnY + btnH);
         boolean pressed = hovered && Gdx.input.isTouched();
