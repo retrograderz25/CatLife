@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import hust.hedspi.oop.game.utils.Constants;
+
 public abstract class Cat extends Entity implements ISubject {
 
     public enum CatColor {
@@ -32,10 +34,10 @@ public abstract class Cat extends Entity implements ISubject {
 
     private float speed;
     private int attackPower;
-    
+
     protected Map<String, Animation<TextureRegion>> animations;
     protected Map<String, Texture> rawTextures;
-    
+
     private float stateTimer;
     private boolean facingRight;
     private CatColor color;
@@ -46,14 +48,14 @@ public abstract class Cat extends Entity implements ISubject {
     public Cat(float x, float y, float width, float height, CatColor color) {
         super(x, y, width, height);
         this.color = color;
-        this.hp = 100;
-        this.hunger = 100;
-        this.energy = 100;
-        
-        this.speed = 150f;
-        this.attackPower = 10;
-        
-        this.stateTimer = 0f;
+        this.hp = Constants.MAX_HP;
+        this.hunger = Constants.MAX_HUNGER;
+        this.energy = Constants.MAX_ENERGY;
+
+        this.speed = Constants.BASE_SPEED;
+        this.attackPower = Constants.BASE_ATTACK_POWER;
+
+        animations = new HashMap<>();
         this.facingRight = true;
         
         // Thu nhỏ hitbox vật lý để luồn lách dễ hơn

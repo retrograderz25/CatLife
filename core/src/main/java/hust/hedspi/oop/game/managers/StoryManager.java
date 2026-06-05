@@ -107,6 +107,20 @@ public class StoryManager {
     public void recordResult(MinigameID id, boolean isWin) {
         playerHistory.put(id, isWin ? GameResult.WIN : GameResult.LOSE);
 
+        // Thưởng / Phạt máu và thể lực khi có kết quả
+        Cat player = GameManager.getInstance().getPlayer();
+        if (player != null) {
+            if (isWin) {
+                player.increaseHp(hust.hedspi.oop.game.utils.Constants.MINIGAME_WIN_HP_REWARD);
+                player.increaseEnergy(hust.hedspi.oop.game.utils.Constants.MINIGAME_WIN_ENERGY_REWARD);
+                player.decreaseHunger(hust.hedspi.oop.game.utils.Constants.MINIGAME_WIN_HUNGER_PENALTY);
+            } else {
+                player.decreaseHp(hust.hedspi.oop.game.utils.Constants.MINIGAME_LOSE_HP_PENALTY);
+                player.decreaseEnergy(hust.hedspi.oop.game.utils.Constants.MINIGAME_LOSE_ENERGY_PENALTY);
+                player.decreaseHunger(hust.hedspi.oop.game.utils.Constants.MINIGAME_LOSE_HUNGER_PENALTY);
+            }
+        }
+
         // Bắt lỗi Instant Death (Quán thịt hổ)
         if (id == MinigameID.THIEF_ESCAPE_CAGE && playerHistory.get(MinigameID.THIEF_ESCAPE_CAGE) == GameResult.LOSE) {
             triggerInstantGameOver("Quán Thịt Hổ");
