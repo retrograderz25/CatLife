@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="47" height="26" tilewidth="16" tileheight="16" infinite="1" nextlayerid="6" nextobjectid="98">
- <imagelayer id="2" name="Image Layer 1" offsetx="0" offsety="0" locked="1">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="47" height="26" tilewidth="16" tileheight="16" infinite="1" nextlayerid="6" nextobjectid="314">
+ <imagelayer id="2" name="Image Layer 1" locked="1">
   <image source="street.png" width="750" height="415"/>
  </imagelayer>
- <objectgroup id="4" name="Collision" offsetx="0" offsety="0" locked="1">
+ <objectgroup id="4" name="Collision" locked="1">
   <object id="1" name="Car" type="Collision" x="3" y="249.022" width="14" height="23.9556"/>
   <object id="19" name="Car" type="Collision" x="2.99716" y="217.017" width="14" height="23.9556"/>
   <object id="12" name="Car" type="Collision" x="83.0171" y="248.981" width="14" height="23.9556"/>
@@ -42,9 +42,6 @@
   <object id="64" name="Wall" type="Collision" x="401.528" y="86.7386" width="63.625" height="47.1591"/>
   <object id="65" name="Wall" type="Collision" x="482.006" y="86.0568" width="63.625" height="47.1591"/>
   <object id="66" name="Wall" type="Collision" x="466.521" y="22.4204" width="63.625" height="47.1591"/>
-  <object id="68" name="Wall" type="Collision" x="416.909" y="22.1818">
-   <polygon points="0,0 -14.5455,15.4545 -14.3636,47.4545 32.7273,47.4545 32.3636,15.4545 18,0.727273"/>
-  </object>
   <object id="69" name="Fence" type="Collision" x="386.273" y="46.9091" width="15.8182" height="6.36364"/>
   <object id="70" name="Fence" type="Collision" x="449.606" y="50.0909" width="15.8182" height="6.36364"/>
   <object id="71" name="Fence" type="Collision" x="530.636" y="50.0909" width="30.3637" height="6.36364"/>
@@ -53,54 +50,85 @@
   <object id="74" name="Fence" type="Collision" x="593.833" y="198.131" width="16.0001" height="6.36364"/>
   <object id="75" name="Fence" type="Collision" x="577.937" y="214.131" width="16.0001" height="6.36364"/>
   <object id="76" name="Fence" type="Collision" x="609.75" y="214.131" width="16.0001" height="6.36364"/>
-  <object id="77" name="Tree" type="Collision" x="439.938" y="250.75">
-   <polygon points="0,0 1.25,0.75 3,0.25 2.875,-4.875 5.1875,-4.875 7.9375,-8 9.3125,-12 2.75,-19.3125 -1.4375,-19.25 -5.3125,-13.5 -5.375,-10.5 -1.5,-5.4375 0.4375,-5.125"/>
-  </object>
-  <object id="78" name="Tree" type="Collision" x="503.639" y="266.728">
-   <polygon points="0,0 1.25,0.75 3,0.25 2.875,-4.875 5.1875,-4.875 7.9375,-8 9.3125,-12 2.75,-19.3125 -1.4375,-19.25 -5.3125,-13.5 -5.375,-10.5 -1.5,-5.4375 0.4375,-5.125"/>
-  </object>
-  <object id="79" name="Tree" type="Collision" x="551.875" y="203.156">
-   <polygon points="0,0 1.25,0.75 3,0.25 2.875,-4.875 5.1875,-4.875 7.9375,-8 9.3125,-12 2.75,-19.3125 -1.4375,-19.25 -5.3125,-13.5 -5.375,-10.5 -1.5,-5.4375 0.4375,-5.125"/>
-  </object>
-  <object id="80" name="Tree" type="Collision" x="519.727" y="186.909">
-   <polygon points="0,0 1.25,0.75 3,0.25 2.875,-4.875 5.1875,-4.875 7.9375,-8 9.3125,-12 2.75,-19.3125 -1.4375,-19.25 -5.3125,-13.5 -5.375,-10.5 -1.5,-5.4375 0.4375,-5.125"/>
-  </object>
-  <object id="81" name="Tree" type="Collision" x="327.848" y="171.63">
-   <polygon points="0,0 1.25,0.75 3,0.25 2.875,-4.875 5.1875,-4.875 7.9375,-8 9.3125,-12 2.75,-19.3125 -1.4375,-19.25 -5.3125,-13.5 -5.375,-10.5 -1.5,-5.4375 0.4375,-5.125"/>
-  </object>
-  <object id="82" name="Tree" type="Collision" x="135.636" y="155.091">
-   <polygon points="0,0 1.25,0.75 3,0.25 2.875,-4.875 5.1875,-4.875 7.9375,-8 9.3125,-12 2.75,-19.3125 -1.4375,-19.25 -5.3125,-13.5 -5.375,-10.5 -1.5,-5.4375 0.4375,-5.125"/>
-  </object>
-  <object id="83" name="Tree" type="Collision" x="183.818" y="187.818">
-   <polygon points="0,0 1.25,0.75 3,0.25 2.875,-4.875 5.1875,-4.875 7.9375,-8 9.3125,-12 2.75,-19.3125 -1.4375,-19.25 -5.3125,-13.5 -5.375,-10.5 -1.5,-5.4375 0.4375,-5.125"/>
-  </object>
-  <object id="84" name="Tree" type="Collision" x="84.7273" y="106.727">
-   <polygon points="0,0 1.25,0.75 3,0.25 2.875,-4.875 5.1875,-4.875 7.9375,-8 9.3125,-12 2.75,-19.3125 -1.4375,-19.25 -5.3125,-13.5 -5.375,-10.5 -1.5,-5.4375 0.4375,-5.125"/>
-  </object>
-  <object id="85" name="Tree" type="Collision" x="10.9407" y="106.336">
-   <polygon points="0,0 1.25,0.75 3,0.25 2.875,-4.875 5.1875,-4.875 7.9375,-8 9.3125,-12 2.75,-19.3125 -1.4375,-19.25 -5.3125,-13.5 -5.375,-10.5 -1.5,-5.4375 0.4375,-5.125"/>
-  </object>
-  <object id="86" name="Tree" type="Collision" x="10.75" y="74.9375">
-   <polygon points="0,0 1.25,0.75 3,0.25 2.875,-4.875 5.1875,-4.875 7.9375,-8 9.3125,-12 2.75,-19.3125 -1.4375,-19.25 -5.3125,-13.5 -5.375,-10.5 -1.5,-5.4375 0.4375,-5.125"/>
-  </object>
-  <object id="87" name="Tree" type="Collision" x="84.875" y="74.6875">
-   <polygon points="0,0 1.25,0.75 3,0.25 2.875,-4.875 5.1875,-4.875 7.9375,-8 9.3125,-12 2.75,-19.3125 -1.4375,-19.25 -5.3125,-13.5 -5.375,-10.5 -1.5,-5.4375 0.4375,-5.125"/>
-  </object>
   <object id="89" name="Wall" type="Collision" x="194.25" y="118" width="110.75" height="80"/>
-  <object id="90" name="Wall" type="Collision" x="113" y="16.375" width="126" height="94.25"/>
-  <object id="91" name="Wall" type="Collision" x="241.625" y="21.75" width="31.25" height="79.5"/>
+  <object id="90" name="Wall" type="Collision" x="114.25" y="22.125" width="126" height="94.25"/>
+  <object id="91" name="Wall" type="Collision" x="241.625" y="38" width="31.5" height="63.25"/>
   <object id="92" name="Wall" type="Collision" x="274.375" y="54.5" width="111.25" height="62.5"/>
   <object id="93" name="Wall" type="Collision" x="194.375" y="118.25" width="110" height="79.5"/>
   <object id="94" name="Wall" type="Collision" x="322.313" y="117.375" width="63.5" height="16.625"/>
   <object id="95" name="Wall" type="Collision" x="338.917" y="166.688" width="78.1667" height="94.2917"/>
-  <object id="96" name="Wall" type="Collision" x="339.5" y="261.75">
-   <polygon points="0,0 14.25,15.125 63.125,15.375 78.125,0.25"/>
-  </object>
-  <object id="97" name="Wall" type="Collision" x="26.5" y="62.125">
-   <polygon points="0,0 14.875,-15 31.5,-15.125 37.125,-9.25 44.625,-9.25 45.375,-0.75 46.875,-0.25 47.25,32.125 0,32.25"/>
-  </object>
+  <object id="101" name="Wall" type="Collision" x="26.0625" y="62" width="48" height="32.9375"/>
+  <object id="128" name="Wall" type="Collision" x="178.5" y="114.5" width="30.625" height="18.75"/>
+  <object id="129" name="Wall" type="Collision" x="114.574" y="116.148" width="30.625" height="18.75"/>
+  <object id="131" name="Wall" type="Collision" x="353" y="260.909" width="49.3636" height="16"/>
+  <object id="132" name="Wall" type="Collision" x="349.829" y="250.206" width="21.8306" height="16" rotation="45.2137"/>
+  <object id="133" name="Wall" type="Collision" x="402.282" y="246.377" width="21.8306" height="21.4011" rotation="45.2137"/>
+  <object id="136" name="Wall" type="Collision" x="274.063" y="263.938" width="31.875" height="6.9375"/>
+  <object id="247" name="Flower" type="Collision" x="210.217" y="198.174" width="30.6957" height="15.5217"/>
+  <object id="248" name="Flower" type="Collision" x="258.016" y="198.057" width="30.6957" height="15.5217"/>
+  <object id="249" name="Flower" type="Collision" x="274.277" y="246.447" width="47.3321" height="15.5217"/>
+  <object id="250" name="Flower" type="Collision" x="321.837" y="214.109" width="16.087" height="15.826"/>
+  <object id="251" name="Flower" type="Collision" x="434.623" y="134.123" width="30.6957" height="15.5217"/>
+  <object id="252" name="Flower" type="Collision" x="658.215" y="104.864" width="30.6957" height="15.5217"/>
+  <object id="253" name="Flower" type="Collision" x="706.902" y="105.043" width="30.6957" height="15.5217"/>
+  <object id="254" name="Wall" type="Collision" x="258.256" y="22.0887" width="22.2488" height="22.665" rotation="44.9838"/>
+  <object id="255" name="Wall" type="Collision" x="263.823" y="28.0715" width="8.21306" height="8.93679" rotation="0.0284277"/>
+  <object id="256" name="Flower" type="Collision" x="499.076" y="73.027" width="45.7866" height="11.9762"/>
+  <object id="257" name="Wall" type="Collision" x="570.006" y="262.901" width="3.0625" height="25.4375"/>
+  <object id="258" name="Wall" type="Collision" x="515.609" y="169.696" width="11.6087" height="12.087"/>
+  <object id="259" name="Wall" type="Collision" x="520.261" y="179.565" width="2.65217" height="8.6087"/>
+  <object id="260" name="Wall" type="Collision" x="547.527" y="185.549" width="11.6087" height="12.087"/>
+  <object id="261" name="Wall" type="Collision" x="552.179" y="195.418" width="2.65217" height="8.6087"/>
+  <object id="262" name="Wall" type="Collision" x="435.446" y="233.449" width="11.6087" height="12.087"/>
+  <object id="263" name="Wall" type="Collision" x="440.098" y="243.318" width="2.65217" height="8.6087"/>
+  <object id="264" name="Wall" type="Collision" x="499.468" y="249.679" width="11.6087" height="12.087"/>
+  <object id="265" name="Wall" type="Collision" x="504.12" y="259.548" width="2.65217" height="8.6087"/>
+  <object id="266" name="Wall" type="Collision" x="80.7411" y="56.6702" width="11.6087" height="12.087"/>
+  <object id="267" name="Wall" type="Collision" x="85.3931" y="66.5392" width="2.65217" height="8.6087"/>
+  <object id="268" name="Wall" type="Collision" x="80.6957" y="88.8862" width="11.6087" height="12.087"/>
+  <object id="269" name="Wall" type="Collision" x="85.3476" y="98.7552" width="2.65217" height="8.6087"/>
+  <object id="270" name="Wall" type="Collision" x="6.6019" y="57.3862" width="11.6087" height="12.087"/>
+  <object id="271" name="Wall" type="Collision" x="11.2539" y="67.2552" width="2.65217" height="8.6087"/>
+  <object id="272" name="Wall" type="Collision" x="6.9144" y="88.4487" width="11.6087" height="12.087"/>
+  <object id="273" name="Wall" type="Collision" x="11.5664" y="98.3177" width="2.65217" height="8.6087"/>
+  <object id="275" name="Wall" type="Collision" x="41.711" y="47.178" width="16.6517" height="21.2895" rotation="44.71"/>
+  <object id="276" name="Wall" type="Collision" x="58.6741" y="47.2927" width="21.2039" height="21.2895" rotation="44.71"/>
+  <object id="277" name="Wall" type="Collision" x="59.0199" y="46.9838" width="21.2039" height="18.0259" rotation="89.7178"/>
+  <object id="278" name="Wall" type="Collision" x="71.9918" y="53.0495" width="21.2039" height="18.0259" rotation="89.7178"/>
+  <object id="279" name="Wall" type="Collision" x="401.797" y="36.9484" width="48" height="32.9375"/>
+  <object id="280" name="Wall" type="Collision" x="417.446" y="22.1264" width="16.6517" height="21.2895" rotation="44.71"/>
+  <object id="281" name="Wall" type="Collision" x="434.409" y="22.2411" width="21.2039" height="21.2895" rotation="44.71"/>
+  <object id="282" name="Wall" type="Collision" x="434.754" y="21.9322" width="21.2039" height="18.0259" rotation="89.7178"/>
+  <object id="283" name="Wall" type="Collision" x="447.726" y="27.9979" width="21.2039" height="18.0259" rotation="89.7178"/>
+  <object id="284" name="Wall" type="Collision" x="131.321" y="137.011" width="11.6087" height="12.087"/>
+  <object id="285" name="Wall" type="Collision" x="135.973" y="146.88" width="2.65217" height="8.6087"/>
+  <object id="286" name="Wall" type="Collision" x="179.821" y="170.136" width="11.6087" height="12.087"/>
+  <object id="287" name="Wall" type="Collision" x="184.473" y="180.005" width="2.65217" height="8.6087"/>
+  <object id="288" name="Wall" type="Collision" x="323.287" y="153.579" width="11.6087" height="12.087"/>
+  <object id="289" name="Wall" type="Collision" x="327.938" y="163.448" width="2.65217" height="8.6087"/>
+  <object id="290" name="Wall" type="Collision" x="312.855" y="270.129" width="3.0625" height="18.6984"/>
+  <object id="293" name="Wall" type="Collision" x="416.715" y="34.5754" width="2.30311" height="11.6297" rotation="89.7178"/>
+  <object id="295" name="Wall" type="Collision" x="418.871" y="32.2963" width="2.30311" height="11.6297" rotation="89.7178"/>
+  <object id="296" name="Wall" type="Collision" x="421.204" y="29.9629" width="2.30311" height="11.6297" rotation="89.7178"/>
+  <object id="297" name="Wall" type="Collision" x="423.648" y="27.6963" width="2.30311" height="11.6297" rotation="89.7178"/>
+  <object id="298" name="Wall" type="Collision" x="426.004" y="25.2963" width="2.30311" height="11.6297" rotation="89.7178"/>
+  <object id="299" name="Wall" type="Collision" x="41.0359" y="59.6852" width="2.30311" height="11.6297" rotation="89.7178"/>
+  <object id="300" name="Wall" type="Collision" x="43.4734" y="57.2164" width="2.30311" height="11.6297" rotation="89.7178"/>
+  <object id="301" name="Wall" type="Collision" x="45.7234" y="54.7789" width="2.30311" height="11.6297" rotation="89.7178"/>
+  <object id="302" name="Wall" type="Collision" x="47.9734" y="52.4664" width="2.30311" height="11.6297" rotation="89.7178"/>
+  <object id="303" name="Wall" type="Collision" x="50.5359" y="50.0602" width="2.30311" height="11.6297" rotation="89.7178"/>
+  <object id="304" name="Wall" type="Collision" x="61.5006" y="50.3156" width="2.30311" height="11.6297" rotation="89.7178"/>
+  <object id="305" name="Wall" type="Collision" x="263.718" y="27.2286" width="2.30311" height="11.6297" rotation="89.7178"/>
+  <object id="306" name="Wall" type="Collision" x="261.675" y="30.0547" width="2.30311" height="11.6297" rotation="89.7178"/>
+  <object id="307" name="Wall" type="Collision" x="258.805" y="32.3156" width="2.30311" height="11.6297" rotation="89.7178"/>
+  <object id="308" name="Wall" type="Collision" x="256.935" y="34.533" width="2.30311" height="11.6297" rotation="89.7178"/>
+  <object id="309" name="Wall" type="Collision" x="255.153" y="36.2286" width="2.30311" height="11.6297" rotation="89.7178"/>
+  <object id="310" name="Wall" type="Collision" x="262.761" y="29.1851" width="2.30311" height="11.6297" rotation="89.7178"/>
+  <object id="311" name="Wall" type="Collision" x="262.022" y="25.5514" width="2.30311" height="7.89019" rotation="89.7178"/>
+  <object id="312" name="Wall" type="Collision" x="260.02" y="23.3102" width="2.30311" height="3.88809" rotation="89.7178"/>
+  <object id="313" name="Wall" type="Collision" x="272.848" y="36.7069" width="2.30311" height="11.6297" rotation="89.7178"/>
  </objectgroup>
- <objectgroup id="5" name="Trigger" offsetx="0" offsety="0" locked="1">
+ <objectgroup id="5" name="Trigger" locked="1">
   <object id="39" name="Sewage" type="Trigger" x="404.063" y="293.875" width="12.0313" height="5.0625"/>
   <object id="40" name="Hotel Gate" type="Trigger" x="370.063" y="277.813" width="15.9375" height="8.1875"/>
   <object id="44" name="Office Gate" type="Trigger" x="242" y="200.031" width="16" height="7.4375"/>
