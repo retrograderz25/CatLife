@@ -29,34 +29,35 @@ public class MainMenuScreen implements Screen {
     private Screen nextScreen = null;
 
     private static final String[] CREDIT_LINES = {
-            "", // Dành cho ảnh giat_tit_vn.png
+            "",
             "",
             "",
             "",
             "--- ĐỘI NGŨ PHÁT TRIỂN ---",
-            "// TODO: Nhập danh sách thành viên phát triển tại đây",
-            "coming soon",
-            "coming soon",
-            "Tuyển thủ VALORANT",
+            "Nguyễn Bình",
+            "Nguyễn Quang Anh aka tuyenthuchuyennghiep",
+            "Bùi Ngọc Trung",
+            "Vũ Lan Anh",
+            "Hoàng Bình Phương",
             "",
             "--- HÌNH ẢNH & ĐỒ HỌA ---",
-            "// TODO: Nhập danh sách người thiết kế đồ họa tại đây",
-            "coming soon",
-            "coming soon",
+            "Vũ Lan Anh",
+            "Nguyễn Quang Anh",
+            "Nguyễn Bình",
+            "Nguyễn Gemini",
             "",
             "--- ÂM NHẠC & ÂM THANH ---",
-            "// TODO: Nhập danh sách người phụ trách âm nhạc tại đây",
-            "coming soon",
-            "Clove",
+            "Bùi Ngọc Trung",
+            "Hoàng Bình Phương",
             "",
             "--- CÔNG NGHỆ SỬ DỤNG ---",
             "LibGDX - Java Game Framework",
             "Gradle Build System",
             "",
-            "--- BẢN QUYỀN ---",
-            "Copyright 2026 Hedspi OOP Group",
-            "All Rights Reserved",
-            ""
+            // "--- BẢN QUYỀN ---",
+            // "Copyright 2026 Hedspi OOP Group",
+            // "All Rights Reserved",
+            // ""
     };
 
     private SpriteBatch batch;
