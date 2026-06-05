@@ -1,0 +1,48 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome false
+skinparam packageStyle rectangle
+
+package "hust.hedspi.oop.game.components" {
+
+    interface ICatState {
+        + enter(cat: Cat): void
+        + update(cat: Cat, dt: float): void
+        + render(cat: Cat, batch: SpriteBatch): void
+        + exit(cat: Cat): void
+    }
+
+    class IdleState {
+        + enter(cat: Cat): void
+        + update(cat: Cat, dt: float): void
+        + render(cat: Cat, batch: SpriteBatch): void
+        + exit(cat: Cat): void
+    }
+
+    class RunState {
+        - isRunning: boolean
+        + enter(cat: Cat): void
+        + update(cat: Cat, dt: float): void
+        + render(cat: Cat, batch: SpriteBatch): void
+        + exit(cat: Cat): void
+    }
+
+    class SleepState {
+        - sleepTimer: float
+        + enter(cat: Cat): void
+        + update(cat: Cat, dt: float): void
+        + render(cat: Cat, batch: SpriteBatch): void
+        + exit(cat: Cat): void
+    }
+}
+
+ICatState <|.. IdleState
+ICatState <|.. RunState
+ICatState <|.. SleepState
+
+note top of ICatState
+  State Pattern: Tránh dùng quá nhiều vòng lặp if - else
+  trong hàm update() của Mèo.
+end note
+
+@enduml

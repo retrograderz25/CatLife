@@ -1,0 +1,99 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome false
+skinparam packageStyle rectangle
+
+package "hust.hedspi.oop.game.entities" {
+    
+    interface IInteractable {
+        + onInteract(player: Cat): void
+    }
+
+    interface IDamageable {
+        + takeDamage(amount: float): void
+    }
+
+    abstract class Entity {
+        # x: float
+        # y: float
+        # width: float
+        # height: float
+        # hitbox: Rectangle
+        + Entity(x: float, y: float, width: float, height: float)
+        + {abstract} update(dt: float): void
+        + {abstract} render(batch: SpriteBatch): void
+        + getX(): float
+        + getY(): float
+        + setPosition(x: float, y: float): void
+        + getHitbox(): Rectangle
+    }
+
+    abstract class Cat {
+        - hp: int
+        - hunger: int
+        - energy: int
+        - speed: float
+        - attackPower: int
+        # texture: Texture
+        - currentState: ICatState
+        + Cat(x: float, y: float, width: float, height: float, color: CatColor)
+        + changeState(newState: ICatState): void
+        + getCurrentState(): ICatState
+        + {abstract} applyPassiveSkill(dt: float): void
+        + update(dt: float): void
+        + render(batch: SpriteBatch): void
+        + increaseHp(amount: int): void
+        + decreaseEnergy(amount: int): void
+        + dispose(): void
+    }
+
+    class StrayCat {
+        - energyRecoveryTimer: float
+        + StrayCat(x: float, y: float, width: float, height: float)
+        + applyPassiveSkill(dt: float): void
+    }
+
+    class HouseCat {
+        - energyRecoveryTimer: float
+        + HouseCat(x: float, y: float, width: float, height: float)
+        + applyPassiveSkill(dt: float): void
+    }
+
+    class NPC {
+        - npcName: String
+        + NPC(x: float, y: float, w: float, h: float, color: CatColor, name: String)
+        + applyPassiveSkill(dt: float): void
+        + update(dt: float): void
+        + render(batch: SpriteBatch): void
+        + getNpcName(): String
+    }
+
+    class TriggerZone {
+        - timeCondition: TimeCondition
+        - linkedMinigame: IMinigameStrategy
+        - zoneName: String
+        + TriggerZone(x: float, y: float, w: float, h: float, name: String)
+        + setTimeCondition(condition: TimeCondition): void
+        + setLinkedMinigame(minigame: IMinigameStrategy): void
+        + onInteract(player: Cat): void
+        + canTrigger(): boolean
+        + update(dt: float): void
+        + render(batch: SpriteBatch): void
+    }
+}
+
+Entity <|-- Cat
+Cat <|-- StrayCat
+Cat <|-- HouseCat
+Cat <|-- NPC
+Entity <|-- TriggerZone
+
+TriggerZone ..|> IInteractable
+
+note right of Cat
+  Polymorphism: applyPassiveSkill()
+  sẽ chạy logic khác nhau tùy thuộc 
+  vào Mèo Hoang hay Mèo Nhà
+end note
+
+@enduml

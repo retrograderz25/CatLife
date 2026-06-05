@@ -1,0 +1,77 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome false
+skinparam packageStyle rectangle
+
+package "hust.hedspi.oop.game.minigames" {
+
+    interface IMinigameStrategy {
+        + start(): void
+        + update(dt: float): void
+        + render(batch: SpriteBatch): void
+        + isFinished(): boolean
+        + isWon(): boolean
+        + dispose(): void
+        + forceEnd(win: boolean): void
+    }
+
+    class BathGameMinigame {
+        + update(dt: float): void
+    }
+    
+    class CaoMongMinigame {
+        + update(dt: float): void
+    }
+    
+    class ThoatKhoiCongMinigame {
+        + update(dt: float): void
+    }
+    
+    class CombatDonMinigame {
+        + update(dt: float): void
+    }
+    
+    class NhayHipHopMinigame {
+        + update(dt: float): void
+    }
+    
+    class TronKimTiemMinigame {
+        + update(dt: float): void
+    }
+    
+    class TromMeoMinigame {
+        + update(dt: float): void
+    }
+    
+    class ThoatKhoiLongMinigame {
+        + update(dt: float): void
+    }
+}
+
+package "hust.hedspi.oop.game.screens" {
+    class MinigameScreen {
+        - strategy: IMinigameStrategy
+        - batch: SpriteBatch
+        + MinigameScreen(strategy: IMinigameStrategy)
+        + render(delta: float): void
+    }
+}
+
+IMinigameStrategy <|.. BathGameMinigame
+IMinigameStrategy <|.. CaoMongMinigame
+IMinigameStrategy <|.. ThoatKhoiCongMinigame
+IMinigameStrategy <|.. CombatDonMinigame
+IMinigameStrategy <|.. NhayHipHopMinigame
+IMinigameStrategy <|.. TronKimTiemMinigame
+IMinigameStrategy <|.. TromMeoMinigame
+IMinigameStrategy <|.. ThoatKhoiLongMinigame
+
+MinigameScreen *--> IMinigameStrategy : Context
+
+note left of MinigameScreen
+  Strategy Pattern: Màn hình dùng chung 
+  để chạy và quản lý bất kỳ luật chơi nào 
+  được chèn vào (tránh rác file Screens).
+end note
+
+@enduml
