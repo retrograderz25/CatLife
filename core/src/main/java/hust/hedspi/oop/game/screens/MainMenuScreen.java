@@ -29,7 +29,9 @@ public class MainMenuScreen implements Screen {
     private Screen nextScreen = null;
 
     private static final String[] CREDIT_LINES = {
-        "CAT LIFE",
+        "", // Dành cho ảnh giat_tit_vn.png
+        "",
+        "",
         "",
         "--- ĐỘI NGŨ PHÁT TRIỂN ---",
         "// TODO: Nhập danh sách thành viên phát triển tại đây",
@@ -82,6 +84,7 @@ public class MainMenuScreen implements Screen {
 
     // Credit Screen specific assets and states
     private Texture creEndTex;
+    private Texture titleVnTex;
     private float creditScrollY = 0f;
     private boolean isAutoScrolling = true;
     private boolean isDraggingScrollbar = false;
@@ -128,6 +131,7 @@ public class MainMenuScreen implements Screen {
 
         // Load credit specific assets
         creEndTex = new Texture(Gdx.files.internal("menu/cre_end.png"));
+        titleVnTex = new Texture(Gdx.files.internal("menu/giat_tit_vn.png"));
 
         // Load UI button textures for NinePatch return buttons
         btnTex = new Texture(Gdx.files.internal("images/HUD/ui/button/button_blue.png"));
@@ -346,13 +350,23 @@ public class MainMenuScreen implements Screen {
         boolean scissorPushed = com.badlogic.gdx.scenes.scene2d.utils.ScissorStack.pushScissors(scissors);
 
         if (scissorPushed) {
-            // Draw credit lines
+            // Draw credit lines and the giat_tit_vn.png image at the top
             font.getData().setScale(1.0f);
             for (int i = 0; i < CREDIT_LINES.length; i++) {
                 float docY = topSpace + i * lineSpacing;
                 float drawY = (clipY + clipH) - (docY - creditScrollY);
-                // Centered inside clipW
-                font.draw(batch, CREDIT_LINES[i], clipX, drawY + 12f, clipW, Align.center, false);
+                
+                if (i == 0) {
+                    // Draw giat_tit_vn.png image instead of text
+                    float titleImgW = 220f;
+                    float titleImgH = titleImgW * titleVnTex.getHeight() / titleVnTex.getWidth();
+                    float imgX = clipX + (clipW - titleImgW) / 2f;
+                    float imgY = drawY - titleImgH + 20f; // Align top of image with drawY line
+                    batch.draw(titleVnTex, imgX, imgY, titleImgW, titleImgH);
+                } else if (!CREDIT_LINES[i].isEmpty()) {
+                    // Centered inside clipW
+                    font.draw(batch, CREDIT_LINES[i], clipX, drawY + 12f, clipW, Align.center, false);
+                }
             }
 
             // Draw cre_end.png at the bottom of the credits scroll
@@ -651,6 +665,7 @@ public class MainMenuScreen implements Screen {
         catDecorTex.dispose();
         tittleTex.dispose();
         creEndTex.dispose();
+        titleVnTex.dispose();
 
         btnTex.dispose();
         btnPressedTex.dispose();
