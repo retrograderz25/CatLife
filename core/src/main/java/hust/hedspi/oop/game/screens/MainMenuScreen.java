@@ -279,15 +279,21 @@ public class MainMenuScreen implements Screen {
         float clipX = panelX + 40f;
         float clipY = panelY + 110f;
         float clipW = panelW - 80f;
-        float clipH = panelH - 170f; // Leaves room for header and back button
+        float clipH = panelH - 195f; // Decreased height to lower the top edge, preventing overlap with the "Credit" title
 
         // Calculate scroll bounds
         float topSpace = clipH; // Start below the bottom of the clipping area
         float lineSpacing = 35f;
         float textH = CREDIT_LINES.length * lineSpacing;
         float gap = 50f;
-        float creEndW = 200f;
+        
+        // Enlarged cre_end.png image size with vertical limits check
+        float creEndW = 380f;
         float creEndH = creEndW * creEndTex.getHeight() / creEndTex.getWidth();
+        if (creEndH > clipH - 40f) {
+            creEndH = clipH - 40f;
+            creEndW = creEndH * creEndTex.getWidth() / creEndTex.getHeight();
+        }
 
         // We want the scroll to stop when cre_end.png is perfectly centered in the clipping box
         float maxScrollY = (topSpace + textH + gap) - (clipH - creEndH) / 2f;
