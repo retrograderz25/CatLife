@@ -43,6 +43,12 @@ public class MainMenuScreen implements Screen {
     private Texture achievementTex;
     private Texture howToPlayTex;
     private Texture creditTex;
+    private Texture quitBtnTex;
+
+    // Achievement Screen specific textures
+    private Texture boardTex;
+    private Texture catDecorTex;
+    private Texture tittleTex;
 
     // UI Buttons (Blue for Back button)
     private Texture btnTex;
@@ -74,6 +80,12 @@ public class MainMenuScreen implements Screen {
         achievementTex = new Texture(Gdx.files.internal("menu/archievement.png"));
         howToPlayTex = new Texture(Gdx.files.internal("menu/how_to_play.png"));
         creditTex = new Texture(Gdx.files.internal("menu/credit.png"));
+        quitBtnTex = new Texture(Gdx.files.internal("menu/quit_button.png"));
+
+        // Load achievements specific assets
+        boardTex = new Texture(Gdx.files.internal("menu/achievement/board.png"));
+        catDecorTex = new Texture(Gdx.files.internal("menu/achievement/cat_decor.png"));
+        tittleTex = new Texture(Gdx.files.internal("menu/achievement/tittle.png"));
 
         // Load UI button textures for NinePatch return buttons
         btnTex = new Texture(Gdx.files.internal("images/HUD/ui/button/button_blue.png"));
@@ -191,6 +203,15 @@ public class MainMenuScreen implements Screen {
         if (handleButton(batch, newGameTex, btnX, y0, w0, h0, mouseX, mouseY, true)) {
             nextScreen = new PlayScreen(false);
         }
+
+        // Quit Button (Bottom-Right corner, aligned with Credit button y4)
+        float qw = quitBtnTex.getWidth() * scale;
+        float qh = quitBtnTex.getHeight() * scale;
+        float qx = Constants.VIRTUAL_WIDTH - qw - 80f;
+        float qy = startY;
+        if (handleButton(batch, quitBtnTex, qx, qy, qw, qh, mouseX, mouseY, true)) {
+            Gdx.app.exit();
+        }
     }
 
     private void renderCredits(SpriteBatch batch, float mouseX, float mouseY) {
@@ -302,34 +323,75 @@ public class MainMenuScreen implements Screen {
         float panelY = (Constants.VIRTUAL_HEIGHT - panelH) / 2f;
         timeframePatch.draw(batch, panelX, panelY, panelW, panelH);
 
-        // Draw Title
-        titleFont.setColor(Color.YELLOW);
-        titleFont.draw(batch, "DANH SÁCH THÀNH TỰU", panelX, panelY + panelH - 45f, panelW, Align.center, false);
-        titleFont.setColor(Color.WHITE);
+        // Draw Title (tittle.png) at the top of the panel (scaled to fit nicely)
+        float titleImgW = tittleTex.getWidth();
+        float titleImgH = tittleTex.getHeight();
+        float titleScale = Math.min(panelW * 0.6f / titleImgW, 60f / titleImgH);
+        float drawTitleW = titleImgW * titleScale;
+        float drawTitleH = titleImgH * titleScale;
+        float drawTitleX = panelX + (panelW - drawTitleW) / 2f;
+        float drawTitleY = panelY + panelH - drawTitleH - 18f;
+        batch.draw(tittleTex, drawTitleX, drawTitleY, drawTitleW, drawTitleH);
 
-        // Draw Headers: STT, Tên Kết Cục, Checkbox
-        font.getData().setScale(1.1f);
+        // Define content layout coordinates
+        float padLeft = 40f;
+        float padRight = 40f;
+        float padBottom = 90f;
+        float contentW = panelW - padLeft - padRight; // 770f
+        float contentH = 290f; // Height for board & decor
+        float gap = 20f;
+        float usableW = contentW - gap; // 750f
+
+        // 5:3 ratio for board vs cat_decor
+        float boardW = usableW * 5f / 8f; // 468.75f
+        float decorW = usableW * 3f / 8f; // 281.25f
+
+        float boardX = panelX + padLeft;
+        float boardY = panelY + padBottom;
+        float decorX = boardX + boardW + gap;
+        float decorY = panelY + padBottom;
+
+        // Draw Board (board.png) on the left
+        batch.draw(boardTex, boardX, boardY, boardW, contentH);
+
+        // Draw Cat Decor (cat_decor.png) on the right (preserving aspect ratio)
+        float decorImgW = catDecorTex.getWidth();
+        float decorImgH = catDecorTex.getHeight();
+        float decorScale = Math.min(decorW / decorImgW, contentH / decorImgH);
+        float drawDecorW = decorImgW * decorScale;
+        float drawDecorH = decorImgH * decorScale;
+        float drawDecorX = decorX + (decorW - drawDecorW) / 2f;
+        float drawDecorY = decorY + (contentH - drawDecorH) / 2f;
+        batch.draw(catDecorTex, drawDecorX, drawDecorY, drawDecorW, drawDecorH);
+
+        // Draw Headers: STT, Tên Kết Cục, Mở Khóa inside the board
+        float boardPadLeft = 30f;
+        float boardPadRight = 30f;
+        float boardPadTop = 25f;
+        float headerY = boardY + contentH - boardPadTop - 15f;
+
+        font.getData().setScale(0.85f);
         font.setColor(Color.GOLD);
-        font.draw(batch, "STT", panelX + 80f, panelY + panelH - 95f);
-        font.draw(batch, "Tên Kết Cục", panelX + 220f, panelY + panelH - 95f);
-        font.draw(batch, "Mở Khóa", panelX + 620f, panelY + panelH - 95f);
+        font.draw(batch, "STT", boardX + boardPadLeft, headerY);
+        font.draw(batch, "Tên Kết Cục", boardX + boardPadLeft + 50f, headerY);
+        font.draw(batch, "Mở Khóa", boardX + boardW - boardPadRight - 75f, headerY);
         font.setColor(Color.WHITE);
 
         com.badlogic.gdx.Preferences prefs = Gdx.app.getPreferences("CatLife_Endings");
 
-        // Render each ending row
+        // Render ending rows
         for (int i = 0; i < 7; i++) {
-            float y = panelY + panelH - 145f - i * 40f;
+            float y = boardY + contentH - boardPadTop - 50f - i * 32f;
             String endingName = hust.hedspi.oop.game.managers.SaveManager.OFFICIAL_ENDINGS[i];
             boolean unlocked = prefs.getBoolean(endingName, false);
 
             // STT
-            font.draw(batch, String.valueOf(i + 1), panelX + 80f, y + 20f);
+            font.draw(batch, String.valueOf(i + 1), boardX + boardPadLeft, y + 18f);
 
             // Tên Kết Cục
             if (unlocked) {
                 font.setColor(Color.WHITE);
-                font.draw(batch, endingName, panelX + 220f, y + 20f);
+                font.draw(batch, endingName, boardX + boardPadLeft + 50f, y + 18f);
             } else {
                 // Build red question marks string preserving spaces
                 StringBuilder sb = new StringBuilder();
@@ -341,14 +403,14 @@ public class MainMenuScreen implements Screen {
                     }
                 }
                 font.setColor(Color.RED);
-                font.draw(batch, sb.toString(), panelX + 220f, y + 20f);
+                font.draw(batch, sb.toString(), boardX + boardPadLeft + 50f, y + 18f);
             }
             font.setColor(Color.WHITE);
 
             // Checkbox: boxSize = 24
             float boxSize = 24f;
-            float boxX = panelX + 650f;
-            float boxY = y + 2f;
+            float boxX = boardX + boardW - boardPadRight - 54f;
+            float boxY = y;
 
             if (unlocked) {
                 // Checked: active blue button with a yellow 'X' in the center
@@ -437,6 +499,11 @@ public class MainMenuScreen implements Screen {
         achievementTex.dispose();
         howToPlayTex.dispose();
         creditTex.dispose();
+        quitBtnTex.dispose();
+
+        boardTex.dispose();
+        catDecorTex.dispose();
+        tittleTex.dispose();
 
         btnTex.dispose();
         btnPressedTex.dispose();
