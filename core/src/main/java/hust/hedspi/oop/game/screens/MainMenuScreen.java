@@ -368,24 +368,24 @@ public class MainMenuScreen implements Screen {
         float drawDecorY = decorY + (contentH - drawDecorH) / 2f;
         batch.draw(catDecorTex, drawDecorX, drawDecorY, drawDecorW, drawDecorH);
 
-        // Draw Headers: STT, Tên Kết Cục, Mở Khóa inside the board
+        // Draw Headers: STT, Tên Kết Cục, Trạng Thái inside the board
         float boardPadLeft = 40f;
         float boardPadRight = 40f;
         float boardPadTop = 25f;
-        float headerY = boardY + contentH - boardPadTop - 20f;
+        float headerY = boardY + contentH - boardPadTop - 15f; // Raised to prevent overlap
 
         font.getData().setScale(0.85f); // Set to 0.85f for better legibility on a larger board
-        font.setColor(Color.GOLD);
+        font.setColor(new Color(0.85f, 0.65f, 0f, 1f)); // Dark yellow color
         drawBoldText(batch, "STT", boardX + boardPadLeft, headerY);
         drawBoldText(batch, "Tên Kết Cục", boardX + boardPadLeft + 60f, headerY);
-        drawBoldText(batch, "Mở Khóa", boardX + boardW - boardPadRight - 85f, headerY);
+        drawBoldText(batch, "Trạng Thái", boardX + boardW - boardPadRight - 90f, headerY); // Centered over checkbox column
         font.setColor(Color.WHITE);
 
         com.badlogic.gdx.Preferences prefs = Gdx.app.getPreferences("CatLife_Endings");
 
-        // Render ending rows with closer vertical spacing (38f)
+        // Render ending rows with closer vertical spacing (38f) starting lower to prevent overlap
         for (int i = 0; i < 7; i++) {
-            float y = boardY + contentH - boardPadTop - 55f - i * 38f;
+            float y = boardY + contentH - boardPadTop - 62f - i * 38f;
             String endingName = hust.hedspi.oop.game.managers.SaveManager.OFFICIAL_ENDINGS[i];
             boolean unlocked = prefs.getBoolean(endingName, false);
 
