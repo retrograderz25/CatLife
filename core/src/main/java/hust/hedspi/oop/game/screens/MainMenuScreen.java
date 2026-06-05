@@ -243,6 +243,7 @@ public class MainMenuScreen implements Screen {
         // 3. Achievement
         float y2 = y3 + h3 + spacing;
         if (handleButton(batch, achievementTex, btnX, y2, w2, h2, mouseX, mouseY, true)) {
+            SoundManager.getInstance().playSFX(SoundManager.SFX_UI_CONFIRM);
             currentState = State.ACHIEVEMENTS;
         }
 
@@ -250,12 +251,14 @@ public class MainMenuScreen implements Screen {
         boolean hasSave = GameManager.getInstance().getPlayer() != null;
         float y1 = y2 + h2 + spacing;
         if (handleButton(batch, continueTex, btnX, y1, w1, h1, mouseX, mouseY, hasSave)) {
+            SoundManager.getInstance().playSFX(SoundManager.SFX_UI_CONFIRM);
             nextScreen = new PlayScreen(true);
         }
 
         // 1. New Game
         float y0 = y1 + h1 + spacing;
         if (handleButton(batch, newGameTex, btnX, y0, w0, h0, mouseX, mouseY, true)) {
+            SoundManager.getInstance().playSFX(SoundManager.SFX_UI_CONFIRM);
             nextScreen = new PlayScreen(false);
         }
 
@@ -265,6 +268,7 @@ public class MainMenuScreen implements Screen {
         float qx = Constants.VIRTUAL_WIDTH - qw - 80f;
         float qy = startY;
         if (handleButton(batch, quitBtnTex, qx, qy, qw, qh, mouseX, mouseY, true)) {
+            SoundManager.getInstance().playSFX(SoundManager.SFX_UI_CANCEL);
             Gdx.app.exit();
         }
     }

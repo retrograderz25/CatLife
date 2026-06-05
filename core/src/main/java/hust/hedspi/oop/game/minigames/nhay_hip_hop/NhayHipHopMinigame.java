@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.I18NBundle;
 import hust.hedspi.oop.game.managers.ResourceManager;
+import hust.hedspi.oop.game.managers.SoundManager;
 import hust.hedspi.oop.game.managers.StoryManager;
 import hust.hedspi.oop.game.minigames.IMinigameStrategy;
 import hust.hedspi.oop.game.utils.MinigameID;
@@ -222,6 +223,7 @@ public class NhayHipHopMinigame implements IMinigameStrategy {
             Arrow activeArrow = currentArrows.get(activeArrowIndex);
             if (pressedDir == activeArrow.direction) {
                 // Correct key pressed!
+                SoundManager.getInstance().playSFX(SoundManager.SFX_HIPHOP_SCRATCH);
                 activeArrow.isPressed = true;
                 activeArrowIndex++;
 

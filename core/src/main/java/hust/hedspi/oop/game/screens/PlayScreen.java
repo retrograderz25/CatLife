@@ -153,6 +153,7 @@ public class PlayScreen implements Screen {
         Gdx.input.setInputProcessor(uiStage);
         isNight = isCurrentlyNight();
         SoundManager.getInstance().playBGM(isNight ? SoundManager.BGM_NIGHT : SoundManager.BGM_DAY);
+        SoundManager.getInstance().playAmbient(isNight ? SoundManager.AMB_NIGHT : SoundManager.AMB_DAY);
     }
 
     private boolean isCurrentlyNight() {
@@ -294,6 +295,12 @@ public class PlayScreen implements Screen {
         if (isDark != isNight) {
             isNight = isDark;
             SoundManager.getInstance().playBGM(isNight ? SoundManager.BGM_NIGHT : SoundManager.BGM_DAY);
+            SoundManager.getInstance().playAmbient(isNight ? SoundManager.AMB_NIGHT : SoundManager.AMB_DAY);
+        }
+
+        // Footstep SFX khi mèo đang di chuyển
+        if (player != null && player.getCurrentState() instanceof hust.hedspi.oop.game.components.RunState) {
+            SoundManager.getInstance().playSFXThrottled(SoundManager.SFX_CAT_FOOTSTEPS, 0.35f);
         }
 
         if (isDark && player != null) {
@@ -421,6 +428,7 @@ public class PlayScreen implements Screen {
     @Override
     public void dispose() {
         SoundManager.getInstance().stopBGM();
+        SoundManager.getInstance().stopAmbient();
         if (batch != null) batch.dispose();
         if (uiStage != null) uiStage.dispose();
         if (playerHUD != null) playerHUD.dispose();

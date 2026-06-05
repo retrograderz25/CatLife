@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.I18NBundle;
 import hust.hedspi.oop.game.managers.ResourceManager;
+import hust.hedspi.oop.game.managers.SoundManager;
 import hust.hedspi.oop.game.managers.StoryManager;
 import hust.hedspi.oop.game.minigames.IMinigameStrategy;
 import hust.hedspi.oop.game.utils.Constants;
@@ -231,6 +232,8 @@ public class TimTieuTamMinigame implements IMinigameStrategy {
         feedbackCorrect = correct;
         feedbackSlot    = slot;
         feedbackTimer   = FEEDBACK_DURATION;
+        if (correct) SoundManager.getInstance().playSFX(SoundManager.SFX_DETECTIVE_CLUE);
+        else         SoundManager.getInstance().playSFX(SoundManager.SFX_UI_CANCEL);
     }
 
     private void endGame(boolean playerWon) {

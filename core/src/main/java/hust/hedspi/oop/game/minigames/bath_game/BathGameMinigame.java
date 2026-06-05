@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.I18NBundle;
 import hust.hedspi.oop.game.managers.ResourceManager;
+import hust.hedspi.oop.game.managers.SoundManager;
 import hust.hedspi.oop.game.managers.StoryManager;
 import hust.hedspi.oop.game.minigames.IMinigameStrategy;
 import hust.hedspi.oop.game.utils.Constants;
@@ -171,6 +172,7 @@ public class BathGameMinigame implements IMinigameStrategy {
                 if (b.alive && isBubbleHit(mx, my, b)) {
                     b.alive = false;
                     score++;
+                    SoundManager.getInstance().playSFX(SoundManager.SFX_BATH_BUBBLE_POP);
                     if (score >= WIN_THRESHOLD) endGame(true);
                     break; // chỉ bấm được 1 bong bóng mỗi click
                 }

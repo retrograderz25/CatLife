@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.I18NBundle;
 import hust.hedspi.oop.game.managers.ResourceManager;
+import hust.hedspi.oop.game.managers.SoundManager;
 import hust.hedspi.oop.game.managers.StoryManager;
 import hust.hedspi.oop.game.minigames.IMinigameStrategy;
 import hust.hedspi.oop.game.utils.Constants;
@@ -274,6 +275,7 @@ public class CaoMongMinigame implements IMinigameStrategy {
             if (Gdx.input.isKeyJustPressed(DIRECTION_KEYS[i])) {
                 if (i == activeArrow) {
                     score++;
+                    SoundManager.getInstance().playSFX(SoundManager.SFX_CAT_SCRATCH);
                     int h = handOf(i);
                     handActive[h]   = true;
                     handAnimTime[h] = 0f;

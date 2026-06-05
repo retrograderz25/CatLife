@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import hust.hedspi.oop.game.entities.Cat;
 import hust.hedspi.oop.game.entities.TriggerZone;
 import hust.hedspi.oop.game.managers.ResourceManager;
+import hust.hedspi.oop.game.managers.SoundManager;
 
 public class InteractionUI {
     private Table rootTable;
@@ -97,13 +98,15 @@ public class InteractionUI {
         btnYes.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                SoundManager.getInstance().playSFX(SoundManager.SFX_UI_CONFIRM);
                 acceptTask();
             }
         });
-        
+
         btnNo.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                SoundManager.getInstance().playSFX(SoundManager.SFX_UI_CANCEL);
                 hide();
             }
         });
@@ -170,6 +173,7 @@ public class InteractionUI {
         rootTable.setVisible(true);
         selectedButtonIndex = 0;
         updateButtonFocus();
+        SoundManager.getInstance().playSFX(SoundManager.SFX_CAT_MEOW_NORMAL);
         
         // Cấp quyền focus cho bàn phím
         if (rootTable.getStage() != null) {

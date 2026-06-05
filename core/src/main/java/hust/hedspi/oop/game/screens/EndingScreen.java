@@ -187,6 +187,9 @@ public class EndingScreen implements Screen {
     @Override
     public void show() {
         SoundManager.getInstance().playBGM(SoundManager.BGM_ENDING);
+        if ("Quán Thịt Hổ".equals(endingName)) {
+            SoundManager.getInstance().playSFX(SoundManager.SFX_DANGER_ALERT);
+        }
     }
 
     @Override
