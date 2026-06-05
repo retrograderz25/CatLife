@@ -336,15 +336,15 @@ public class MainMenuScreen implements Screen {
         // Define content layout coordinates
         float padLeft = 40f;
         float padRight = 40f;
-        float padBottom = 90f;
+        float padBottom = 65f; // Lowered to give more room for the board
         float contentW = panelW - padLeft - padRight; // 770f
-        float contentH = 290f; // Height for board & decor
+        float contentH = 325f; // Heightened board & decor
         float gap = 20f;
         float usableW = contentW - gap; // 750f
 
-        // Adjust layout: widen the board and narrow cat_decor
-        float boardW = 540f;
-        float decorW = 210f;
+        // Adjust layout: widen the board and narrow cat_decor (550:200)
+        float boardW = 550f;
+        float decorW = 200f;
 
         float boardX = panelX + padLeft;
         float boardY = panelY + padBottom;
@@ -367,31 +367,31 @@ public class MainMenuScreen implements Screen {
         // Draw Headers: STT, Tên Kết Cục, Mở Khóa inside the board
         float boardPadLeft = 30f;
         float boardPadRight = 30f;
-        float boardPadTop = 25f;
-        float headerY = boardY + contentH - boardPadTop - 15f;
+        float boardPadTop = 20f;
+        float headerY = boardY + contentH - boardPadTop - 12f;
 
-        font.getData().setScale(0.78f);
+        font.getData().setScale(0.80f);
         font.setColor(Color.GOLD);
-        font.draw(batch, "STT", boardX + boardPadLeft, headerY);
-        font.draw(batch, "Tên Kết Cục", boardX + boardPadLeft + 50f, headerY);
-        font.draw(batch, "Mở Khóa", boardX + boardW - boardPadRight - 75f, headerY);
+        drawBoldText(batch, "STT", boardX + boardPadLeft, headerY);
+        drawBoldText(batch, "Tên Kết Cục", boardX + boardPadLeft + 50f, headerY);
+        drawBoldText(batch, "Mở Khóa", boardX + boardW - boardPadRight - 75f, headerY);
         font.setColor(Color.WHITE);
 
         com.badlogic.gdx.Preferences prefs = Gdx.app.getPreferences("CatLife_Endings");
 
-        // Render ending rows
+        // Render ending rows with wider vertical spacing (36f instead of 32f)
         for (int i = 0; i < 7; i++) {
-            float y = boardY + contentH - boardPadTop - 50f - i * 32f;
+            float y = boardY + contentH - boardPadTop - 48f - i * 36f;
             String endingName = hust.hedspi.oop.game.managers.SaveManager.OFFICIAL_ENDINGS[i];
             boolean unlocked = prefs.getBoolean(endingName, false);
 
             // STT
-            font.draw(batch, String.valueOf(i + 1), boardX + boardPadLeft, y + 18f);
+            drawBoldText(batch, String.valueOf(i + 1), boardX + boardPadLeft, y + 18f);
 
             // Tên Kết Cục
             if (unlocked) {
                 font.setColor(Color.WHITE);
-                font.draw(batch, endingName, boardX + boardPadLeft + 50f, y + 18f);
+                drawBoldText(batch, endingName, boardX + boardPadLeft + 50f, y + 18f);
             } else {
                 // Build red question marks string preserving spaces
                 StringBuilder sb = new StringBuilder();
@@ -403,7 +403,7 @@ public class MainMenuScreen implements Screen {
                     }
                 }
                 font.setColor(Color.RED);
-                font.draw(batch, sb.toString(), boardX + boardPadLeft + 50f, y + 18f);
+                drawBoldText(batch, sb.toString(), boardX + boardPadLeft + 50f, y + 18f);
             }
             font.setColor(Color.WHITE);
 
@@ -416,7 +416,7 @@ public class MainMenuScreen implements Screen {
                 // Checked: active blue button with a yellow 'X' in the center
                 btnPatch.draw(batch, boxX, boxY, boxSize, boxSize);
                 font.setColor(Color.YELLOW);
-                font.draw(batch, "X", boxX, boxY + boxSize / 2f + 7f, boxSize, Align.center, false);
+                drawBoldText(batch, "X", boxX, boxY + boxSize / 2f + 7f, boxSize, Align.center, false);
                 font.setColor(Color.WHITE);
             } else {
                 // Unchecked: dark blue/pressed empty box
@@ -425,11 +425,11 @@ public class MainMenuScreen implements Screen {
         }
         font.getData().setScale(1.0f);
 
-        // Draw "Quay lại" button inside timeframe frame
-        float btnW = 180f;
-        float btnH = 60f;
+        // Draw "Quay lại" button inside timeframe frame (shrunk to 140x40 and lowered)
+        float btnW = 140f;
+        float btnH = 40f;
         float btnX = (Constants.VIRTUAL_WIDTH - btnW) / 2f;
-        float btnY = panelY + 25f;
+        float btnY = panelY + 15f;
 
         boolean hovered = (mouseX >= btnX && mouseX <= btnX + btnW && mouseY >= btnY && mouseY <= btnY + btnH);
         boolean pressed = hovered && Gdx.input.isTouched();
@@ -441,12 +441,22 @@ public class MainMenuScreen implements Screen {
         }
 
         font.setColor(hovered ? Color.YELLOW : Color.WHITE);
-        font.draw(batch, "Quay lại", btnX, btnY + btnH / 2f + 8f, btnW, Align.center, false);
+        drawBoldText(batch, "Quay lại", btnX, btnY + btnH / 2f + 6f, btnW, Align.center, false);
         font.setColor(Color.WHITE);
 
         if (hovered && Gdx.input.justTouched()) {
             currentState = State.MAIN_MENU;
         }
+    }
+
+    private void drawBoldText(SpriteBatch batch, String text, float x, float y) {
+        font.draw(batch, text, x, y);
+        font.draw(batch, text, x + 0.6f, y);
+    }
+
+    private void drawBoldText(SpriteBatch batch, String text, float x, float y, float targetWidth, int align, boolean wrap) {
+        font.draw(batch, text, x, y, targetWidth, align, wrap);
+        font.draw(batch, text, x + 0.6f, y, targetWidth, align, wrap);
     }
 
     /**
