@@ -342,9 +342,9 @@ public class MainMenuScreen implements Screen {
         float gap = 20f;
         float usableW = contentW - gap; // 750f
 
-        // 5:3 ratio for board vs cat_decor
-        float boardW = usableW * 5f / 8f; // 468.75f
-        float decorW = usableW * 3f / 8f; // 281.25f
+        // Adjust layout: widen the board and narrow cat_decor
+        float boardW = 540f;
+        float decorW = 210f;
 
         float boardX = panelX + padLeft;
         float boardY = panelY + padBottom;
@@ -370,7 +370,7 @@ public class MainMenuScreen implements Screen {
         float boardPadTop = 25f;
         float headerY = boardY + contentH - boardPadTop - 15f;
 
-        font.getData().setScale(0.85f);
+        font.getData().setScale(0.78f);
         font.setColor(Color.GOLD);
         font.draw(batch, "STT", boardX + boardPadLeft, headerY);
         font.draw(batch, "Tên Kết Cục", boardX + boardPadLeft + 50f, headerY);
