@@ -29,34 +29,34 @@ public class MainMenuScreen implements Screen {
     private Screen nextScreen = null;
 
     private static final String[] CREDIT_LINES = {
-        "", // Dành cho ảnh giat_tit_vn.png
-        "",
-        "",
-        "",
-        "--- ĐỘI NGŨ PHÁT TRIỂN ---",
-        "// TODO: Nhập danh sách thành viên phát triển tại đây",
-        "coming soon",
-        "coming soon",
-        "coming soon",
-        "",
-        "--- HÌNH ẢNH & ĐỒ HỌA ---",
-        "// TODO: Nhập danh sách người thiết kế đồ họa tại đây",
-        "coming soon",
-        "coming soon",
-        "",
-        "--- ÂM NHẠC & ÂM THANH ---",
-        "// TODO: Nhập danh sách người phụ trách âm nhạc tại đây",
-        "coming soon",
-        "coming soon",
-        "",
-        "--- CÔNG NGHỆ SỬ DỤNG ---",
-        "LibGDX - Java Game Framework",
-        "Gradle Build System",
-        "",
-        "--- BẢN QUYỀN ---",
-        "Copyright 2026 Hedspi OOP Group",
-        "All Rights Reserved",
-        ""
+            "", // Dành cho ảnh giat_tit_vn.png
+            "",
+            "",
+            "",
+            "--- ĐỘI NGŨ PHÁT TRIỂN ---",
+            "// TODO: Nhập danh sách thành viên phát triển tại đây",
+            "coming soon",
+            "coming soon",
+            "Tuyển thủ VALORANT",
+            "",
+            "--- HÌNH ẢNH & ĐỒ HỌA ---",
+            "// TODO: Nhập danh sách người thiết kế đồ họa tại đây",
+            "coming soon",
+            "coming soon",
+            "",
+            "--- ÂM NHẠC & ÂM THANH ---",
+            "// TODO: Nhập danh sách người phụ trách âm nhạc tại đây",
+            "coming soon",
+            "Clove",
+            "",
+            "--- CÔNG NGHỆ SỬ DỤNG ---",
+            "LibGDX - Java Game Framework",
+            "Gradle Build System",
+            "",
+            "--- BẢN QUYỀN ---",
+            "Copyright 2026 Hedspi OOP Group",
+            "All Rights Reserved",
+            ""
     };
 
     private SpriteBatch batch;
@@ -123,7 +123,8 @@ public class MainMenuScreen implements Screen {
 
         // Load achievements specific assets
         boardTex = new Texture(Gdx.files.internal("menu/achievement/board.png"));
-        // TODO: Chỉnh sửa các thông số chia NinePatch của board.png ở đây để điều chỉnh bo viền/giãn góc
+        // TODO: Chỉnh sửa các thông số chia NinePatch của board.png ở đây để điều chỉnh
+        // bo viền/giãn góc
         // Định dạng: new NinePatch(texture, left, right, top, bottom)
         boardPatch = new NinePatch(boardTex, 12, 12, 12, 12);
         catDecorTex = new Texture(Gdx.files.internal("menu/achievement/cat_decor.png"));
@@ -186,7 +187,8 @@ public class MainMenuScreen implements Screen {
 
         batch.end();
 
-        // Defer screen transition to prevent disposing assets while batch is rendering/flushing
+        // Defer screen transition to prevent disposing assets while batch is
+        // rendering/flushing
         if (nextScreen != null) {
             ScreenManager.getInstance().clearAndSetScreen(nextScreen);
         }
@@ -213,12 +215,13 @@ public class MainMenuScreen implements Screen {
         float w3 = howToPlayTex.getWidth() * scale;
         float w4 = creditTex.getWidth() * scale;
 
-        // Calculate total vertical height to center the buttons vertically and shift down slightly
+        // Calculate total vertical height to center the buttons vertically and shift
+        // down slightly
         float totalH = h0 + h1 + h2 + h3 + h4 + 4 * spacing;
         float startY = ((Constants.VIRTUAL_HEIGHT - totalH) / 2f) - 90f;
 
         // Draw buttons bottom-up (Credit at the bottom, New Game at the top)
-        
+
         // 5. Credit
         float y4 = startY;
         if (handleButton(batch, creditTex, btnX, y4, w4, h4, mouseX, mouseY, true)) {
@@ -283,14 +286,15 @@ public class MainMenuScreen implements Screen {
         float clipX = panelX + 40f;
         float clipY = panelY + 110f;
         float clipW = panelW - 80f;
-        float clipH = panelH - 195f; // Decreased height to lower the top edge, preventing overlap with the "Credit" title
+        float clipH = panelH - 195f; // Decreased height to lower the top edge, preventing overlap with the "Credit"
+                                     // title
 
         // Calculate scroll bounds
         float topSpace = clipH; // Start below the bottom of the clipping area
         float lineSpacing = 35f;
         float textH = CREDIT_LINES.length * lineSpacing;
         float gap = 50f;
-        
+
         // Enlarged cre_end.png image size with vertical limits check
         float creEndW = 380f;
         float creEndH = creEndW * creEndTex.getHeight() / creEndTex.getWidth();
@@ -299,9 +303,11 @@ public class MainMenuScreen implements Screen {
             creEndW = creEndH * creEndTex.getWidth() / creEndTex.getHeight();
         }
 
-        // We want the scroll to stop when cre_end.png is perfectly centered in the clipping box
+        // We want the scroll to stop when cre_end.png is perfectly centered in the
+        // clipping box
         float maxScrollY = (topSpace + textH + gap) - (clipH - creEndH) / 2f;
-        if (maxScrollY < 0f) maxScrollY = 0f;
+        if (maxScrollY < 0f)
+            maxScrollY = 0f;
 
         // Drag handle dimensions
         float trackX = panelX + panelW - 35f;
@@ -326,7 +332,8 @@ public class MainMenuScreen implements Screen {
         if (Gdx.input.isTouched()) {
             if (Gdx.input.justTouched()) {
                 // Check if user clicked on or near the scrollbar
-                if (mouseX >= trackX - 15f && mouseX <= trackX + trackW + 15f && mouseY >= trackY && mouseY <= trackY + trackH) {
+                if (mouseX >= trackX - 15f && mouseX <= trackX + trackW + 15f && mouseY >= trackY
+                        && mouseY <= trackY + trackH) {
                     isDraggingScrollbar = true;
                     isAutoScrolling = false;
                 }
@@ -346,7 +353,8 @@ public class MainMenuScreen implements Screen {
         batch.flush();
         com.badlogic.gdx.math.Rectangle clipBounds = new com.badlogic.gdx.math.Rectangle(clipX, clipY, clipW, clipH);
         com.badlogic.gdx.math.Rectangle scissors = new com.badlogic.gdx.math.Rectangle();
-        com.badlogic.gdx.scenes.scene2d.utils.ScissorStack.calculateScissors(viewport.getCamera(), batch.getTransformMatrix(), clipBounds, scissors);
+        com.badlogic.gdx.scenes.scene2d.utils.ScissorStack.calculateScissors(viewport.getCamera(),
+                batch.getTransformMatrix(), clipBounds, scissors);
         boolean scissorPushed = com.badlogic.gdx.scenes.scene2d.utils.ScissorStack.pushScissors(scissors);
 
         if (scissorPushed) {
@@ -355,7 +363,7 @@ public class MainMenuScreen implements Screen {
             for (int i = 0; i < CREDIT_LINES.length; i++) {
                 float docY = topSpace + i * lineSpacing;
                 float drawY = (clipY + clipH) - (docY - creditScrollY);
-                
+
                 if (i == 0) {
                     // Draw giat_tit_vn.png image instead of text
                     float titleImgW = 220f;
@@ -430,11 +438,11 @@ public class MainMenuScreen implements Screen {
         // Draw guide content (left aligned with padding)
         font.getData().setScale(1.1f);
         String guideText = "\n" +
-            "- Di chuyển: Sử dụng các phím WASD hoặc Mũi Tên\n" +
-            "- Tương tác (Nhiệm vụ/Minigame): Nhấn phím SPACE\n" +
-            "- Tạm dừng trò chơi: Nhấn phím ESC\n\n" +
-            // "- Mở bảng điều khiển gỡ lỗi (Debug): Nhấn phím F12\n\n" +
-            "Hãy hoàn thành các minigame và thử thách sinh tồn để mở khóa đầy đủ 7 kết cục (Ending) của trò chơi!";
+                "- Di chuyển: Sử dụng các phím WASD hoặc Mũi Tên\n" +
+                "- Tương tác (Nhiệm vụ/Minigame): Nhấn phím SPACE\n" +
+                "- Tạm dừng trò chơi: Nhấn phím ESC\n\n" +
+                // "- Mở bảng điều khiển gỡ lỗi (Debug): Nhấn phím F12\n\n" +
+                "Hãy hoàn thành các minigame và thử thách sinh tồn để mở khóa đầy đủ 7 kết cục (Ending) của trò chơi!";
         font.draw(batch, guideText, panelX + 50f, panelY + panelH - 120f, panelW - 100f, Align.left, true);
         font.getData().setScale(1.0f);
 
@@ -524,12 +532,14 @@ public class MainMenuScreen implements Screen {
         font.setColor(new Color(0.85f, 0.65f, 0f, 1f)); // Dark yellow color
         drawBoldText(batch, "STT", boardX + boardPadLeft, headerY);
         drawBoldText(batch, "Tên Kết Cục", boardX + boardPadLeft + 60f, headerY);
-        drawBoldText(batch, "Trạng Thái", boardX + boardW - boardPadRight - 90f, headerY); // Centered over checkbox column
+        drawBoldText(batch, "Trạng Thái", boardX + boardW - boardPadRight - 90f, headerY); // Centered over checkbox
+                                                                                           // column
         font.setColor(Color.WHITE);
 
         com.badlogic.gdx.Preferences prefs = Gdx.app.getPreferences("CatLife_Endings");
 
-        // Render ending rows with closer vertical spacing (38f) starting lower to prevent overlap
+        // Render ending rows with closer vertical spacing (38f) starting lower to
+        // prevent overlap
         for (int i = 0; i < 7; i++) {
             float y = boardY + contentH - boardPadTop - 62f - i * 38f;
             String endingName = hust.hedspi.oop.game.managers.SaveManager.OFFICIAL_ENDINGS[i];
@@ -575,7 +585,8 @@ public class MainMenuScreen implements Screen {
         }
         font.getData().setScale(1.0f);
 
-        // Draw "Quay lại" button inside timeframe frame (re-centered and scaled for 1000x550)
+        // Draw "Quay lại" button inside timeframe frame (re-centered and scaled for
+        // 1000x550)
         float btnW = 160f;
         float btnH = 45f;
         float btnX = (Constants.VIRTUAL_WIDTH - btnW) / 2f;
@@ -604,16 +615,19 @@ public class MainMenuScreen implements Screen {
         font.draw(batch, text, x + 0.6f, y);
     }
 
-    private void drawBoldText(SpriteBatch batch, String text, float x, float y, float targetWidth, int align, boolean wrap) {
+    private void drawBoldText(SpriteBatch batch, String text, float x, float y, float targetWidth, int align,
+            boolean wrap) {
         font.draw(batch, text, x, y, targetWidth, align, wrap);
         font.draw(batch, text, x + 0.6f, y, targetWidth, align, wrap);
     }
 
     /**
-     * Draws a button texture, checks for mouse interaction, and tints it with a brown tone.
+     * Draws a button texture, checks for mouse interaction, and tints it with a
+     * brown tone.
      * 30% brown for hover, 60% brown for pressed. 50% opacity gray for disabled.
      */
-    private boolean handleButton(SpriteBatch batch, Texture tex, float x, float y, float w, float h, float mouseX, float mouseY, boolean enabled) {
+    private boolean handleButton(SpriteBatch batch, Texture tex, float x, float y, float w, float h, float mouseX,
+            float mouseY, boolean enabled) {
         boolean hovered = enabled && (mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h);
         boolean pressed = hovered && Gdx.input.isTouched();
 
@@ -622,9 +636,9 @@ public class MainMenuScreen implements Screen {
         } else if (pressed) {
             batch.setColor(pressedColor); // 60% brown tint
         } else if (hovered) {
-            batch.setColor(hoverColor);   // 30% brown tint
+            batch.setColor(hoverColor); // 30% brown tint
         } else {
-            batch.setColor(Color.WHITE);  // Normal
+            batch.setColor(Color.WHITE); // Normal
         }
 
         batch.draw(tex, x, y, w, h);
@@ -639,13 +653,16 @@ public class MainMenuScreen implements Screen {
     }
 
     @Override
-    public void pause() {}
+    public void pause() {
+    }
 
     @Override
-    public void resume() {}
+    public void resume() {
+    }
 
     @Override
-    public void hide() {}
+    public void hide() {
+    }
 
     @Override
     public void dispose() {
