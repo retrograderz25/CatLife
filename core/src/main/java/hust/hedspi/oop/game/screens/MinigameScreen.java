@@ -121,7 +121,7 @@ public class MinigameScreen implements Screen {
             case "CaoMongMinigame":      return SoundManager.BGM_MG_FUNNY1;
             case "PetBegMinigame":       return SoundManager.BGM_MG_FUNNY1;
             case "BathGameMinigame":     return SoundManager.BGM_MG_FUNNY2;
-            case "NhayHipHopMinigame":   return SoundManager.BGM_MG_FUNNY2;
+            case "NhayHipHopMinigame":   return SoundManager.BGM_MG_HIPHOP;
             case "TimTieuTamMinigame":   return SoundManager.BGM_MG_FUNNY3;
             case "RhythmMinigame":       return SoundManager.BGM_MG_FUNNY3;
             // Sinh tồn / Trốn chạy

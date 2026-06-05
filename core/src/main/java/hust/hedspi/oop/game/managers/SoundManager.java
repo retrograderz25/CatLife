@@ -11,7 +11,7 @@ public class SoundManager {
 
     // Minigame BGMs
     public static final String BGM_MG_FUNNY1  = "music/minigame_funny1_bgm.mp3";   // CaoMong, PetBeg
-    public static final String BGM_MG_FUNNY2  = "music/minigame_funny2_bgm.mp3";   // Bath, HipHop
+    public static final String BGM_MG_FUNNY2  = "music/minigame_funny2_bgm.mp3";   // Bath
     public static final String BGM_MG_FUNNY3  = "music/minigame_funny3_bgm.mp3";   // Detective, Rhythm
     public static final String BGM_MG_ESCAPE1 = "music/minigame_escape1_bgm.mp3";  // ThoatKhoiCong
     public static final String BGM_MG_ESCAPE2 = "music/minigame_escape2_bgm.mp3";  // TromMeo
@@ -19,6 +19,7 @@ public class SoundManager {
     public static final String BGM_MG_FIGHT1  = "music/minigame_fight1_bgm.mp3";   // CombatMinigame (gang/stray)
     public static final String BGM_MG_FIGHT2  = "music/minigame_fight2_bgm.mp3";   // CombatDon (1v1)
     public static final String BGM_MG_BOSS    = "music/minigame_boss_bgm.mp3";     // Boss fight
+    public static final String BGM_MG_HIPHOP  = "music/hip_hop_bgm.mp3";     // Hiphop
 
     private static SoundManager instance;
 
