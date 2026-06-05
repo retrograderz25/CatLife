@@ -24,6 +24,7 @@ public class ResourceManager {
         // Chỉ gọi generateFonts nếu ứng dụng LibGDX đã khởi tạo
         if (Gdx.files != null) {
             generateFonts();
+            loadBundle();
         }
     }
     
@@ -39,15 +40,24 @@ public class ResourceManager {
             generateFonts();
         }
         if (bundle == null) {
-            bundle = I18NBundle.createBundle(Gdx.files.internal("i18n/ui"), new Locale("vi"));
+            loadBundle();
         }
     }
 
-    public I18NBundle getBundle() { return bundle; }
+    private void loadBundle() {
+        bundle = I18NBundle.createBundle(Gdx.files.internal("i18n/dialogues_vi"));
+    }
+
+    public I18NBundle getBundle() {
+        if (bundle == null) {
+            loadBundle();
+        }
+        return bundle;
+    }
 
     private void generateFonts() {
         // Trỏ tới file font tải về để trong thư mục assets/fonts/
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/zpix.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Arimo-Regular.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 
         // 1. CHUẨN BỊ KÝ TỰ TIẾNG VIỆT

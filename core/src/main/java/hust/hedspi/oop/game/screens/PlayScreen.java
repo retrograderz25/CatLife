@@ -1,120 +1,436 @@
 package hust.hedspi.oop.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import hust.hedspi.oop.game.entities.Cat;
+import hust.hedspi.oop.game.entities.TriggerZone;
+import hust.hedspi.oop.game.entities.NPC;
 import hust.hedspi.oop.game.managers.GameManager;
+import hust.hedspi.oop.game.managers.MapManager;
 import hust.hedspi.oop.game.managers.TimeManager;
+import hust.hedspi.oop.game.managers.ScreenManager;
+import hust.hedspi.oop.game.managers.SoundManager;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import hust.hedspi.oop.game.screens.MainMenuScreen;
+import hust.hedspi.oop.game.screens.hud.InteractionUI;
 import hust.hedspi.oop.game.screens.hud.PlayerHUD;
 import hust.hedspi.oop.game.screens.hud.TimeHUD;
+import hust.hedspi.oop.game.debug.DebugMenu;
+import hust.hedspi.oop.game.screens.EndingScreen;
+import hust.hedspi.oop.game.utils.EndingCondition;
 import hust.hedspi.oop.game.utils.Constants;
 
 public class PlayScreen implements Screen {
+    private OrthographicCamera gameCamera;
+    private Viewport gamePort;
     private SpriteBatch batch;
-    private ShapeRenderer shapeRenderer;
-    private OrthographicCamera camera;
-    private Viewport viewport;
-    private Stage hudStage;
-    
-    private TimeHUD timeHUD;
+    private TriggerZone currentTrigger = null; 
+
+    // UI
+    private Stage uiStage;
     private PlayerHUD playerHUD;
+    private TimeHUD timeHUD;
+    private InteractionUI interactionUI;
+    private DebugMenu debugMenu;
+    
+    // Icon
+    private Texture hasTaskIcon;
+
+    // --- PAUSE MENU ---
+    private boolean isPaused = false;
+    private Texture dimTexture;
+    private BitmapFont font;
+    private int selectedOption = 0; // 0: Chơi tiếp, 1: Quay lại Menu
+
+    // Darkness / Lighting overlay
+    private Texture darkLayerTexture;
+    private boolean isNight = false;
+    private Texture haloTexture;
+    private FrameBuffer fbo;
+    private OrthographicCamera fboCamera;
+    private float mapWidth;
+    private float mapHeight;
 
     public PlayScreen() {
-        batch = new SpriteBatch();
-        shapeRenderer = new ShapeRenderer();
-        
-        // Game Camera & Viewport
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT, camera);
-        camera.position.set(Constants.VIRTUAL_WIDTH / 2f, Constants.VIRTUAL_HEIGHT / 2f, 0);
+        this(false);
+    }
 
-        // HUD Stage
-        hudStage = new Stage(new FitViewport(Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT));
+    public PlayScreen(boolean isContinue) {
+        batch = new SpriteBatch();
         
-        // Khởi tạo các thành phần HUD
-        timeHUD = new TimeHUD();
+        gameCamera = new OrthographicCamera();
+        gamePort = new ExtendViewport(Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT, gameCamera);
+        
+        gameCamera.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
+        gameCamera.zoom = 0.20f; 
+
+        MapManager.getInstance().loadMap("images/HUD/street.tmx");
+        
+        if (!isContinue || GameManager.getInstance().getPlayer() == null) {
+            GameManager.getInstance().startNewGame(true);
+            GameManager.getInstance().getPlayer().setPosition(250f, 150f);
+        } else {
+            GameManager.getInstance().resumeGame();
+        }
+
+        uiStage = new Stage(new ScreenViewport(), batch);
         playerHUD = new PlayerHUD();
+        timeHUD = new TimeHUD();
+        interactionUI = new InteractionUI(GameManager.getInstance().getPlayer());
+        debugMenu = new DebugMenu();
         
-        // Thêm vào Stage
-        hudStage.addActor(timeHUD.getTable());
-        hudStage.addActor(playerHUD.getTable());
+        uiStage.addActor(playerHUD.getTable());
+        uiStage.addActor(timeHUD.getTable());
+        uiStage.addActor(interactionUI.getTable());
+        uiStage.addActor(debugMenu.getTable());
         
-        Gdx.input.setInputProcessor(hudStage);
+        hasTaskIcon = new Texture(Gdx.files.internal("images/HUD/Cat/has_task(stack_with_cat).png"));
+
+        // Setup Pause Menu
+        Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pix.setColor(Color.WHITE);
+        pix.fill();
+        dimTexture = new Texture(pix);
+        pix.dispose();
+        font = hust.hedspi.oop.game.managers.ResourceManager.getInstance().dialogFont;
+
+        // Setup darkness overlay & light halo
+        mapWidth = MapManager.getInstance().getMapPixelWidth();
+        mapHeight = MapManager.getInstance().getMapPixelHeight();
+        
+        darkLayerTexture = new Texture(Gdx.files.internal("images/HUD/dark_layer.png"));
+        haloTexture = createLightHaloTexture(256, 256);
+        fbo = new FrameBuffer(Pixmap.Format.RGBA8888, (int)mapWidth, (int)mapHeight, false);
+        fboCamera = new OrthographicCamera(mapWidth, mapHeight);
+        fboCamera.position.set(mapWidth / 2f, mapHeight / 2f, 0);
+        fboCamera.update();
+    }
+
+    private Texture createLightHaloTexture(int width, int height) {
+        Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
+        float centerX = width / 2f;
+        float centerY = height / 2f;
+        
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                float dx = (x - centerX) / (width / 2f);
+                float dy = (y - centerY) / (height / 2f);
+                float distSq = dx * dx + dy * dy;
+                
+                if (distSq < 1f) {
+                    float alpha = 1f - distSq;
+                    alpha = alpha * alpha; 
+                    alpha = Math.max(0f, Math.min(1f, alpha));
+                    
+                    pixmap.setColor(1f, 1f, 1f, alpha);
+                    pixmap.drawPixel(x, y);
+                } else {
+                    pixmap.setColor(0f, 0f, 0f, 0f);
+                    pixmap.drawPixel(x, y);
+                }
+            }
+        }
+        Texture tex = new Texture(pixmap);
+        pixmap.dispose();
+        return tex;
     }
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(hudStage);
+        Gdx.input.setInputProcessor(uiStage);
+        isNight = isCurrentlyNight();
+        SoundManager.getInstance().playBGM(isNight ? SoundManager.BGM_NIGHT : SoundManager.BGM_DAY);
+    }
+
+    private boolean isCurrentlyNight() {
+        int hour = TimeManager.getInstance().getInGameHour();
+        return hour >= 18 || hour < 5;
     }
 
     @Override
     public void render(float delta) {
-        // Cập nhật Logic
-        TimeManager.getInstance().update(delta);
-        GameManager.getInstance().update(delta);
-        camera.update();
-
-        // Xóa màn hình với màu xanh lá cây tượng trưng cho bãi cỏ (Map placeholder)
-        ScreenUtils.clear(0.3f, 0.7f, 0.3f, 1);
-
-        // Đặt ma trận chiếu cho game map
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        batch.setProjectionMatrix(camera.combined);
-
-        // Render "Map" placeholder bằng ShapeRenderer (Đường đi, v.v.)
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.LIGHT_GRAY);
-        // Vẽ một con đường chữ thập làm điểm nhấn
-        shapeRenderer.rect(0, Constants.VIRTUAL_HEIGHT / 2 - 50, Constants.VIRTUAL_WIDTH, 100);
-        shapeRenderer.rect(Constants.VIRTUAL_WIDTH / 2 - 50, 0, 100, Constants.VIRTUAL_HEIGHT);
-        shapeRenderer.end();
-
-        // Vẽ Entities (Mèo)
-        batch.begin();
-        if (GameManager.getInstance().getPlayer() != null) {
-            GameManager.getInstance().getPlayer().render(batch);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F12)) {
+            debugMenu.toggle();
         }
-        batch.end();
 
-        // Vẽ HUD lên trên cùng
-        hudStage.act(delta);
-        hudStage.draw();
+        // Bắt phím ESC để bật/tắt Pause Menu
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !interactionUI.isVisible() && !debugMenu.isVisible()) {
+            isPaused = !isPaused;
+            selectedOption = 0; // Trỏ vào nút đầu tiên
+        }
+
+        if (isPaused) {
+            // Điều khiển Menu Pause
+            if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W)) {
+                selectedOption = 0;
+            } else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+                selectedOption = 1;
+            } else if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                if (selectedOption == 0) {
+                    isPaused = false;
+                } else {
+                    ScreenManager.getInstance().clearAndSetScreen(new MainMenuScreen());
+                    return;
+                }
+            }
+        }
+
+        if (!interactionUI.isVisible() && !debugMenu.isVisible() && !isPaused) {
+            TimeManager.getInstance().update(delta);
+            GameManager.getInstance().update(delta);
+        }
+        
+        uiStage.act(delta);
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F11)) {
+            if (Gdx.graphics.isFullscreen()) {
+                Gdx.graphics.setWindowedMode(768, 1024);
+            } else {
+                Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+            }
+        }
+
+        // F1-F8: Trực quan hóa kết thúc nhanh (Debug Ending screens - pass shouldSave=false)
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
+            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Thánh Đổ Vỏ", 0).build(), false));
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
+            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Gia Đình Hạnh Phúc", 0).build(), false));
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
+            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Mãi Mãi Kiếp Culi", 0).build(), false));
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F4)) {
+            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Làm Đại Ca Mèo", 0).build(), false));
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F5)) {
+            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Hoàng Thượng Có Hoàng Hậu", 0).build(), false));
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F6)) {
+            ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Hoàng Thượng Thái Giám", 0).build(), false));
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F7)) {
+            ScreenManager.getInstance().pushScreen(new EndingScreen("Quán Thịt Hổ", false));
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F8)) {
+            ScreenManager.getInstance().pushScreen(new EndingScreen((EndingCondition) null, false));
+            return;
+        }
+
+        Cat player = GameManager.getInstance().getPlayer();
+
+        if (player != null && !interactionUI.isVisible() && !isPaused) {
+            float playerX = player.getX();
+            float playerY = player.getY();
+            
+            gameCamera.position.x += (playerX - gameCamera.position.x) * 0.1f;
+            gameCamera.position.y += (playerY - gameCamera.position.y) * 0.1f;
+            
+            float camHalfWidth = gamePort.getWorldWidth() * gameCamera.zoom / 2f;
+            float camHalfHeight = gamePort.getWorldHeight() * gameCamera.zoom / 2f;
+            
+            float minX = camHalfWidth;
+            float maxX = mapWidth - camHalfWidth;
+            float minY = camHalfHeight;
+            float maxY = mapHeight - camHalfHeight;
+            
+            if (maxX < minX) {
+                gameCamera.position.x = mapWidth / 2f;
+            } else {
+                gameCamera.position.x = com.badlogic.gdx.math.MathUtils.clamp(gameCamera.position.x, minX, maxX);
+            }
+            
+            if (maxY < minY) {
+                gameCamera.position.y = mapHeight / 2f;
+            } else {
+                gameCamera.position.y = com.badlogic.gdx.math.MathUtils.clamp(gameCamera.position.y, minY, maxY);
+            }
+
+            gameCamera.update();
+
+            boolean isTouchingAny = false;
+            for (TriggerZone zone : MapManager.getInstance().getTriggerZones()) {
+                if (player.getHitbox().overlaps(zone.getHitbox())) {
+                    if (zone.canTrigger()) {
+                        isTouchingAny = true;
+                        if (currentTrigger != zone) {
+                            currentTrigger = zone;
+                            interactionUI.show(zone);
+                        }
+                        break;
+                    }
+                }
+            }
+            if (!isTouchingAny) {
+                currentTrigger = null;
+                interactionUI.hide();
+            }
+        }
+
+        // Determine if it is dark (18h to 5h)
+        int hour = TimeManager.getInstance().getInGameHour();
+        boolean isDark = (hour >= 18 || hour < 5);
+
+        if (isDark != isNight) {
+            isNight = isDark;
+            SoundManager.getInstance().playBGM(isNight ? SoundManager.BGM_NIGHT : SoundManager.BGM_DAY);
+        }
+
+        if (isDark && player != null) {
+            fboCamera.update();
+            fbo.begin();
+            Gdx.gl.glClearColor(0, 0, 0, 0);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+            batch.setProjectionMatrix(fboCamera.combined);
+            batch.begin();
+            batch.draw(darkLayerTexture, 0, 0, mapWidth, mapHeight);
+
+            float haloW = 72f;
+            float haloH = 45f;
+            float haloX = player.getX() + player.getHitbox().width / 2f - haloW / 2f;
+            float haloY = player.getY() + player.getHitbox().height / 2f - haloH / 2f;
+
+            batch.setBlendFunction(GL20.GL_ZERO, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            batch.draw(haloTexture, haloX, haloY, haloW, haloH);
+            batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+            batch.end();
+            fbo.end();
+        }
+
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        MapManager.getInstance().render(gameCamera);
+
+        batch.setProjectionMatrix(gameCamera.combined);
+        batch.begin();
+        
+        for (NPC npc : MapManager.getInstance().getNpcs()) {
+            String zoneName = npc.getNpcName().substring(4);
+            boolean isVisible = false;
+            for (TriggerZone zone : MapManager.getInstance().getTriggerZones()) {
+                if (zone.getZoneName().equals(zoneName)) {
+                    isVisible = zone.canTrigger();
+                    break;
+                }
+            }
+            if (isVisible) {
+                npc.render(batch);
+            }
+        }
+
+        if (player != null) {
+            player.render(batch);
+            
+            if (currentTrigger != null) {
+                float iconSize = 10f;
+                float iconX = player.getHitbox().x + (player.getHitbox().width - iconSize) / 2f;
+                float iconY = player.getY() + 22f;
+                batch.draw(hasTaskIcon, iconX, iconY, iconSize, iconSize);
+            }
+        }
+        
+        // Draw night overlay
+        if (isDark) {
+            Texture fboTexture = fbo.getColorBufferTexture();
+            batch.draw(fboTexture, 0, 0, mapWidth, mapHeight, 0, 0, fboTexture.getWidth(), fboTexture.getHeight(), false, true);
+
+            if (player != null) {
+                float glowW = 72f;
+                float glowH = 45f;
+                float glowX = player.getX() + player.getHitbox().width / 2f - glowW / 2f;
+                float glowY = player.getY() + player.getHitbox().height / 2f - glowH / 2f;
+
+                batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+                batch.setColor(1f, 0.9f, 0.6f, 0.15f);
+                batch.draw(haloTexture, glowX, glowY, glowW, glowH);
+                batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+                batch.setColor(Color.WHITE);
+            }
+        }
+
+        batch.end();
+        
+        uiStage.draw();
+
+        if (isPaused) {
+            // Draw Pause Menu using the UI stage's camera projection for physical screen mapping
+            batch.setProjectionMatrix(uiStage.getViewport().getCamera().combined);
+            batch.begin();
+            batch.setColor(0f, 0f, 0f, 0.7f);
+            batch.draw(dimTexture, 0, 0, uiStage.getViewport().getWorldWidth(), uiStage.getViewport().getWorldHeight());
+            batch.setColor(Color.WHITE);
+            
+            float vw = uiStage.getViewport().getWorldWidth();
+            float vh = uiStage.getViewport().getWorldHeight();
+
+            font.getData().setScale(1.5f);
+            font.setColor(Color.YELLOW);
+            font.draw(batch, "BẠN CÓ MUỐN QUAY LẠI MENU?", 0, vh / 2f + 100, vw, Align.center, false);
+            
+            font.getData().setScale(1.2f);
+            font.setColor(selectedOption == 0 ? Color.YELLOW : Color.WHITE);
+            font.draw(batch, selectedOption == 0 ? "> Chơi tiếp <" : "Chơi tiếp", 0, vh / 2f + 20, vw, Align.center, false);
+            
+            font.setColor(selectedOption == 1 ? Color.YELLOW : Color.WHITE);
+            font.draw(batch, selectedOption == 1 ? "> Quay lại Menu <" : "Quay lại Menu", 0, vh / 2f - 40, vw, Align.center, false);
+            
+            font.getData().setScale(1.0f);
+            font.setColor(Color.WHITE);
+            batch.end();
+        }
     }
 
     @Override
     public void resize(int width, int height) {
-        viewport.update(width, height, false);
-        hudStage.getViewport().update(width, height, true);
+        gamePort.update(width, height);
+        uiStage.getViewport().update(width, height, true);
     }
 
     @Override
-    public void pause() {
-        GameManager.getInstance().pauseGame();
-    }
+    public void pause() { }
 
     @Override
-    public void resume() {
-        GameManager.getInstance().resumeGame();
-    }
+    public void resume() { }
 
     @Override
-    public void hide() {
-    }
+    public void hide() { }
 
     @Override
     public void dispose() {
-        batch.dispose();
-        shapeRenderer.dispose();
-        hudStage.dispose();
-        if (timeHUD != null) timeHUD.dispose();
+        SoundManager.getInstance().stopBGM();
+        if (batch != null) batch.dispose();
+        if (uiStage != null) uiStage.dispose();
         if (playerHUD != null) playerHUD.dispose();
+        if (timeHUD != null) timeHUD.dispose();
+        if (interactionUI != null) interactionUI.dispose();
+        if (debugMenu != null) debugMenu.dispose();
+        if (hasTaskIcon != null) hasTaskIcon.dispose();
+        if (darkLayerTexture != null) darkLayerTexture.dispose();
+        if (haloTexture != null) haloTexture.dispose();
+        if (fbo != null) fbo.dispose();
+        if (dimTexture != null) dimTexture.dispose();
     }
 }

@@ -4,22 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import hust.hedspi.oop.game.entities.Cat;
-import hust.hedspi.oop.game.skills.DashSkill;
-import hust.hedspi.oop.game.utils.Constants;
+import hust.hedspi.oop.game.managers.MapManager;
 
 public class RunState implements ICatState {
 
-    private float energyDrainTimer = 0f;
-    private DashSkill dashSkill;
+    private boolean isRunning = false;
 
     @Override
     public void enter(Cat cat) {
-        // System.out.println("Cat enters Run State.");
-        energyDrainTimer = 0f;
-        if (dashSkill == null) {
-            dashSkill = new DashSkill();
-        }
+        isRunning = false;
     }
 
     @Override
@@ -38,20 +33,58 @@ public class RunState implements ICatState {
         boolean isMoving = false;
         float x = cat.getX();
         float y = cat.getY();
-        float speed = cat.getSpeed();
+        
+        // Kiểm tra xem người chơi có đang giữ phím Shift không
+        isRunning = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT);
+        
+        // Nếu chạy thì dùng tốc độ gốc, nếu đi bộ thì giảm còn 60%
+        float currentSpeed = isRunning ? cat.getSpeed() : cat.getSpeed() * 0.6f;
 
-        // Xử lý kỹ năng Dash
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyJustPressed(Input.Keys.SHIFT_RIGHT)) {
-            if (dashSkill.canUse(cat)) {
-                dashSkill.use(cat);
-                speed *= 3f; // Tăng tốc độ tức thời khi dash (tùy chỉnh logic Dash thêm nếu muốn)
-            }
+        float dx = 0;
+        float dy = 0;
+
+        if ((Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP))) { dy += 1; }
+        if ((Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN))) { dy -= 1; }
+        if ((Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT))) {
+            dx -= 1;
+            cat.setFacingRight(false);
+        }
+        if ((Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT))) {
+            dx += 1;
+            cat.setFacingRight(true);
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) { y += speed * dt; isMoving = true; }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) { y -= speed * dt; isMoving = true; }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) { x -= speed * dt; isMoving = true; }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) { x += speed * dt; isMoving = true; }
+        if (dx != 0 || dy != 0) {
+            isMoving = true;
+            float length = (float) Math.sqrt(dx * dx + dy * dy);
+            dx /= length;
+            dy /= length;
+
+            float moveX = dx * currentSpeed * dt;
+            float moveY = dy * currentSpeed * dt;
+
+            float mapWidth = MapManager.getInstance().getMapPixelWidth();
+            float mapHeight = MapManager.getInstance().getMapPixelHeight();
+
+            float hitW = cat.getHitbox().width;
+            float hitH = cat.getHitbox().height;
+
+            float newX = MathUtils.clamp(x + moveX, 0, mapWidth - hitW);
+            com.badlogic.gdx.math.Rectangle testHitbox = new com.badlogic.gdx.math.Rectangle(newX, y, hitW, hitH);
+            boolean collisionX = false;
+            for (com.badlogic.gdx.math.Rectangle rect : MapManager.getInstance().getCollisionRectangles()) {
+                if (testHitbox.overlaps(rect)) { collisionX = true; break; }
+            }
+            if (!collisionX) x = newX;
+
+            float newY = MathUtils.clamp(y + moveY, 0, mapHeight - hitH);
+            testHitbox.set(x, newY, hitW, hitH);
+            boolean collisionY = false;
+            for (com.badlogic.gdx.math.Rectangle rect : MapManager.getInstance().getCollisionRectangles()) {
+                if (testHitbox.overlaps(rect)) { collisionY = true; break; }
+            }
+            if (!collisionY) y = newY;
+        }
 
         // Giàng buộc: Không cho phép nhân vật đi ra ngoài bản đồ (màn hình)
         x = Math.max(0, Math.min(x, Constants.VIRTUAL_WIDTH - cat.getWidth()));
@@ -59,26 +92,15 @@ public class RunState implements ICatState {
 
         cat.setPosition(x, y);
 
-        // Trừ thể lực theo thời gian khi di chuyển
-        if (isMoving) {
-            energyDrainTimer += dt;
-            if (energyDrainTimer >= 1.0f) { // Cứ 1 giây chạy liên tục thì trừ 2 Energy
-                cat.decreaseEnergy(2);
-                energyDrainTimer -= 1.0f;
-            }
-        } else {
-            // Nếu không bấm phím nào, tự động chuyển về trạng thái Đứng yên (IdleState)
+        if (!isMoving) {
             cat.changeState(new IdleState());
         }
     }
 
     @Override
     public void render(Cat cat, SpriteBatch batch) {
-        if (cat.getTexture() != null) {
-            batch.setColor(Color.WHITE); // Reset color
-            // Thêm hiệu ứng bóp méo nhẹ hoặc rung để thể hiện chạy nếu muốn, tạm thời vẽ bình thường
-            batch.draw(cat.getTexture(), cat.getX(), cat.getY(), cat.getWidth(), cat.getHeight());
-        }
+        String animToPlay = isRunning ? "RUN" : "WALK";
+        cat.renderAnimation(batch, animToPlay, Gdx.graphics.getDeltaTime());
     }
 
     @Override

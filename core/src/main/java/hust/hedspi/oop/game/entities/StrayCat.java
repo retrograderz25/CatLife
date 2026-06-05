@@ -1,16 +1,18 @@
 package hust.hedspi.oop.game.entities;
 
-import com.badlogic.gdx.graphics.Color;
-
 public class StrayCat extends Cat {
     
     private final int BASE_ATTACK_POWER = 10;
     private float energyRecoveryTimer = 0f;
     
     public StrayCat(float x, float y, float width, float height) {
-        super(x, y, width, height);
+        super(x, y, width, height, CatColor.ORANGE); // Mặc định là mèo hoang màu cam
         setAttackPower(BASE_ATTACK_POWER);
-        createPlaceholderTexture(Color.ORANGE); // Mèo hoang màu cam
+    }
+
+    public StrayCat(float x, float y, float width, float height, CatColor color) {
+        super(x, y, width, height, color);
+        setAttackPower(BASE_ATTACK_POWER);
     }
 
     @Override

@@ -14,9 +14,16 @@ public class IdleState implements ICatState {
 
     @Override
     public void update(Cat cat, float dt) {
-        // Chuyển sang trạng thái Chạy (RunState) nếu người chơi bấm phím điều hướng
-        if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.A) ||
-            Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+        float dx = 0;
+        float dy = 0;
+
+        if ((Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP))) { dy += 1; }
+        if ((Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN))) { dy -= 1; }
+        if ((Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT))) { dx -= 1; }
+        if ((Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT))) { dx += 1; }
+
+        // Chuyển sang trạng thái Chạy (RunState) nếu người chơi có hướng di chuyển thực sự
+        if (dx != 0 || dy != 0) {
             cat.changeState(new RunState());
         }
         
@@ -28,10 +35,7 @@ public class IdleState implements ICatState {
 
     @Override
     public void render(Cat cat, SpriteBatch batch) {
-        if (cat.getTexture() != null) {
-            batch.setColor(Color.WHITE); // Reset color
-            batch.draw(cat.getTexture(), cat.getX(), cat.getY(), cat.getWidth(), cat.getHeight());
-        }
+        cat.renderAnimation(batch, "IDLE", Gdx.graphics.getDeltaTime());
     }
 
     @Override

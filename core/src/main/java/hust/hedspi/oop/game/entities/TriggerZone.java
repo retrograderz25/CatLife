@@ -29,22 +29,30 @@ public class TriggerZone extends Entity implements IInteractable {
         this.linkedMinigame = minigame;
     }
 
+    public String getZoneName() {
+        return zoneName;
+    }
+
+    public boolean canTrigger() {
+        // 1. Kiểm tra điều kiện thời gian
+        if (timeCondition != null && !timeCondition.isCurrentlyValid()) {
+            return false;
+        }
+        // 2. Kiểm tra điều kiện tiên quyết từ cốt truyện
+        if (!hust.hedspi.oop.game.managers.StoryManager.getInstance().isZoneUnlocked(zoneName)) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public void onInteract(Cat player) {
-        // Kiểm tra xem có điều kiện thời gian không và thời gian có hợp lệ không
-        if (timeCondition != null && !timeCondition.isCurrentlyValid()) {
-            System.out.println("TriggerZone [" + zoneName + "]: Sự kiện chưa mở vào giờ này.");
-            // TODO: Bắn thông báo UI lên màn hình "Hãy quay lại sau!"
-            return;
-        }
-
         // Nếu hợp lệ và có Minigame được liên kết, mở Minigame
         if (linkedMinigame != null) {
-            System.out.println("TriggerZone [" + zoneName + "]: Kích hoạt Minigame!");
+            System.out.println("TriggerZone [" + zoneName + "]: Trigger Minigame!");
             ScreenManager.getInstance().pushScreen(new MinigameScreen(linkedMinigame));
         } else {
-            System.out.println("TriggerZone [" + zoneName + "]: Tương tác thành công (Story Event)!");
-            // TODO: Kích hoạt thoại hoặc sự kiện cốt truyện
+            System.out.println("TriggerZone [" + zoneName + "]: Story Event!");
         }
     }
 

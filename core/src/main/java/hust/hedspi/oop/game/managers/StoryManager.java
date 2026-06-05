@@ -116,23 +116,24 @@ public class StoryManager {
     private void triggerInstantGameOver(String reason) {
         System.out.println("INSTANT GAME OVER: " + reason);
         GameManager.getInstance().pauseGame();
-        // Set state directly or handle it
+        ScreenManager.getInstance().pushScreen(new hust.hedspi.oop.game.screens.EndingScreen(reason));
     }
 
-    public boolean isMinigameUnlocked(MinigameID requestedGame) {
-        switch (requestedGame) {
-            case LOVE_DETECTIVE:
+    public boolean isZoneUnlocked(String zoneName) {
+        switch (zoneName) {
+            case "Hotel Gate": // LOVE_DETECTIVE
                 // Phải thắng HipHop mới mở game Thám tử
-                return playerHistory.get(MinigameID.LOVE_HIPHOP) == GameResult.WIN;
-            case GANG_FIGHT_BOSS:
+                return playerHistory.getOrDefault(MinigameID.LOVE_HIPHOP, GameResult.UNPLAYED) == GameResult.WIN;
+            case "Warzone2": // GANG_FIGHT_BOSS
                 // Phải thắng Đánh hội đồng 1vn mới được đập Đại ca
-                return playerHistory.get(MinigameID.GANG_FIGHT_1VN) == GameResult.WIN;
-            case PET_BATH:
-            case PET_ESCAPE_VET:
-                // Phải làm nũng thành công mới đi tắm và đi thú y
-                return playerHistory.get(MinigameID.PET_BEG) == GameResult.WIN;
+                return playerHistory.getOrDefault(MinigameID.GANG_FIGHT_1VN, GameResult.UNPLAYED) == GameResult.WIN;
+            case "Bubble": // PET_BATH
+            case "Office Gate": // PET_ESCAPE_VET
+                // Phải làm nũng thành công (Adopt) mới đi tắm và đi thú y
+                return playerHistory.getOrDefault(MinigameID.PET_BEG, GameResult.UNPLAYED) == GameResult.WIN;
             default:
-                return true; // Các game mặc định (thoát cống, võ mèo lang thang...) luôn mở
+                // Các game mặc định (thoát cống, võ mèo lang thang, adopt, le-nin, caomong, exciter) luôn mở về mặt cốt truyện
+                return true; 
         }
     }
 
@@ -140,11 +141,11 @@ public class StoryManager {
     public EndingCondition evaluateFinalEnding(Cat player) {
         for (EndingCondition ending : endingsDatabase) {
             if (ending.isSatisfied(playerHistory)) {
-                System.out.println("ACHIEVED ENDING: " + ending.getEndingName());
+                ScreenManager.getInstance().pushScreen(new hust.hedspi.oop.game.screens.EndingScreen(ending));
                 return ending;
             }
         }
-        System.out.println("ACHIEVED ENDING: Sống sót ngoài đường (Default)");
+        ScreenManager.getInstance().pushScreen(new hust.hedspi.oop.game.screens.EndingScreen((EndingCondition) null));
         return null; 
     }
 }

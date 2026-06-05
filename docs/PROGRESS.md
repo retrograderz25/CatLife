@@ -19,15 +19,25 @@
 ## 🟨 PHASE 2: GAMEPLAY & TÍNH NĂNG (Đang Chuẩn Bị)
 *Giai đoạn thiết kế Bản đồ, va chạm vật lý, giao diện chi tiết và hệ thống NPC.*
 
-- [ ] Tích hợp thư viện Map (TiledMap `*.tmx`).
-- [ ] Khởi tạo Box2D hoặc hệ thống xử lý va chạm cơ bản.
-- [ ] Giao diện (Scene2D UI) cho Main Menu, Inventory và Hộp thoại.
+- [x] Tích hợp thư viện Map (TiledMap `*.tmx`). Cài đặt `PlayScreen` và `MapManager`.
+- [x] Khởi tạo hệ thống xử lý va chạm cơ bản (AABB Wall Sliding trong `RunState`).
+- [x] Giao diện (Scene2D UI) cho Main Menu, Inventory và Hộp thoại. (Đã bổ sung tính năng F11 chuyển đổi Windowed/Fullscreen thông minh).
+- [x] Hoàn thiện Map rendering: Tích hợp `ExtendViewport` xóa viền đen (Letterboxing), Fix lỗi lệch trục Y của TiledMap (`offsety`).
+- [x] Hoàn thiện giao diện HUD: `PlayerHUD` (chỉ số sinh tồn) và `TimeHUD` (đồng hồ thời gian) sử dụng cấu trúc UI Observer và khung `NinePatch` co giãn chuẩn xác.
+- [x] Hệ thống InteractionUI: Hiển thị icon trên đầu Mèo khi đứng vào TriggerZone, hiện popup xác nhận nhiệm vụ (load text từ `I18NBundle`) và cho phép điều khiển bằng chuột/bàn phím.
+- [x] **Minigame Adopt (Nhận Nuôi):** Tạo hộp thoại tương tác (Đồng ý/Từ chối), tích hợp luồng StoryManager để mở khóa các minigame nhánh Pet. Đã xóa bỏ cơ chế Coming Soon.
+- [x] **NPC System:** Thêm NPC đứng tại các vị trí Trigger trên bản đồ, hỗ trợ hiển thị tên và lời thoại riêng biệt.
+- [x] **UI Polish:** Cải thiện `InteractionUI` với Overlay làm mờ màn hình, bố cục tập trung và hiển thị tên NPC.
+- [x] **Hiệu ứng Ngày/Đêm & Hào quang:** Phủ lớp bóng tối (`dark_layer.png`) lên bản đồ từ 18:00 đến 05:00 sáng. Sử dụng FrameBuffer (FBO) đục lỗ tạo hào quang elip dịu mắt di chuyển bám sát mèo, và thêm ánh sáng vàng ấm nhẹ (Additive Blending).
 - [ ] Hệ thống hộp thoại RPG (Dialogue System với Typewriter Effect).
 - [ ] Gắn kết AssetManager đầy đủ cho SoundManager.
 - [ ] Phát triển công cụ F12 (Developer Debug Kit).
 
 ## 🟥 PHASE 3: CONTENT & ĐÁNH BÓNG (Tương Lai)
-- [ ] Vẽ / Tích hợp toàn bộ Sprite Animation.
-- [x] **Minigame Cào Móng – `CaoMongMinigame` (Strategy + I18N + StoryManager):** Minigame đầu tiên hoàn chỉnh: background, board, 4 zone mũi tên xoay đúng hướng bằng `TextureRegion` rotation, bàn tay mèo flash khi bấm đúng, đếm ngược 30 giây, game over overlay. Tuân thủ: font lấy từ `ResourceManager`, text từ `I18NBundle` (`assets/i18n/ui_vi.properties`), hằng số trong `Constants`, kết quả ghi vào `StoryManager.recordResult(DAILY_SCRATCH, won)`.
-- [ ] Tích hợp âm thanh, BGM.
+- [x] Vẽ / Tích hợp toàn bộ Sprite Animation (Đã tích hợp cơ chế load SpriteSheet và chuyển đổi trạng thái Animation cho Cat).
+- [x] Sửa mượt animation và di chuyển (Fix UV mutation glitch bằng Scene2D draw flip, chuẩn hóa vector di chuyển chéo, và fix flickering state).
+- [x] **Minigame Cào Móng – `CaoMongMinigame` (Strategy + I18N + StoryManager):** Minigame đầu tiên hoàn chỉnh: background, board, 4 zone mũi tên xoay đúng hướng bằng `TextureRegion` rotation, bàn tay mèo flash khi bấm đúng, đếm ngược 30 giây, game over overlay.
+- [x] **Hệ thống Âm thanh BGM:** Tích hợp `SoundManager` với 13 file nhạc cho Menu, PlayScreen (ngày/đêm), tất cả 12 Minigame và EndingScreen.
+- [ ] Code logic cho các Minigame cụ thể còn lại.
+- [x] Tích hợp âm thanh, BGM.
 - [ ] Cân bằng game (Chỉ số hồi/tiêu hao năng lượng, độ khó minigame).

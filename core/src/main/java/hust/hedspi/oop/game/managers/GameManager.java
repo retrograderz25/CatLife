@@ -27,9 +27,9 @@ public class GameManager {
         TimeManager.getInstance().resetTime();
         
         if (isStrayCat) {
-            player = new StrayCat(400, 300, 64, 64); // Center of screen, larger
+            player = new StrayCat(400, 300, 12, 12, Cat.CatColor.ORANGE); // Center of screen, larger
         } else {
-            player = new HouseCat(400, 300, 64, 64);
+            player = new HouseCat(400, 300, 12, 12, Cat.CatColor.WHITE);
         }
         
         currentState = GameState.PLAYING;

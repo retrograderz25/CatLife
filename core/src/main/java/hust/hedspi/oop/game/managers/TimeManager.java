@@ -49,26 +49,52 @@ public class TimeManager implements ISubject {
         notifyObservers();
     }
 
+    public void addTime(int minutes) {
+        if (minutes < 0) {
+            inGameMinute += minutes;
+            while (inGameMinute < 0) {
+                inGameMinute += 60;
+                inGameHour--;
+                if (inGameHour < 0) {
+                    inGameHour += 24;
+                }
+            }
+        } else {
+            inGameMinute += minutes;
+            while (inGameMinute >= 60) {
+                inGameMinute -= 60;
+                inGameHour++;
+                if (inGameHour >= 24) {
+                    inGameHour -= 24;
+                    currentDayOfWeek = currentDayOfWeek.next();
+                }
+            }
+        }
+        notifyObservers();
+    }
+
     public void update(float deltaTime) {
         timer += deltaTime;
-        if (timer >= Constants.REAL_SECONDS_PER_IN_GAME_MINUTE) {
-            timer -= Constants.REAL_SECONDS_PER_IN_GAME_MINUTE;
+        // Cập nhật mỗi 10 phút trong game (10 * 0.5s = 5s ngoài đời thực)
+        if (timer >= Constants.REAL_SECONDS_PER_IN_GAME_MINUTE * 10) {
+            timer -= Constants.REAL_SECONDS_PER_IN_GAME_MINUTE * 10;
             incrementTime();
         }
     }
 
     private void incrementTime() {
-        inGameMinute++;
+        inGameMinute += 10;
         if (inGameMinute >= 60) {
             inGameMinute = 0;
             inGameHour++;
-            notifyObservers();
             
             if (inGameHour >= 24) {
                 inGameHour = 0;
                 currentDayOfWeek = currentDayOfWeek.next();
             }
         }
+        // Gọi notifyObservers() ở đây để HUD cập nhật mỗi lần nhảy 10 phút
+        notifyObservers();
     }
 
     public int getInGameHour() { return inGameHour; }
