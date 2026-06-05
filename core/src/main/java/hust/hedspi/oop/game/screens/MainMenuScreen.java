@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import hust.hedspi.oop.game.managers.GameManager;
 import hust.hedspi.oop.game.managers.ResourceManager;
 import hust.hedspi.oop.game.managers.ScreenManager;
+import hust.hedspi.oop.game.managers.SoundManager;
 import hust.hedspi.oop.game.utils.Constants;
 
 public class MainMenuScreen implements Screen {
@@ -152,6 +153,7 @@ public class MainMenuScreen implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(null); // Direct mouse testing inside render
+        SoundManager.getInstance().playBGM(SoundManager.BGM_MENU);
     }
 
     @Override

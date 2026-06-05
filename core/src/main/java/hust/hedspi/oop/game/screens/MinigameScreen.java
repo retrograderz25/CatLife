@@ -18,6 +18,7 @@ import hust.hedspi.oop.game.minigames.IMinigameStrategy;
 import hust.hedspi.oop.game.managers.ResourceManager;
 import hust.hedspi.oop.game.managers.ScreenManager;
 import hust.hedspi.oop.game.managers.GameManager;
+import hust.hedspi.oop.game.managers.SoundManager;
 import hust.hedspi.oop.game.utils.Constants;
 import hust.hedspi.oop.game.debug.DebugMenu;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -109,8 +110,30 @@ public class MinigameScreen implements Screen {
     @Override
     public void show() {
         strategy.start();
-        // Để Stage bắt sự kiện click cho DebugMenu
         Gdx.input.setInputProcessor(debugStage);
+        SoundManager.getInstance().playBGM(getBGMForStrategy(strategy));
+    }
+
+    private String getBGMForStrategy(IMinigameStrategy s) {
+        if (s == null) return SoundManager.BGM_MG_FUNNY1;
+        switch (s.getClass().getSimpleName()) {
+            // Hài hước / Lãng mạn
+            case "CaoMongMinigame":      return SoundManager.BGM_MG_FUNNY1;
+            case "PetBegMinigame":       return SoundManager.BGM_MG_FUNNY1;
+            case "BathGameMinigame":     return SoundManager.BGM_MG_FUNNY2;
+            case "NhayHipHopMinigame":   return SoundManager.BGM_MG_FUNNY2;
+            case "TimTieuTamMinigame":   return SoundManager.BGM_MG_FUNNY3;
+            case "RhythmMinigame":       return SoundManager.BGM_MG_FUNNY3;
+            // Sinh tồn / Trốn chạy
+            case "ThoatKhoiCongMinigame": return SoundManager.BGM_MG_ESCAPE1;
+            case "TromMeoMinigame":       return SoundManager.BGM_MG_ESCAPE2;
+            case "ThoatKhoiLongMinigame": return SoundManager.BGM_MG_ESCAPE3;
+            case "TronKimTiemMinigame":   return SoundManager.BGM_MG_ESCAPE3;
+            // Đánh nhau / Băng đảng
+            case "CombatDonMinigame":    return SoundManager.BGM_MG_FIGHT2;
+            case "CombatMinigame":       return SoundManager.BGM_MG_BOSS;
+            default:                     return SoundManager.BGM_MG_FUNNY1;
+        }
     }
 
     @Override
@@ -332,6 +355,7 @@ public class MinigameScreen implements Screen {
 
     @Override
     public void dispose() {
+        SoundManager.getInstance().stopBGM();
         batch.dispose();
         if (dimTexture != null) {
             dimTexture.dispose();

@@ -23,6 +23,7 @@ import hust.hedspi.oop.game.managers.GameManager;
 import hust.hedspi.oop.game.managers.ResourceManager;
 import hust.hedspi.oop.game.managers.SaveManager;
 import hust.hedspi.oop.game.managers.ScreenManager;
+import hust.hedspi.oop.game.managers.SoundManager;
 import hust.hedspi.oop.game.utils.Constants;
 import hust.hedspi.oop.game.utils.EndingCondition;
 
@@ -185,6 +186,7 @@ public class EndingScreen implements Screen {
 
     @Override
     public void show() {
+        SoundManager.getInstance().playBGM(SoundManager.BGM_ENDING);
     }
 
     @Override
@@ -215,6 +217,7 @@ public class EndingScreen implements Screen {
 
     @Override
     public void dispose() {
+        SoundManager.getInstance().stopBGM();
         batch.dispose();
         stage.dispose();
         if (endingBgTexture != null) {
