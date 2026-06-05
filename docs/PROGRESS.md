@@ -36,6 +36,8 @@
 ## 🟥 PHASE 3: CONTENT & ĐÁNH BÓNG (Tương Lai)
 - [x] Vẽ / Tích hợp toàn bộ Sprite Animation (Đã tích hợp cơ chế load SpriteSheet và chuyển đổi trạng thái Animation cho Cat).
 - [x] Sửa mượt animation và di chuyển (Fix UV mutation glitch bằng Scene2D draw flip, chuẩn hóa vector di chuyển chéo, và fix flickering state).
-- [ ] Code logic cho các Minigame cụ thể.
-- [ ] Tích hợp âm thanh, BGM.
+- [x] **Minigame Cào Móng – `CaoMongMinigame` (Strategy + I18N + StoryManager):** Minigame đầu tiên hoàn chỉnh: background, board, 4 zone mũi tên xoay đúng hướng bằng `TextureRegion` rotation, bàn tay mèo flash khi bấm đúng, đếm ngược 30 giây, game over overlay.
+- [x] **Hệ thống Âm thanh BGM:** Tích hợp `SoundManager` với 13 file nhạc cho Menu, PlayScreen (ngày/đêm), tất cả 12 Minigame và EndingScreen.
+- [ ] Code logic cho các Minigame cụ thể còn lại.
+- [x] Tích hợp âm thanh, BGM.
 - [ ] Cân bằng game (Chỉ số hồi/tiêu hao năng lượng, độ khó minigame).

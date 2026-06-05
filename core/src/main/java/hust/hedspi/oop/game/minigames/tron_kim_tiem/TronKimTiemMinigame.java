@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.I18NBundle;
 import hust.hedspi.oop.game.managers.ResourceManager;
+import hust.hedspi.oop.game.managers.SoundManager;
 import hust.hedspi.oop.game.managers.StoryManager;
 import hust.hedspi.oop.game.minigames.IMinigameStrategy;
 import hust.hedspi.oop.game.utils.Constants;
@@ -225,6 +226,7 @@ public class TronKimTiemMinigame implements IMinigameStrategy {
         }
 
         boolean moving = (dx != 0 || dy != 0);
+        if (moving) SoundManager.getInstance().playSFXThrottled(SoundManager.SFX_ESCAPE_RUN, 0.3f);
         catX += dx;
         catY += dy;
 
@@ -252,6 +254,7 @@ public class TronKimTiemMinigame implements IMinigameStrategy {
         if (spawnTimer >= currentSpawnInterval) {
             spawnTimer = 0f;
             bossShootFlash = 1f; // Boss sáng bừng lên khi bắn
+            SoundManager.getInstance().playSFX(SoundManager.SFX_VET_SYRINGE);
 
             // Xác định số đạn bắn cùng lúc (Tăng đáng kể mật độ)
             int count = 1;

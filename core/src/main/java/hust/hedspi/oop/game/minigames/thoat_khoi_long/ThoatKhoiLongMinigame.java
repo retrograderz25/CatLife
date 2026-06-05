@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.I18NBundle;
 import hust.hedspi.oop.game.managers.ResourceManager;
+import hust.hedspi.oop.game.managers.SoundManager;
 import hust.hedspi.oop.game.managers.StoryManager;
 import hust.hedspi.oop.game.minigames.IMinigameStrategy;
 import hust.hedspi.oop.game.utils.MinigameID;
@@ -184,6 +185,7 @@ public class ThoatKhoiLongMinigame implements IMinigameStrategy {
         }
 
         if (keyInput) {
+            SoundManager.getInstance().playSFXThrottled(SoundManager.SFX_CAGE_RATTLE, 0.2f);
             slideTile(targetRow, targetCol);
         }
 

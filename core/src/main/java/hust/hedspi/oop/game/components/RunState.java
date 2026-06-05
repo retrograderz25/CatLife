@@ -34,59 +34,45 @@ public class RunState implements ICatState {
 
         if ((Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP))) { dy += 1; }
         if ((Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN))) { dy -= 1; }
-        if ((Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT))) { 
-            dx -= 1; 
+        if ((Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT))) {
+            dx -= 1;
             cat.setFacingRight(false);
         }
-        if ((Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT))) { 
-            dx += 1; 
+        if ((Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT))) {
+            dx += 1;
             cat.setFacingRight(true);
         }
 
         if (dx != 0 || dy != 0) {
             isMoving = true;
-            // Normalize for diagonal movement
             float length = (float) Math.sqrt(dx * dx + dy * dy);
             dx /= length;
             dy /= length;
-            
+
             float moveX = dx * currentSpeed * dt;
             float moveY = dy * currentSpeed * dt;
 
-            // Map boundaries
             float mapWidth = MapManager.getInstance().getMapPixelWidth();
             float mapHeight = MapManager.getInstance().getMapPixelHeight();
-            
+
             float hitW = cat.getHitbox().width;
             float hitH = cat.getHitbox().height;
 
-            // 1. Test X-axis movement
             float newX = MathUtils.clamp(x + moveX, 0, mapWidth - hitW);
             com.badlogic.gdx.math.Rectangle testHitbox = new com.badlogic.gdx.math.Rectangle(newX, y, hitW, hitH);
             boolean collisionX = false;
             for (com.badlogic.gdx.math.Rectangle rect : MapManager.getInstance().getCollisionRectangles()) {
-                if (testHitbox.overlaps(rect)) {
-                    collisionX = true;
-                    break;
-                }
+                if (testHitbox.overlaps(rect)) { collisionX = true; break; }
             }
-            if (!collisionX) {
-                x = newX;
-            }
+            if (!collisionX) x = newX;
 
-            // 2. Test Y-axis movement
             float newY = MathUtils.clamp(y + moveY, 0, mapHeight - hitH);
             testHitbox.set(x, newY, hitW, hitH);
             boolean collisionY = false;
             for (com.badlogic.gdx.math.Rectangle rect : MapManager.getInstance().getCollisionRectangles()) {
-                if (testHitbox.overlaps(rect)) {
-                    collisionY = true;
-                    break;
-                }
+                if (testHitbox.overlaps(rect)) { collisionY = true; break; }
             }
-            if (!collisionY) {
-                y = newY;
-            }
+            if (!collisionY) y = newY;
         }
 
         cat.setPosition(x, y);

@@ -3,6 +3,7 @@ package hust.hedspi.oop.game.entities;
 public class StrayCat extends Cat {
     
     private final int BASE_ATTACK_POWER = 10;
+    private float energyRecoveryTimer = 0f;
     
     public StrayCat(float x, float y, float width, float height) {
         super(x, y, width, height, CatColor.ORANGE); // Mặc định là mèo hoang màu cam
@@ -25,7 +26,13 @@ public class StrayCat extends Cat {
         
         // Hồi phục thể lực theo thời gian
         if (getEnergy() < 100) {
-            increaseEnergy((int)(5.0f * dt)); // Hồi 5 energy mỗi giây
+            energyRecoveryTimer += dt;
+            if (energyRecoveryTimer >= 0.2f) { // Hồi 5 energy mỗi giây -> 1 energy mỗi 0.2 giây
+                increaseEnergy(1);
+                energyRecoveryTimer -= 0.2f;
+            }
+        } else {
+            energyRecoveryTimer = 0f;
         }
     }
 }

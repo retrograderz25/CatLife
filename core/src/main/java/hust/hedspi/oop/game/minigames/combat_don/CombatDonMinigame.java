@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.I18NBundle;
 import hust.hedspi.oop.game.managers.ResourceManager;
+import hust.hedspi.oop.game.managers.SoundManager;
 import hust.hedspi.oop.game.managers.StoryManager;
 import hust.hedspi.oop.game.minigames.IMinigameStrategy;
 import hust.hedspi.oop.game.utils.MinigameID;
@@ -88,6 +89,7 @@ public class CombatDonMinigame implements IMinigameStrategy {
 
     @Override
     public void start() {
+        SoundManager.getInstance().playSFX(SoundManager.SFX_CAT_HISS);
         screenW = hust.hedspi.oop.game.utils.Constants.VIRTUAL_WIDTH;
         screenH = hust.hedspi.oop.game.utils.Constants.VIRTUAL_HEIGHT;
 
@@ -198,6 +200,7 @@ public class CombatDonMinigame implements IMinigameStrategy {
 
             if (!hand.hit && !hand.missed && hand.y < TARGET_Y - TOLERANCE) {
                 hand.missed = true;
+                SoundManager.getInstance().playSFX(SoundManager.SFX_FIGHT_MISS);
                 missCount++;
                 if (missCount >= 5) {
                     endGame(false);
@@ -230,12 +233,14 @@ public class CombatDonMinigame implements IMinigameStrategy {
 
         if (targetHand != null) {
             targetHand.hit = true;
+            SoundManager.getInstance().playSFX(SoundManager.SFX_FIGHT_PUNCH);
         }
     }
 
     private void endGame(boolean playerWon) {
         won = playerWon;
         gameOver = true;
+        if (playerWon) SoundManager.getInstance().playSFX(SoundManager.SFX_FIGHT_HEAVY);
         StoryManager.getInstance().recordResult(MinigameID.GANG_FIGHT_1VN, won);
     }
 

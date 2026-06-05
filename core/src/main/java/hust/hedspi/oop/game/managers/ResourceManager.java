@@ -7,16 +7,17 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.utils.I18NBundle;
 import hust.hedspi.oop.game.utils.Constants;
+import java.util.Locale;
 
 public class ResourceManager {
     private static ResourceManager instance;
     
-    // Khai báo các loại Font
+    // Fonts
     public BitmapFont dialogFont;
     public BitmapFont nameFont;
     public BitmapFont hudFont;
 
-    // Bundle ngôn ngữ
+    // I18N bundle (text tiếng Việt – không hardcode string trong .java)
     private I18NBundle bundle;
 
     private ResourceManager() {

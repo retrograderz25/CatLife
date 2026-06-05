@@ -17,6 +17,7 @@ import hust.hedspi.oop.game.managers.GameManager;
 import hust.hedspi.oop.game.managers.MapManager;
 import hust.hedspi.oop.game.managers.TimeManager;
 import hust.hedspi.oop.game.managers.ScreenManager;
+import hust.hedspi.oop.game.managers.SoundManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -56,6 +57,7 @@ public class PlayScreen implements Screen {
 
     // Darkness / Lighting overlay
     private Texture darkLayerTexture;
+    private boolean isNight = false;
     private Texture haloTexture;
     private FrameBuffer fbo;
     private OrthographicCamera fboCamera;
@@ -148,7 +150,15 @@ public class PlayScreen implements Screen {
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(uiStage); 
+        Gdx.input.setInputProcessor(uiStage);
+        isNight = isCurrentlyNight();
+        SoundManager.getInstance().playBGM(isNight ? SoundManager.BGM_NIGHT : SoundManager.BGM_DAY);
+        SoundManager.getInstance().playAmbient(isNight ? SoundManager.AMB_NIGHT : SoundManager.AMB_DAY);
+    }
+
+    private boolean isCurrentlyNight() {
+        int hour = TimeManager.getInstance().getInGameHour();
+        return hour >= 18 || hour < 5;
     }
 
     @Override
@@ -282,6 +292,17 @@ public class PlayScreen implements Screen {
         int hour = TimeManager.getInstance().getInGameHour();
         boolean isDark = (hour >= 18 || hour < 5);
 
+        if (isDark != isNight) {
+            isNight = isDark;
+            SoundManager.getInstance().playBGM(isNight ? SoundManager.BGM_NIGHT : SoundManager.BGM_DAY);
+            SoundManager.getInstance().playAmbient(isNight ? SoundManager.AMB_NIGHT : SoundManager.AMB_DAY);
+        }
+
+        // Footstep SFX khi mèo đang di chuyển
+        if (player != null && player.getCurrentState() instanceof hust.hedspi.oop.game.components.RunState) {
+            SoundManager.getInstance().playSFXThrottled(SoundManager.SFX_CAT_FOOTSTEPS, 0.35f);
+        }
+
         if (isDark && player != null) {
             fboCamera.update();
             fbo.begin();
@@ -406,6 +427,8 @@ public class PlayScreen implements Screen {
 
     @Override
     public void dispose() {
+        SoundManager.getInstance().stopBGM();
+        SoundManager.getInstance().stopAmbient();
         if (batch != null) batch.dispose();
         if (uiStage != null) uiStage.dispose();
         if (playerHUD != null) playerHUD.dispose();
