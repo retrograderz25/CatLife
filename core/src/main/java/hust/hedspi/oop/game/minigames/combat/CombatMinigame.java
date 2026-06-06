@@ -84,6 +84,7 @@ public class CombatMinigame implements IMinigameStrategy {
     private float spawnTimer;
     private float timer;
     private int missCount;
+    private int currentMissSoundIndex = 1;
     private boolean gameOver, won, exitRequested;
 
     // Hiệu ứng tương tác: Hiện bàn tay mèo bảo vệ khi người chơi bấm nút/đỡ đòn
@@ -115,6 +116,7 @@ public class CombatMinigame implements IMinigameStrategy {
         spawnTimer = 0f;
         timer = 0f;
         missCount = 0;
+        currentMissSoundIndex = 1;
         gameOver = false;
         won = false;
         exitRequested = false;
@@ -219,7 +221,9 @@ public class CombatMinigame implements IMinigameStrategy {
             // Nếu đi quá khung đỡ đòn mà không đỡ được
             if (!hand.hit && !hand.missed && hand.y < TARGET_Y - TOLERANCE) {
                 hand.missed = true;
-                SoundManager.getInstance().playSFX(SoundManager.SFX_FIGHT_MISS);
+                SoundManager.getInstance().playSFX("sounds/Champion/Champions_2021_Kill_" + currentMissSoundIndex + ".mp3");
+                currentMissSoundIndex++;
+                if (currentMissSoundIndex > 5) currentMissSoundIndex = 1;
                 missCount++;
                 if (missCount >= 5) {
                     endGame(false);
@@ -260,7 +264,11 @@ public class CombatMinigame implements IMinigameStrategy {
     private void endGame(boolean playerWon) {
         won = playerWon;
         gameOver = true;
-        if (playerWon) SoundManager.getInstance().playSFX(SoundManager.SFX_FIGHT_HEAVY);
+        if (playerWon) {
+            SoundManager.getInstance().playSFX(SoundManager.SFX_FIGHT_HEAVY);
+        } else {
+            SoundManager.getInstance().playBGM("sounds/Champion/champions-2021-finisher-music.mp3");
+        }
         StoryManager.getInstance().recordResult(MinigameID.DAILY_FIGHT_STRAY, won);
     }
 

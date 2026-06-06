@@ -78,6 +78,7 @@ public class CombatDonMinigame implements IMinigameStrategy {
     private float spawnTimer;
     private float timer;
     private int missCount;
+    private int currentMissSoundIndex = 1;
     private boolean gameOver, won, exitRequested;
 
     private float[] catHandActiveTimer = new float[3];
@@ -107,6 +108,7 @@ public class CombatDonMinigame implements IMinigameStrategy {
         spawnTimer = 0f;
         timer = 0f;
         missCount = 0;
+        currentMissSoundIndex = 1;
         gameOver = false;
         won = false;
         exitRequested = false;
@@ -200,7 +202,9 @@ public class CombatDonMinigame implements IMinigameStrategy {
 
             if (!hand.hit && !hand.missed && hand.y < TARGET_Y - TOLERANCE) {
                 hand.missed = true;
-                SoundManager.getInstance().playSFX(SoundManager.SFX_FIGHT_MISS);
+                SoundManager.getInstance().playSFX("sounds/Champion/Champions_2021_Kill_" + currentMissSoundIndex + ".mp3");
+                currentMissSoundIndex++;
+                if (currentMissSoundIndex > 5) currentMissSoundIndex = 1;
                 missCount++;
                 if (missCount >= 5) {
                     endGame(false);
@@ -240,7 +244,11 @@ public class CombatDonMinigame implements IMinigameStrategy {
     private void endGame(boolean playerWon) {
         won = playerWon;
         gameOver = true;
-        if (playerWon) SoundManager.getInstance().playSFX(SoundManager.SFX_FIGHT_HEAVY);
+        if (playerWon) {
+            SoundManager.getInstance().playSFX(SoundManager.SFX_FIGHT_HEAVY);
+        } else {
+            SoundManager.getInstance().playBGM("sounds/Champion/champions-2021-finisher-music.mp3");
+        }
         StoryManager.getInstance().recordResult(MinigameID.GANG_FIGHT_1VN, won);
     }
 
