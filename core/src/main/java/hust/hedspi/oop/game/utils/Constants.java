@@ -11,7 +11,7 @@ public class Constants {
         "0123456789! @#$%^&*()_+-=[]{}|;':,./<>?\"\\ ";
 
     // Thời gian
-    public static final float REAL_SECONDS_PER_IN_GAME_MINUTE = 0.25f; 
+    public static final float REAL_SECONDS_PER_IN_GAME_MINUTE = 0.2f; 
     public static final int START_HOUR = 6;
     public static final int START_MINUTE = 0;
     
