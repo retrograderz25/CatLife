@@ -269,7 +269,7 @@ public class CombatMinigame implements IMinigameStrategy {
         } else {
             SoundManager.getInstance().playBGM("sounds/Champion/champions-2021-finisher-music.mp3");
         }
-        StoryManager.getInstance().recordResult(MinigameID.DAILY_FIGHT_STRAY, won);
+        StoryManager.getInstance().recordResult(MinigameID.GANG_FIGHT_BOSS, won);
     }
 
     @Override
@@ -451,6 +451,6 @@ public class CombatMinigame implements IMinigameStrategy {
     public void forceEnd(boolean win) {
         this.won = win;
         this.gameOver = true;
-        hust.hedspi.oop.game.managers.StoryManager.getInstance().recordResult(MinigameID.DAILY_FIGHT_STRAY, win);
+        hust.hedspi.oop.game.managers.StoryManager.getInstance().recordResult(MinigameID.GANG_FIGHT_BOSS, win);
     }
 }

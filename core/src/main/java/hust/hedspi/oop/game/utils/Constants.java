@@ -19,27 +19,15 @@ public class Constants {
     // CÁC CHỈ SỐ SINH TỒN (GAME BALANCE STATS)
     // ==========================================
     public static final int MAX_HP = 100;
-    public static final int MAX_HUNGER = 100;
-    public static final int MAX_ENERGY = 100;
 
     public static final float BASE_SPEED = 150f;
     public static final int BASE_ATTACK_POWER = 10;
     public static final int LOW_HP_THRESHOLD = 30; // Mức máu thấp để kích hoạt nội tại
 
-    // Tốc độ phục hồi Thể lực (Energy)
-    public static final float STRAY_CAT_ENERGY_RECOVERY_RATE = 5.0f; // Giây thực tế để hồi 1 Energy (Chậm)
-    public static final float HOUSE_CAT_ENERGY_RECOVERY_RATE = 0.2f; // Giây thực tế để hồi 1 Energy 
-    public static final float SLEEP_ENERGY_RECOVERY_RATE = 1.0f;     // Giây thực tế để hồi SLEEP_ENERGY_RECOVERY_AMOUNT
-    public static final int SLEEP_ENERGY_RECOVERY_AMOUNT = 5;
-
     // Phần thưởng / Hình phạt Minigame
     public static final int MINIGAME_WIN_HP_REWARD = 20;
-    public static final int MINIGAME_WIN_ENERGY_REWARD = 20;
-    public static final int MINIGAME_WIN_HUNGER_PENALTY = 10; // Trừ độ đói khi chơi xong (dù thắng)
-    
+
     public static final int MINIGAME_LOSE_HP_PENALTY = 20;
-    public static final int MINIGAME_LOSE_ENERGY_PENALTY = 20;
-    public static final int MINIGAME_LOSE_HUNGER_PENALTY = 15; // Trừ độ đói khi chơi xong (thua mệt hơn)
     
     // UI
     public static final float HUD_FONT_SIZE = 1.0f;

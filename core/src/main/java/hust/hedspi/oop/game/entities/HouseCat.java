@@ -16,16 +16,6 @@ public class HouseCat extends Cat {
 
     @Override
     public void applyPassiveSkill(float dt) {
-        // Tính Đa hình: Mèo nhà hồi phục thể lực chậm
-        boolean isIndoors = true; // TODO: Lấy trạng thái map hiện tại từ GameManager/MapManager
-        if (isIndoors) {
-            energyRecoveryTimer += dt;
-            if (energyRecoveryTimer >= Constants.HOUSE_CAT_ENERGY_RECOVERY_RATE) { 
-                increaseEnergy(1);
-                energyRecoveryTimer -= Constants.HOUSE_CAT_ENERGY_RECOVERY_RATE;
-            }
-        } else {
-            energyRecoveryTimer = 0f;
-        }
+        // Mèo nhà không còn nội tại hồi energy
     }
 }

@@ -91,7 +91,7 @@ public class TestScreen implements Screen, IObserver {
         
         if (GameManager.getInstance().getPlayer() != null) {
             nameFont.draw(batch, "Mèo Mun (Stray Cat)", 50, Gdx.graphics.getHeight() - 320);
-            dialogFont.draw(batch, "Máu: " + GameManager.getInstance().getPlayer().getHp() + " Năng lượng: " + GameManager.getInstance().getPlayer().getEnergy() + " Hành vi: " + GameManager.getInstance().getPlayer().getCurrentState().getClass().getSimpleName(), 50, Gdx.graphics.getHeight() - 350);
+            dialogFont.draw(batch, "Máu: " + GameManager.getInstance().getPlayer().getHp() + " Hành vi: " + GameManager.getInstance().getPlayer().getCurrentState().getClass().getSimpleName(), 50, Gdx.graphics.getHeight() - 350);
         }
 
         dialogFont.draw(batch, "Nhấn [M] Rhythm | [C] CaoMong | [WASD] Di chuyển | [Z] Ngủ | [Space] Thức", 50, 100);

@@ -21,14 +21,8 @@ public class SleepState implements ICatState {
     public void update(Cat cat, float dt) {
         sleepTimer += dt;
         
-        // Hồi phục Energy
-        if (sleepTimer >= Constants.SLEEP_ENERGY_RECOVERY_RATE) {
-            cat.increaseEnergy(Constants.SLEEP_ENERGY_RECOVERY_AMOUNT);
-            sleepTimer -= Constants.SLEEP_ENERGY_RECOVERY_RATE;
-        }
-
-        // Tự động thức dậy nếu đầy Energy hoặc nhấn Space
-        if (cat.getEnergy() >= Constants.MAX_ENERGY || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+        // Tự động thức dậy nếu nhấn Space
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             cat.changeState(new IdleState());
         }
     }

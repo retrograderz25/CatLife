@@ -29,8 +29,6 @@ public abstract class Cat extends Entity implements ISubject {
     }
 
     private int hp;
-    private int hunger;
-    private int energy;
 
     private float speed;
     private int attackPower;
@@ -49,8 +47,6 @@ public abstract class Cat extends Entity implements ISubject {
         super(x, y, width, height);
         this.color = color;
         this.hp = Constants.MAX_HP;
-        this.hunger = Constants.MAX_HUNGER;
-        this.energy = Constants.MAX_ENERGY;
 
         this.speed = Constants.BASE_SPEED;
         this.attackPower = Constants.BASE_ATTACK_POWER;
@@ -210,14 +206,6 @@ public abstract class Cat extends Entity implements ISubject {
     public void setHp(int hp) { this.hp = Math.max(0, hp); notifyObservers(); }
     public void decreaseHp(int amount) { this.hp = Math.max(0, this.hp - amount); notifyObservers(); }
     public void increaseHp(int amount) { this.hp = Math.min(100, this.hp + amount); notifyObservers(); }
-
-    public int getHunger() { return hunger; }
-    public void decreaseHunger(int amount) { this.hunger = Math.max(0, this.hunger - amount); notifyObservers(); }
-    public void increaseHunger(int amount) { this.hunger = Math.min(100, this.hunger + amount); notifyObservers(); }
-
-    public int getEnergy() { return energy; }
-    public void decreaseEnergy(int amount) { this.energy = Math.max(0, this.energy - amount); notifyObservers(); }
-    public void increaseEnergy(int amount) { this.energy = Math.min(100, this.energy + amount); notifyObservers(); }
 
     public float getSpeed() { return speed; }
     public void setSpeed(float speed) { this.speed = speed; }

@@ -56,7 +56,6 @@ public class StoryManager {
         // Gia Đình Hạnh Phúc
         endingsDatabase.add(new EndingCondition.Builder("Gia Đình Hạnh Phúc", 60)
             .require(MinigameID.DAILY_ESCAPE_SEWER, GameResult.WIN)
-            .require(MinigameID.DAILY_FIGHT_STRAY, GameResult.WIN)
             .require(MinigameID.LOVE_HIPHOP, GameResult.WIN)
             // .require(MinigameID.LOVE_MASSAGE, GameResult.WIN) <-- (o) Đang tạm khóa
             .require(MinigameID.LOVE_DETECTIVE, GameResult.WIN)
@@ -66,7 +65,6 @@ public class StoryManager {
         // Kiếp Culi
         endingsDatabase.add(new EndingCondition.Builder("Mãi Mãi Kiếp Culi", 40)
             .require(MinigameID.DAILY_ESCAPE_SEWER, GameResult.WIN)
-            .require(MinigameID.DAILY_FIGHT_STRAY, GameResult.WIN)
             .require(MinigameID.GANG_FIGHT_1VN, GameResult.WIN)
             // .require(MinigameID.GANG_MASSAGE_BOSS, GameResult.WIN) <-- (o) Đang tạm khóa
             .require(MinigameID.GANG_FIGHT_BOSS, GameResult.LOSE)
@@ -75,7 +73,6 @@ public class StoryManager {
         // Làm Đại Ca Mèo
         endingsDatabase.add(new EndingCondition.Builder("Làm Đại Ca Mèo", 70)
             .require(MinigameID.DAILY_ESCAPE_SEWER, GameResult.WIN)
-            .require(MinigameID.DAILY_FIGHT_STRAY, GameResult.WIN)
             .require(MinigameID.GANG_FIGHT_1VN, GameResult.WIN)
             // .require(MinigameID.GANG_MASSAGE_BOSS, GameResult.WIN) <-- (o) Đang tạm khóa
             .require(MinigameID.GANG_FIGHT_BOSS, GameResult.WIN)
@@ -107,24 +104,24 @@ public class StoryManager {
     public void recordResult(MinigameID id, boolean isWin) {
         playerHistory.put(id, isWin ? GameResult.WIN : GameResult.LOSE);
 
-        // Thưởng / Phạt máu và thể lực khi có kết quả
+        // Thưởng / Phạt máu khi có kết quả
         Cat player = GameManager.getInstance().getPlayer();
         if (player != null) {
             if (isWin) {
                 player.increaseHp(hust.hedspi.oop.game.utils.Constants.MINIGAME_WIN_HP_REWARD);
-                player.increaseEnergy(hust.hedspi.oop.game.utils.Constants.MINIGAME_WIN_ENERGY_REWARD);
-                player.decreaseHunger(hust.hedspi.oop.game.utils.Constants.MINIGAME_WIN_HUNGER_PENALTY);
             } else {
                 player.decreaseHp(hust.hedspi.oop.game.utils.Constants.MINIGAME_LOSE_HP_PENALTY);
-                player.decreaseEnergy(hust.hedspi.oop.game.utils.Constants.MINIGAME_LOSE_ENERGY_PENALTY);
-                player.decreaseHunger(hust.hedspi.oop.game.utils.Constants.MINIGAME_LOSE_HUNGER_PENALTY);
             }
         }
 
         // Bắt lỗi Instant Death (Quán thịt hổ)
         if (id == MinigameID.THIEF_ESCAPE_CAGE && playerHistory.get(MinigameID.THIEF_ESCAPE_CAGE) == GameResult.LOSE) {
             triggerInstantGameOver("Quán Thịt Hổ");
+            return; // Dừng luôn
         }
+
+        // Đánh giá xem có đạt ending nào không ngay sau khi chơi xong
+        evaluateFinalEnding(player);
     }
 
     private void triggerInstantGameOver(String reason) {
@@ -151,15 +148,20 @@ public class StoryManager {
         }
     }
 
-    // Chữ ký hàm cũ để tương thích với GameManager hiện tại
+    // Đánh giá kết cục ngay khi hoàn thành đủ số lượng
     public EndingCondition evaluateFinalEnding(Cat player) {
         for (EndingCondition ending : endingsDatabase) {
             if (ending.isSatisfied(playerHistory)) {
+                // Bỏ qua nếu Ending này đã được mở khóa trước đó (để ép đi nhánh khác)
+                if (SaveManager.isEndingUnlocked(ending.getEndingName())) {
+                    continue; 
+                }
+
+                GameManager.getInstance().pauseGame();
                 ScreenManager.getInstance().pushScreen(new hust.hedspi.oop.game.screens.EndingScreen(ending));
                 return ending;
             }
         }
-        ScreenManager.getInstance().pushScreen(new hust.hedspi.oop.game.screens.EndingScreen((EndingCondition) null));
         return null; 
     }
 }
