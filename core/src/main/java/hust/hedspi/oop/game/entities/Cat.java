@@ -54,7 +54,7 @@ public abstract class Cat extends Entity implements ISubject {
         animations = new HashMap<>();
         this.facingRight = true;
         
-        // Thu nhỏ hitbox vật lý để luồn lách dễ hơn
+        
         this.hitbox.width = width / 2f;
         this.hitbox.height = height / 2f;
         
@@ -87,7 +87,7 @@ public abstract class Cat extends Entity implements ISubject {
         Pixmap pixmap = texture.getTextureData().consumePixmap();
         
         int frameHeight = texture.getHeight();
-        int frameWidth = 80; // Thực tế ảnh được chia thành các block rộng 80px thay vì vuông
+        int frameWidth = 80; 
         int cols = texture.getWidth() / frameWidth;
         
         List<TextureRegion> validFrames = new ArrayList<>();
@@ -96,12 +96,12 @@ public abstract class Cat extends Entity implements ISubject {
             int minX = frameWidth;
             int maxX = -1;
             
-            // Quét alpha để tìm bounding box ôm sát con mèo trong ô 80x64 này
+            
             for (int y = 0; y < frameHeight; y++) {
                 for (int x = 0; x < frameWidth; x++) {
                     int pixelX = i * frameWidth + x;
                     int color = pixmap.getPixel(pixelX, y);
-                    int alpha = color & 0x000000ff; // Lấy kênh Alpha
+                    int alpha = color & 0x000000ff; 
                     
                     if (alpha > 0) {
                         if (x < minX) minX = x;
@@ -110,7 +110,7 @@ public abstract class Cat extends Entity implements ISubject {
                 }
             }
             
-            if (minX <= maxX) { // Nếu frame này có ảnh con mèo
+            if (minX <= maxX) { 
                 int startX = i * frameWidth + minX;
                 int tightWidth = maxX - minX + 1;
                 validFrames.add(new TextureRegion(texture, startX, 0, tightWidth, frameHeight));
@@ -167,22 +167,22 @@ public abstract class Cat extends Entity implements ISubject {
             TextureRegion currentFrame = anim.getKeyFrame(stateTimer, true);
             
             batch.setColor(Color.WHITE);
-            // Ảnh gốc (sprite sheet) vẽ con mèo quay mặt sang TRÁI. 
-            // Do đó, nếu mèo đang đi sang phải (facingRight = true) thì ta cần lật ảnh (flipX = true).
+            
+            
             boolean flipX = facingRight;
             
-            // Giữ nguyên tỷ lệ khung hình (Aspect Ratio) của ảnh gốc thay vì ép thành ô vuông width x height
-            // height * 2 là chiều cao hiển thị trên màn hình hiện tại (12 * 2 = 24)
+            
+            
             float scale = (height * 2f) / currentFrame.getRegionHeight(); 
             float drawWidth = currentFrame.getRegionWidth() * scale;
             float drawHeight = currentFrame.getRegionHeight() * scale;
             
-            // Căn giữa chiều ngang theo Hitbox thực tế
+            
             float drawX = x - (drawWidth - hitbox.width) / 2f;
             
-            // Dải sprite 64x64 có khoảng trống ở dưới chân mèo khoảng 16 pixel.
-            // Khi scale xuống, khoảng trống này là: 16 * scale.
-            // Để bàn chân Mèo chạm đúng cạnh dưới của Hitbox (tọa độ y), ta cần kéo toàn bộ ảnh lùi xuống dưới.
+            
+            
+            
             float emptyBottomSpace = 16f * scale;
             float drawY = y - emptyBottomSpace;
 
@@ -201,7 +201,7 @@ public abstract class Cat extends Entity implements ISubject {
         }
     }
 
-    // Getters & Setters
+    
     public int getHp() { return hp; }
     public void setHp(int hp) { this.hp = Math.max(0, hp); notifyObservers(); }
     public void decreaseHp(int amount) { this.hp = Math.max(0, this.hp - amount); notifyObservers(); }

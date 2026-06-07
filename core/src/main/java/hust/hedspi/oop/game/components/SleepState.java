@@ -21,7 +21,7 @@ public class SleepState implements ICatState {
     public void update(Cat cat, float dt) {
         sleepTimer += dt;
         
-        // Tự động thức dậy nếu nhấn Space
+        
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             cat.changeState(new IdleState());
         }

@@ -45,41 +45,41 @@ public class StoryManager {
     private void buildEndingsConfig() {
         endingsDatabase.clear();
 
-        // 1. Nhánh Tình Yêu & Lang Thang
-        // Thánh Đổ Vỏ
+        
+        
         endingsDatabase.add(new EndingCondition.Builder("Thánh Đổ Vỏ", 50)
             .require(MinigameID.LOVE_HIPHOP, GameResult.WIN)
-            // .require(MinigameID.LOVE_MASSAGE, GameResult.WIN) <-- (o) Đang tạm khóa
+            
             .require(MinigameID.LOVE_DETECTIVE, GameResult.LOSE)
             .build());
 
-        // Gia Đình Hạnh Phúc
+        
         endingsDatabase.add(new EndingCondition.Builder("Gia Đình Hạnh Phúc", 60)
             .require(MinigameID.DAILY_ESCAPE_SEWER, GameResult.WIN)
             .require(MinigameID.LOVE_HIPHOP, GameResult.WIN)
-            // .require(MinigameID.LOVE_MASSAGE, GameResult.WIN) <-- (o) Đang tạm khóa
+            
             .require(MinigameID.LOVE_DETECTIVE, GameResult.WIN)
             .build());
 
-        // 2. Nhánh Giang Hồ (Gang)
-        // Kiếp Culi
+        
+        
         endingsDatabase.add(new EndingCondition.Builder("Mãi Mãi Kiếp Culi", 40)
             .require(MinigameID.DAILY_ESCAPE_SEWER, GameResult.WIN)
             .require(MinigameID.GANG_FIGHT_1VN, GameResult.WIN)
-            // .require(MinigameID.GANG_MASSAGE_BOSS, GameResult.WIN) <-- (o) Đang tạm khóa
+            
             .require(MinigameID.GANG_FIGHT_BOSS, GameResult.LOSE)
             .build());
 
-        // Làm Đại Ca Mèo
+        
         endingsDatabase.add(new EndingCondition.Builder("Làm Đại Ca Mèo", 70)
             .require(MinigameID.DAILY_ESCAPE_SEWER, GameResult.WIN)
             .require(MinigameID.GANG_FIGHT_1VN, GameResult.WIN)
-            // .require(MinigameID.GANG_MASSAGE_BOSS, GameResult.WIN) <-- (o) Đang tạm khóa
+            
             .require(MinigameID.GANG_FIGHT_BOSS, GameResult.WIN)
             .build());
 
-        // 3. Nhánh Nuôi Nhốt (Pet)
-        // Hoàng Thượng Có Hoàng Hậu
+        
+        
         endingsDatabase.add(new EndingCondition.Builder("Hoàng Thượng Có Hoàng Hậu", 80)
             .require(MinigameID.LOVE_HIPHOP, GameResult.WIN)
             .require(MinigameID.LOVE_DETECTIVE, GameResult.WIN)
@@ -88,7 +88,7 @@ public class StoryManager {
             .require(MinigameID.PET_ESCAPE_VET, GameResult.WIN)
             .build());
 
-        // Hoàng Thượng Thái Giám
+        
         endingsDatabase.add(new EndingCondition.Builder("Hoàng Thượng Thái Giám", 30)
             .require(MinigameID.DAILY_SCRATCH, GameResult.WIN)
             .require(MinigameID.PET_BEG, GameResult.WIN)
@@ -96,15 +96,15 @@ public class StoryManager {
             .require(MinigameID.PET_ESCAPE_VET, GameResult.LOSE)
             .build());
 
-        // Sắp xếp database theo Priority (Độ ưu tiên cao xét trước)
+        
         endingsDatabase.sort((e1, e2) -> Integer.compare(e2.getPriority(), e1.getPriority()));
     }
 
-    // Hàm gọi khi hoàn thành 1 Minigame
+    
     public void recordResult(MinigameID id, boolean isWin) {
         playerHistory.put(id, isWin ? GameResult.WIN : GameResult.LOSE);
 
-        // Thưởng / Phạt máu khi có kết quả
+        
         Cat player = GameManager.getInstance().getPlayer();
         if (player != null) {
             if (isWin) {
@@ -114,13 +114,13 @@ public class StoryManager {
             }
         }
 
-        // Bắt lỗi Instant Death (Quán thịt hổ)
+        
         if (id == MinigameID.THIEF_ESCAPE_CAGE && playerHistory.get(MinigameID.THIEF_ESCAPE_CAGE) == GameResult.LOSE) {
             triggerInstantGameOver("Quán Thịt Hổ");
-            return; // Dừng luôn
+            return; 
         }
 
-        // Đánh giá xem có đạt ending nào không ngay sau khi chơi xong
+        
         evaluateFinalEnding(player);
     }
 
@@ -132,27 +132,28 @@ public class StoryManager {
 
     public boolean isZoneUnlocked(String zoneName) {
         switch (zoneName) {
-            case "Hotel Gate": // LOVE_DETECTIVE
-                // Phải thắng HipHop mới mở game Thám tử
+            case "Hotel Gate": 
+                
                 return playerHistory.getOrDefault(MinigameID.LOVE_HIPHOP, GameResult.UNPLAYED) == GameResult.WIN;
-            case "Warzone2": // GANG_FIGHT_BOSS
-                // Phải thắng Đánh hội đồng 1vn mới được đập Đại ca
+            case "Warzone2": 
+                
                 return playerHistory.getOrDefault(MinigameID.GANG_FIGHT_1VN, GameResult.UNPLAYED) == GameResult.WIN;
-            case "Bubble": // PET_BATH
-            case "Office Gate": // PET_ESCAPE_VET
-                // Phải làm nũng thành công (Adopt) mới đi tắm và đi thú y
+            case "Bubble": 
+            case "Office Gate": 
+                
                 return playerHistory.getOrDefault(MinigameID.PET_BEG, GameResult.UNPLAYED) == GameResult.WIN;
             default:
-                // Các game mặc định (thoát cống, võ mèo lang thang, adopt, le-nin, caomong, exciter) luôn mở về mặt cốt truyện
+                
                 return true; 
         }
     }
 
-    // Đánh giá kết cục ngay khi hoàn thành đủ số lượng
+    
     public EndingCondition evaluateFinalEnding(Cat player) {
+        // duyệt mấy cái ending từ độ ưu tiên cao xuống thấp, cái nào thoả mãn đầu tiên thì lấy luôn
         for (EndingCondition ending : endingsDatabase) {
             if (ending.isSatisfied(playerHistory)) {
-                // Bỏ qua nếu Ending này đã được mở khóa trước đó (để ép đi nhánh khác)
+                
                 if (SaveManager.isEndingUnlocked(ending.getEndingName())) {
                     continue; 
                 }

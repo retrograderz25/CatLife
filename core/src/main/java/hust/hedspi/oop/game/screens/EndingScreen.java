@@ -54,7 +54,7 @@ public class EndingScreen implements Screen {
         } else {
             endingName = "Sống sót ngoài đường";
             endingDescription = "Bạn tiếp tục cuộc sống lang bạt kỳ hồ...";
-            // Fallback ending is not counted in TOTAL_ENDINGS (7)
+            
         }
 
         loadBackground();

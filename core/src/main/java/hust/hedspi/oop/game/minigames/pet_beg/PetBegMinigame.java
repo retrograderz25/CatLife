@@ -24,7 +24,7 @@ public class PetBegMinigame implements IMinigameStrategy {
     private BitmapFont font;
     private BitmapFont dialogFont;
 
-    private int selectedOption = 0; // 0: Đồng ý, 1: Từ chối
+    private int selectedOption = 0; 
 
     @Override
     public void start() {

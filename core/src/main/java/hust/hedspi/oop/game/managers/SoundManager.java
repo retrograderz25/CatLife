@@ -8,15 +8,15 @@ import java.util.Map;
 
 public class SoundManager {
 
-    // -------------------------------------------------------------------------
-    // BGM paths
-    // -------------------------------------------------------------------------
+    
+    
+    
     public static final String BGM_MENU    = "music/menu_bgm.mp3";
     public static final String BGM_DAY     = "music/day_bgm.mp3";
     public static final String BGM_NIGHT   = "music/night_bgm.mp3";
     public static final String BGM_ENDING  = "music/ending_bgm.mp3";
 
-    // Minigame BGMs
+    
     public static final String BGM_MG_FUNNY1   = "music/minigame_funny1_bgm.mp3";
     public static final String BGM_MG_FUNNY2   = "music/minigame_funny2_bgm.mp3";
     public static final String BGM_MG_FUNNY3   = "music/minigame_funny3_bgm.mp3";
@@ -29,35 +29,35 @@ public class SoundManager {
     public static final String BGM_MG_HIPHOP   = "music/hip_hop_bgm.mp3";
     public static final String BGM_MG_BONGBONG = "music/minigame_bongbong_bgm.mp3";
 
-    // -------------------------------------------------------------------------
-    // Ambient paths
-    // -------------------------------------------------------------------------
+    
+    
+    
     public static final String AMB_DAY   = "sounds/Env_Day_City.mp3";
     public static final String AMB_NIGHT = "sounds/Env_Night_Alley.mp3";
 
-    // -------------------------------------------------------------------------
-    // SFX paths
-    // -------------------------------------------------------------------------
-    // Cat core
+    
+    
+    
+    
     public static final String SFX_CAT_MEOW_NORMAL  = "sounds/Cat_Meow_Normal.mp3";
     public static final String SFX_CAT_MEOW_PURR    = "sounds/Cat_Meow_Cute_Purr.mp3";
     public static final String SFX_CAT_HISS          = "sounds/Cat_Hiss_Angry.mp3";
     public static final String SFX_CAT_HURT          = "sounds/Cat_Hurt_Screech.mp3";
     public static final String SFX_CAT_FOOTSTEPS     = "sounds/Cat_Footsteps.mp3";
     public static final String SFX_CAT_SCRATCH       = "sounds/Cat_Scratch_Object.mp3";
-    // UI
+    
     public static final String SFX_UI_HOVER          = "sounds/UI_Hover_Select.mp3";
     public static final String SFX_UI_CONFIRM        = "sounds/UI_Click_Confirm.mp3";
     public static final String SFX_UI_CANCEL         = "sounds/UI_Cancel_Back.mp3";
     public static final String SFX_UI_DIALOGUE_BLIP  = "sounds/UI_Dialogue_Blip.mp3";
-    // Env
+    
     public static final String SFX_ENV_MOTORBIKE     = "sounds/Env_Motorbike_Loud.mp3";
     public static final String SFX_ENV_DOG_BARKING   = "sounds/Env_Dog_Barking.mp3";
-    // Fight
+    
     public static final String SFX_FIGHT_PUNCH       = "sounds/Fight_Punch_Slap.mp3";
     public static final String SFX_FIGHT_MISS        = "sounds/Fight_Whoosh_Miss.mp3";
     public static final String SFX_FIGHT_HEAVY       = "sounds/Fight_Impact_Heavy.mp3";
-    // Minigame-specific
+    
     public static final String SFX_HIPHOP_SCRATCH    = "sounds/Hiphop_Record_Scratch.mp3";
     public static final String SFX_DETECTIVE_CLUE    = "sounds/Detective_Clue_Found.mp3";
     public static final String SFX_BATH_BUBBLE_POP   = "sounds/Bath_Bubble_Pop.mp3";
@@ -68,9 +68,9 @@ public class SoundManager {
     public static final String SFX_CAGE_RATTLE       = "sounds/Cage_Rattle.mp3";
     public static final String SFX_DANGER_ALERT      = "sounds/Danger_Alert_JumpScare.mp3";
 
-    // -------------------------------------------------------------------------
-    // Singleton
-    // -------------------------------------------------------------------------
+    
+    
+    
     private static SoundManager instance;
     public static SoundManager getInstance() {
         if (instance == null) instance = new SoundManager();
@@ -78,12 +78,31 @@ public class SoundManager {
     }
     private SoundManager() {}
 
-    // -------------------------------------------------------------------------
-    // BGM
-    // -------------------------------------------------------------------------
+    
+    
+    
     private Music currentBGM;
     private String currentBGMPath;
     private float  bgmVolume = 0.6f;
+    private boolean muted = false;
+
+    public boolean isMuted() {
+        return muted;
+    }
+
+    public void setMuted(boolean m) {
+        muted = m;
+        if (currentBGM != null) {
+            currentBGM.setVolume(muted ? 0f : bgmVolume);
+        }
+        if (currentAmbient != null) {
+            currentAmbient.setVolume(muted ? 0f : ambientVolume);
+        }
+    }
+
+    public void toggleMute() {
+        setMuted(!muted);
+    }
 
     public void playBGM(String path) {
         if (path == null) return;
@@ -91,7 +110,7 @@ public class SoundManager {
         stopBGM();
         currentBGM = Gdx.audio.newMusic(Gdx.files.internal(path));
         currentBGM.setLooping(true);
-        currentBGM.setVolume(bgmVolume);
+        currentBGM.setVolume(muted ? 0f : bgmVolume);
         currentBGM.play();
         currentBGMPath = path;
     }
@@ -103,12 +122,12 @@ public class SoundManager {
     public void resumeBGM() { if (currentBGM != null && !currentBGM.isPlaying()) currentBGM.play();  }
     public void setBGMVolume(float v) {
         bgmVolume = Math.max(0f, Math.min(1f, v));
-        if (currentBGM != null) currentBGM.setVolume(bgmVolume);
+        if (currentBGM != null) currentBGM.setVolume(muted ? 0f : bgmVolume);
     }
 
-    // -------------------------------------------------------------------------
-    // Ambient (looping env sound, independent of BGM)
-    // -------------------------------------------------------------------------
+    
+    
+    
     private Music currentAmbient;
     private String currentAmbientPath;
     private float  ambientVolume = 0.25f;
@@ -119,7 +138,7 @@ public class SoundManager {
         stopAmbient();
         currentAmbient = Gdx.audio.newMusic(Gdx.files.internal(path));
         currentAmbient.setLooping(true);
-        currentAmbient.setVolume(ambientVolume);
+        currentAmbient.setVolume(muted ? 0f : ambientVolume);
         currentAmbient.play();
         currentAmbientPath = path;
     }
@@ -128,18 +147,13 @@ public class SoundManager {
         currentAmbientPath = null;
     }
 
-    // -------------------------------------------------------------------------
-    // SFX (short clips, cached in memory)
-    // -------------------------------------------------------------------------
     private final Map<String, Sound> sfxCache = new HashMap<>();
     private float sfxVolume = 0.8f;
 
-    /** Phát SFX bình thường. */
     public void playSFX(String path) {
         playSFX(path, sfxVolume);
     }
 
-    /** Phát SFX với volume tùy chỉnh. */
     public void playSFX(String path, float volume) {
         if (path == null) return;
         Sound s = sfxCache.get(path);
@@ -147,13 +161,13 @@ public class SoundManager {
             s = Gdx.audio.newSound(Gdx.files.internal(path));
             sfxCache.put(path, s);
         }
-        s.play(Math.max(0f, Math.min(1f, volume)));
+        s.play(muted ? 0f : Math.max(0f, Math.min(1f, volume)));
     }
 
-    /**
-     * Phát SFX có cooldown — dùng cho footsteps, tiếng chuột, ...
-     * Chỉ phát nếu đã qua ít nhất minInterval giây kể từ lần phát trước.
-     */
+    
+
+
+
     private final Map<String, Float> sfxTimers = new HashMap<>();
     public void playSFXThrottled(String path, float minInterval) {
         Float last = sfxTimers.get(path);
@@ -167,9 +181,9 @@ public class SoundManager {
     public void setSFXVolume(float v) { sfxVolume = Math.max(0f, Math.min(1f, v)); }
     public float getSFXVolume()       { return sfxVolume; }
 
-    // -------------------------------------------------------------------------
-    // Dispose
-    // -------------------------------------------------------------------------
+    
+    
+    
     public void dispose() {
         stopBGM();
         stopAmbient();

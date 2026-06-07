@@ -18,13 +18,13 @@ import hust.hedspi.oop.game.utils.MinigameID;
 
 import java.util.ArrayList;
 
-/**
- * Minigame "Nhay Hip Hop" (LOVE_HIPHOP).
- * 
- * Người chơi cần bấm đúng chuỗi 10 mũi tên (2 hàng, mỗi hàng 5 mũi tên) trong 10 giây.
- * Có tổng cộng 5 lượt chơi độc lập. Thắng tối thiểu 3 lượt để chiến thắng minigame.
- * Hoạt ảnh nhân vật (idle.png và spin1-3.png) hiển thị phía dưới khung mũi tên.
- */
+
+
+
+
+
+
+
 public class NhayHipHopMinigame implements IMinigameStrategy {
 
     private static final String ASSET_BASE = "minigames/nhay_hip_hop/";
@@ -33,20 +33,20 @@ public class NhayHipHopMinigame implements IMinigameStrategy {
     private static final float SPIN_TOTAL_DURATION = 0.45f;
 
     private static class Arrow {
-        int direction;   // 0 = UP, 1 = LEFT, 2 = DOWN, 3 = RIGHT
-        int colorIndex;  // Determined by direction: 0 = yellow, 1 = blue, 2 = green, 3 = red
+        int direction;   
+        int colorIndex;  
         boolean isPressed;
 
         Arrow(int direction) {
             this.direction = direction;
-            this.colorIndex = direction; // 1-to-1 mapping: UP->yellow, LEFT->blue, DOWN->green, RIGHT->red
+            this.colorIndex = direction; 
             this.isPressed = false;
         }
     }
 
     private enum DancerState { IDLE, SPIN }
 
-    // Textures
+    
     private Texture bgTexture;
     private Texture frameTexture;
     private Texture idleTexture;
@@ -57,7 +57,7 @@ public class NhayHipHopMinigame implements IMinigameStrategy {
     private Texture dimTexture;
     private Texture[] arrowTextures;
 
-    // Game state variables
+    
     private int screenW, screenH;
     private int currentRound;
     private int successfulRounds;
@@ -71,12 +71,12 @@ public class NhayHipHopMinigame implements IMinigameStrategy {
     private final ArrayList<Arrow> currentArrows = new ArrayList<>();
     private int activeArrowIndex;
 
-    // Dancer animation state
+    
     private DancerState dancerState;
     private float spinTimer;
     private float stateTime;
 
-    // Feedback message overlay
+    
     private float feedbackTimer;
     private String feedbackText = "";
     private Color feedbackColor = Color.WHITE;
@@ -168,7 +168,7 @@ public class NhayHipHopMinigame implements IMinigameStrategy {
             return;
         }
 
-        // Dancer animation updates
+        
         if (dancerState == DancerState.SPIN) {
             spinTimer += dt;
             if (spinTimer >= SPIN_TOTAL_DURATION) {
@@ -177,12 +177,12 @@ public class NhayHipHopMinigame implements IMinigameStrategy {
             }
         }
 
-        // Update feedback message timer
+        
         if (feedbackTimer > 0f) {
             feedbackTimer -= dt;
         }
 
-        // If currently displaying feedback from the end of a round
+        
         if (roundOver) {
             if (feedbackTimer <= 0f) {
                 if (currentRound < 5) {
@@ -194,7 +194,7 @@ public class NhayHipHopMinigame implements IMinigameStrategy {
             return;
         }
 
-        // Round timer countdown
+        
         roundTimer -= dt;
         if (roundTimer <= 0f) {
             roundTimer = 0f;
@@ -207,30 +207,30 @@ public class NhayHipHopMinigame implements IMinigameStrategy {
             return;
         }
 
-        // Input processing
+        
         int pressedDir = -1;
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || (Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.UP))) {
-            pressedDir = 0; // UP
+            pressedDir = 0; 
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) || (Gdx.input.isKeyJustPressed(Input.Keys.A) || Gdx.input.isKeyJustPressed(Input.Keys.LEFT))) {
-            pressedDir = 1; // LEFT
+            pressedDir = 1; 
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || (Gdx.input.isKeyJustPressed(Input.Keys.S) || Gdx.input.isKeyJustPressed(Input.Keys.DOWN))) {
-            pressedDir = 2; // DOWN
+            pressedDir = 2; 
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) || (Gdx.input.isKeyJustPressed(Input.Keys.D) || Gdx.input.isKeyJustPressed(Input.Keys.RIGHT))) {
-            pressedDir = 3; // RIGHT
+            pressedDir = 3; 
         }
 
         if (pressedDir != -1) {
+            // check xem người chơi bấm đúng nút mũi tên tiếp theo chưa
             Arrow activeArrow = currentArrows.get(activeArrowIndex);
             if (pressedDir == activeArrow.direction) {
-                // Correct key pressed!
                 activeArrow.isPressed = true;
                 activeArrowIndex++;
 
-                // Trigger spin animation
+                
                 dancerState = DancerState.SPIN;
                 spinTimer = 0f;
 
-                // Check if the whole sequence is completed
+                
                 if (activeArrowIndex >= 10) {
                     roundWon = true;
                     roundOver = true;
@@ -240,7 +240,7 @@ public class NhayHipHopMinigame implements IMinigameStrategy {
                     feedbackColor = Color.GREEN;
                 }
             } else {
-                // Wrong key pressed! Reset sequence of arrows for this round
+                
                 for (Arrow arrow : currentArrows) {
                     arrow.isPressed = false;
                 }
@@ -262,28 +262,28 @@ public class NhayHipHopMinigame implements IMinigameStrategy {
 
     @Override
     public void render(SpriteBatch batch) {
-        // 1. Background
+        
         batch.draw(bgTexture, 0, 0, screenW, screenH);
 
-        // 2. Frame container for arrows (centered at the top half)
+        
         float frameW = 300f;
         float frameH = 175f;
         float frameX = (screenW - frameW) / 2f;
         float frameY = 280f;
         batch.draw(frameTexture, frameX, frameY, frameW, frameH);
 
-        // 3. Render 10 Arrows arranged in 2 rows of 5
-        // Row 1 (top): indexes 0 to 4
-        // Row 2 (bottom): indexes 5 to 9
+        
+        
+        
         float arrowW = 27f;
         float arrowH = 39f;
         float[] slotCentersX = { frameX + 50f, frameX + 100f, frameX + 150f, frameX + 200f, frameX + 250f };
-        float[] slotCentersY = { frameY + 120f, frameY + 55f }; // Top row, Bottom row
+        float[] slotCentersY = { frameY + 120f, frameY + 55f }; 
 
         for (int i = 0; i < 10; i++) {
             Arrow arrow = currentArrows.get(i);
             if (arrow.isPressed) {
-                continue; // Disappear when successfully pressed
+                continue; 
             }
 
             int col = i % 5;
@@ -294,18 +294,18 @@ public class NhayHipHopMinigame implements IMinigameStrategy {
             Texture arrowTex = arrowTextures[arrow.colorIndex];
             TextureRegion region = new TextureRegion(arrowTex);
 
-            // Calculate rotation angle
-            // 0 = UP (0 deg), 1 = LEFT (90 deg), 2 = DOWN (180 deg), 3 = RIGHT (270 deg)
+            
+            
             float angle = 0f;
             if (arrow.direction == 1) angle = 90f;
             else if (arrow.direction == 2) angle = 180f;
             else if (arrow.direction == 3) angle = 270f;
 
-            // Highlight the active arrow with a pulsing scale effect
+            
             float scale = 1.0f;
             if (i == activeArrowIndex && !roundOver) {
                 scale = 1.0f + 0.12f * MathUtils.sin(stateTime * 10f);
-                // Draw a subtle background indicator for active arrow
+                
                 batch.setColor(1f, 1f, 1f, 0.25f);
                 batch.draw(dimTexture, cx - arrowW * scale / 2f, cy - arrowH * scale / 2f, arrowW * scale, arrowH * scale);
                 batch.setColor(Color.WHITE);
@@ -314,17 +314,17 @@ public class NhayHipHopMinigame implements IMinigameStrategy {
             batch.draw(region, cx - arrowW / 2f, cy - arrowH / 2f, arrowW / 2f, arrowH / 2f, arrowW, arrowH, scale, scale, angle);
         }
 
-        // 4. Render Timer Bar right under the arrow frame
+        
         float timerBarW = 300f;
         float timerBarH = 10f;
         float timerBarX = (screenW - timerBarW) / 2f;
         float timerBarY = frameY - 20f;
 
-        // Draw Timer Bar Background (Dark Gray)
+        
         batch.setColor(Color.DARK_GRAY);
         batch.draw(dimTexture, timerBarX, timerBarY, timerBarW, timerBarH);
 
-        // Draw Timer Bar Foreground based on remaining time
+        
         float percent = roundTimer / ROUND_DURATION;
         if (percent > 0.5f) {
             batch.setColor(Color.GREEN);
@@ -334,9 +334,9 @@ public class NhayHipHopMinigame implements IMinigameStrategy {
             batch.setColor(Color.RED);
         }
         batch.draw(dimTexture, timerBarX, timerBarY, timerBarW * percent, timerBarH);
-        batch.setColor(Color.WHITE); // Reset color to white
+        batch.setColor(Color.WHITE); 
 
-        // 5. Render Dancer Character (centered below the frame)
+        
         Texture activeDancerTex = idleTexture;
         if (dancerState == DancerState.SPIN) {
             int frameIdx = (int) (spinTimer / SPIN_FRAME_DURATION);
@@ -352,21 +352,21 @@ public class NhayHipHopMinigame implements IMinigameStrategy {
         float dY = 80f;
         batch.draw(activeDancerTex, dX, dY, dW, dH);
 
-        // 6. Render HUD labels (Round, Successes, Instructions)
+        
         String roundText = String.format(bundle.get("hiphop_round"), currentRound);
         String successText = String.format(bundle.get("hiphop_success"), successfulRounds);
         String hintText = bundle.get("hiphop_ctrl_hint");
 
-        // Top-left: Round indicator
+        
         hudFont.setColor(Color.YELLOW);
         hudFont.draw(batch, roundText, 30f, screenH - 30f);
 
-        // Top-right: Success count
+        
         hudFont.setColor(Color.GREEN);
-        float successWidth = 280f; // estimated width
+        float successWidth = 280f; 
         hudFont.draw(batch, successText, screenW - successWidth, screenH - 30f);
 
-        // Bottom-right: Timer frame & Time text
+        
         float tfScale = 3.5f;
         float tfW = timeFrameTexture.getWidth() * tfScale;
         float tfH = timeFrameTexture.getHeight() * tfScale;
@@ -379,27 +379,27 @@ public class NhayHipHopMinigame implements IMinigameStrategy {
         hudFont.draw(batch, timeStr, tfX + 18f, tfY + tfH * 0.68f);
         hudFont.setColor(Color.WHITE);
 
-        // 7. Render Success/Miss Feedback Message (Fades in/out)
+        
         if (feedbackTimer > 0f && !feedbackText.isEmpty()) {
             float alpha = Math.min(1.0f, feedbackTimer / 0.3f);
             hudFont.setColor(feedbackColor.r, feedbackColor.g, feedbackColor.b, alpha);
-            // Centered overlay text
+            
             float textScale = 1.0f + 0.3f * (1.2f - feedbackTimer);
             hudFont.getData().setScale(textScale);
-            float textW = 200f * textScale; // approximation
+            float textW = 200f * textScale; 
             hudFont.draw(batch, feedbackText, screenW / 2f - textW / 2f, timerBarY - 35f);
-            hudFont.getData().setScale(1.0f); // Reset font scale
+            hudFont.getData().setScale(1.0f); 
             hudFont.setColor(Color.WHITE);
         }
 
-        // 8. Render Game Over overlay screen
+        
         if (gameOver) {
             renderGameOver(batch);
         }
     }
 
     private void renderGameOver(SpriteBatch batch) {
-        // Dim the background
+        
         batch.setColor(0f, 0f, 0f, 0.72f);
         batch.draw(dimTexture, 0, 0, screenW, screenH);
         batch.setColor(Color.WHITE);
