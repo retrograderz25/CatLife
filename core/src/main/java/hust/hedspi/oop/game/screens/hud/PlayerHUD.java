@@ -34,15 +34,15 @@ public class PlayerHUD implements IObserver {
         statsTable.top().left();
 
         panelTex = new Texture(Gdx.files.internal("images/HUD/ui/panel/panel.png"));
-        // Sử dụng NinePatch để kéo dãn khung giao diện không bị vỡ viền
+        
         NinePatch panelPatch = new NinePatch(panelTex, 8, 8, 8, 8); 
         NinePatchDrawable panelBg = new NinePatchDrawable(panelPatch);
 
         Table contentTable = new Table();
         contentTable.setBackground(panelBg);
-        contentTable.pad(15); // Lề bên trong khung
+        contentTable.pad(15); 
 
-        // Dùng font chuyên dụng cho HUD
+        
         Label.LabelStyle labelStyle = new Label.LabelStyle(ResourceManager.getInstance().hudFont, Color.WHITE);
         
         hpLabel = new Label("", labelStyle);
@@ -51,7 +51,7 @@ public class PlayerHUD implements IObserver {
         contentTable.add(hpLabel).left().padBottom(5).row();
         contentTable.add(energyLabel).left();
 
-        // Thêm contentTable vào statsTable gốc với lề 10px từ góc trên trái
+        
         statsTable.add(contentTable).padTop(10).padLeft(10);
         
         iconTable = new Table();
@@ -60,18 +60,18 @@ public class PlayerHUD implements IObserver {
         try {
             iconTex = new Texture(Gdx.files.internal("images/adopted_icon.png"));
             adoptedIcon = new Image(new TextureRegionDrawable(iconTex));
-            // Add icon to the bottom-left table with a fixed square size to prevent distortion
+            
             iconTable.add(adoptedIcon).size(64, 64).padBottom(10).padLeft(10);
             adoptedIcon.setVisible(false);
         } catch (Exception e) {
-            // Icon not found
+            
         }
         
         rootTable.add(statsTable).expand().top().left();
         rootTable.row();
         rootTable.add(iconTable).expand().bottom().left();
 
-        // Register as observer
+        
         this.player = GameManager.getInstance().getPlayer();
         if (this.player != null) {
             this.player.addObserver(this);
@@ -84,7 +84,7 @@ public class PlayerHUD implements IObserver {
         hpLabel.setText("HP: " + player.getHp() + "/100");
         
         if (adoptedIcon != null) {
-            // Nếu đã được nhận nuôi (Zone Bubble được mở)
+            
             boolean isAdopted = StoryManager.getInstance().isZoneUnlocked("Bubble");
             adoptedIcon.setVisible(isAdopted);
         }

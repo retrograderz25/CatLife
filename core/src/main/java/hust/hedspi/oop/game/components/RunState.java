@@ -23,10 +23,10 @@ public class RunState implements ICatState {
         float x = cat.getX();
         float y = cat.getY();
         
-        // Kiểm tra xem người chơi có đang giữ phím Shift không
+        
         isRunning = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT);
         
-        // Nếu chạy thì dùng tốc độ gốc, nếu đi bộ thì giảm còn 60%
+        
         float currentSpeed = isRunning ? cat.getSpeed() : cat.getSpeed() * 0.6f;
 
         float dx = 0;

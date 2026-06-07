@@ -75,7 +75,7 @@ public class TimeManager implements ISubject {
 
     public void update(float deltaTime) {
         timer += deltaTime;
-        // Cập nhật mỗi 10 phút trong game (10 * 0.5s = 5s ngoài đời thực)
+        
         if (timer >= Constants.REAL_SECONDS_PER_IN_GAME_MINUTE * 10) {
             timer -= Constants.REAL_SECONDS_PER_IN_GAME_MINUTE * 10;
             incrementTime();
@@ -93,7 +93,7 @@ public class TimeManager implements ISubject {
                 currentDayOfWeek = currentDayOfWeek.next();
             }
         }
-        // Gọi notifyObservers() ở đây để HUD cập nhật mỗi lần nhảy 10 phút
+        
         notifyObservers();
     }
 

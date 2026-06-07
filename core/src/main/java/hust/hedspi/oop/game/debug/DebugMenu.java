@@ -54,7 +54,7 @@ public class DebugMenu {
         Label titleLabel = new Label("--- DEBUG MENU ---", new Label.LabelStyle(ResourceManager.getInstance().hudFont, Color.YELLOW));
         contentTable.add(titleLabel).colspan(3).padBottom(20).center().row();
 
-        // 1. Time: Hour
+        
         hourLabel = new Label("Giờ: ", labelStyle);
         TextButton subHourBtn = new TextButton(" - ", btnStyle);
         TextButton addHourBtn = new TextButton(" + ", btnStyle);
@@ -68,7 +68,7 @@ public class DebugMenu {
         contentTable.add(hourLabel).width(150).align(Align.center);
         contentTable.add(addHourBtn).width(40).height(40).pad(5).row();
 
-        // 2. Time: Minute
+        
         minLabel = new Label("Phút: ", labelStyle);
         TextButton subMinBtn = new TextButton(" - ", btnStyle);
         TextButton addMinBtn = new TextButton(" + ", btnStyle);
@@ -82,7 +82,7 @@ public class DebugMenu {
         contentTable.add(minLabel).width(150).align(Align.center);
         contentTable.add(addMinBtn).width(40).height(40).pad(5).row();
 
-        // 3. Player: HP
+        
         hpLabel = new Label("HP: ", labelStyle);
         TextButton subHpBtn = new TextButton(" - ", btnStyle);
         TextButton addHpBtn = new TextButton(" + ", btnStyle);
@@ -102,7 +102,7 @@ public class DebugMenu {
         contentTable.add(hpLabel).width(150).align(Align.center);
         contentTable.add(addHpBtn).width(40).height(40).pad(5).row();
 
-        // 6. Adopt / Unadopt
+        
         unadoptBtn = new TextButton("Bỏ Nhận Nuôi", btnStyle);
         unadoptBtn.addListener(new ClickListener() {
             public void clicked(InputEvent e, float x, float y) {
@@ -126,14 +126,14 @@ public class DebugMenu {
         actionTable.add(resetSavesBtn).width(150).height(40).pad(5);
         contentTable.add(actionTable).colspan(3).center().row();
 
-        // 7. Force Minigame Result
+        
         winBtn = new TextButton("Thắng Game", btnStyle);
         loseBtn = new TextButton("Thua Game", btnStyle);
         winBtn.addListener(new ClickListener() {
             public void clicked(InputEvent e, float x, float y) {
                 if (hust.hedspi.oop.game.managers.ScreenManager.getInstance().getCurrentScreen() instanceof hust.hedspi.oop.game.screens.MinigameScreen) {
                     ((hust.hedspi.oop.game.screens.MinigameScreen)hust.hedspi.oop.game.managers.ScreenManager.getInstance().getCurrentScreen()).forceEnd(true);
-                    toggle(); // Hide menu
+                    toggle(); 
                 }
             }
         });
@@ -141,7 +141,7 @@ public class DebugMenu {
             public void clicked(InputEvent e, float x, float y) {
                 if (hust.hedspi.oop.game.managers.ScreenManager.getInstance().getCurrentScreen() instanceof hust.hedspi.oop.game.screens.MinigameScreen) {
                     ((hust.hedspi.oop.game.screens.MinigameScreen)hust.hedspi.oop.game.managers.ScreenManager.getInstance().getCurrentScreen()).forceEnd(false);
-                    toggle(); // Hide menu
+                    toggle(); 
                 }
             }
         });
@@ -161,7 +161,7 @@ public class DebugMenu {
             hpLabel.setText("HP: " + p.getHp());
         }
         
-        // Hide minigame buttons if not in minigame
+        
         boolean isMinigame = hust.hedspi.oop.game.managers.ScreenManager.getInstance().getCurrentScreen() instanceof hust.hedspi.oop.game.screens.MinigameScreen;
         winBtn.setVisible(isMinigame);
         loseBtn.setVisible(isMinigame);

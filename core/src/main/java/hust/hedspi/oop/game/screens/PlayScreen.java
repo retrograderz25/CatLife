@@ -39,23 +39,23 @@ public class PlayScreen implements Screen {
     private SpriteBatch batch;
     private TriggerZone currentTrigger = null; 
 
-    // UI
+    
     private Stage uiStage;
     private PlayerHUD playerHUD;
     private TimeHUD timeHUD;
     private InteractionUI interactionUI;
     private DebugMenu debugMenu;
     
-    // Icon
+    
     private Texture hasTaskIcon;
 
-    // --- PAUSE MENU ---
+    
     private boolean isPaused = false;
     private Texture dimTexture;
     private BitmapFont font;
-    private int selectedOption = 0; // 0: Chơi tiếp, 1: Quay lại Menu
+    private int selectedOption = 0; 
 
-    // Darkness / Lighting overlay
+    
     private Texture darkLayerTexture;
     private boolean isNight = false;
     private Texture haloTexture;
@@ -99,7 +99,7 @@ public class PlayScreen implements Screen {
         
         hasTaskIcon = new Texture(Gdx.files.internal("images/HUD/Cat/has_task(stack_with_cat).png"));
 
-        // Setup Pause Menu
+        
         Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pix.setColor(Color.WHITE);
         pix.fill();
@@ -107,7 +107,7 @@ public class PlayScreen implements Screen {
         pix.dispose();
         font = hust.hedspi.oop.game.managers.ResourceManager.getInstance().dialogFont;
 
-        // Setup darkness overlay & light halo
+        
         mapWidth = MapManager.getInstance().getMapPixelWidth();
         mapHeight = MapManager.getInstance().getMapPixelHeight();
         
@@ -120,6 +120,7 @@ public class PlayScreen implements Screen {
     }
 
     private Texture createLightHaloTexture(int width, int height) {
+        // tạo vòng sáng elip bao quanh con mèo cho đẹp
         Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
         float centerX = width / 2f;
         float centerY = height / 2f;
@@ -167,14 +168,14 @@ public class PlayScreen implements Screen {
             debugMenu.toggle();
         }
 
-        // Bắt phím ESC để bật/tắt Pause Menu
+        
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !interactionUI.isVisible() && !debugMenu.isVisible()) {
             isPaused = !isPaused;
-            selectedOption = 0; // Trỏ vào nút đầu tiên
+            selectedOption = 0; 
         }
 
         if (isPaused) {
-            // Điều khiển Menu Pause
+            
             if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W)) {
                 selectedOption = 0;
             } else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || Gdx.input.isKeyJustPressed(Input.Keys.S)) {
@@ -204,7 +205,7 @@ public class PlayScreen implements Screen {
             }
         }
 
-        // F1-F8: Trực quan hóa kết thúc nhanh (Debug Ending screens - pass shouldSave=false)
+        
         if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
             ScreenManager.getInstance().pushScreen(new EndingScreen(new EndingCondition.Builder("Thánh Đổ Vỏ", 0).build(), false));
             return;
@@ -288,7 +289,7 @@ public class PlayScreen implements Screen {
             }
         }
 
-        // Determine if it is dark (18h to 5h)
+        
         int hour = TimeManager.getInstance().getInGameHour();
         boolean isDark = (hour >= 18 || hour < 5);
 
@@ -298,7 +299,7 @@ public class PlayScreen implements Screen {
             SoundManager.getInstance().playAmbient(isNight ? SoundManager.AMB_NIGHT : SoundManager.AMB_DAY);
         }
 
-        // Footstep SFX khi mèo đang di chuyển
+        
         if (player != null && player.getCurrentState() instanceof hust.hedspi.oop.game.components.RunState) {
             SoundManager.getInstance().playSFXThrottled(SoundManager.SFX_CAT_FOOTSTEPS, 0.35f);
         }
@@ -318,6 +319,7 @@ public class PlayScreen implements Screen {
             float haloX = player.getX() + player.getHitbox().width / 2f - haloW / 2f;
             float haloY = player.getY() + player.getHitbox().height / 2f - haloH / 2f;
 
+            // dùng blend mode để đục một lỗ tròn sáng xung quanh mèo trên lớp bóng tối
             batch.setBlendFunction(GL20.GL_ZERO, GL20.GL_ONE_MINUS_SRC_ALPHA);
             batch.draw(haloTexture, haloX, haloY, haloW, haloH);
             batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -359,7 +361,7 @@ public class PlayScreen implements Screen {
             }
         }
         
-        // Draw night overlay
+        
         if (isDark) {
             Texture fboTexture = fbo.getColorBufferTexture();
             batch.draw(fboTexture, 0, 0, mapWidth, mapHeight, 0, 0, fboTexture.getWidth(), fboTexture.getHeight(), false, true);
@@ -383,7 +385,7 @@ public class PlayScreen implements Screen {
         uiStage.draw();
 
         if (isPaused) {
-            // Draw Pause Menu using the UI stage's camera projection for physical screen mapping
+            
             batch.setProjectionMatrix(uiStage.getViewport().getCamera().combined);
             batch.begin();
             batch.setColor(0f, 0f, 0f, 0.7f);

@@ -5,7 +5,7 @@ import hust.hedspi.oop.game.utils.Constants;
 public class StrayCat extends Cat {
     
     public StrayCat(float x, float y, float width, float height) {
-        super(x, y, width, height, CatColor.ORANGE); // Mặc định là mèo hoang màu cam
+        super(x, y, width, height, CatColor.ORANGE); 
         setAttackPower(Constants.BASE_ATTACK_POWER);
     }
 
@@ -16,7 +16,7 @@ public class StrayCat extends Cat {
 
     @Override
     public void applyPassiveSkill(float dt) {
-        // Tính Đa hình: Mèo hoang tăng sức mạnh khi ít máu
+        
         if (getHp() < Constants.LOW_HP_THRESHOLD) {
             setAttackPower(Constants.BASE_ATTACK_POWER * 2);
         } else {

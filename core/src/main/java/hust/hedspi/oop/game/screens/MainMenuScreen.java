@@ -55,22 +55,22 @@ public class MainMenuScreen implements Screen {
             "LibGDX - Java Game Framework",
             "Gradle Build System",
             "",
-            // "--- BẢN QUYỀN ---",
-            // "Copyright 2026 Hedspi OOP Group",
-            // "All Rights Reserved",
-            // ""
+            
+            
+            
+            
     };
 
     private SpriteBatch batch;
     private Viewport viewport;
 
-    // Textures
+    
     private Texture bgMainMenu;
     private Texture bgSubScreen;
     private Texture timeframeTex;
     private NinePatch timeframePatch;
 
-    // Menu Buttons
+    
     private Texture newGameTex;
     private Texture continueTex;
     private Texture achievementTex;
@@ -78,30 +78,30 @@ public class MainMenuScreen implements Screen {
     private Texture creditTex;
     private Texture quitBtnTex;
 
-    // Achievement Screen specific textures
+    
     private Texture boardTex;
     private NinePatch boardPatch;
     private Texture catDecorTex;
     private Texture tittleTex;
 
-    // Credit Screen specific assets and states
+    
     private Texture creEndTex;
     private Texture titleVnTex;
     private float creditScrollY = 0f;
     private boolean isAutoScrolling = true;
     private boolean isDraggingScrollbar = false;
 
-    // UI Buttons (Blue for Back button)
+    
     private Texture btnTex;
     private Texture btnPressedTex;
     private NinePatch btnPatch;
     private NinePatch btnPressedPatch;
 
-    // Fonts
+    
     private BitmapFont font;
     private BitmapFont titleFont;
 
-    // Brown color for tinting (darken by 30% on hover, 60% on press)
+    
     private static final Color BROWN = new Color(0.45f, 0.25f, 0.12f, 1f);
     private Color hoverColor;
     private Color pressedColor;
@@ -110,7 +110,7 @@ public class MainMenuScreen implements Screen {
         batch = new SpriteBatch();
         viewport = new FitViewport(Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT);
 
-        // Load textures from assets/menu
+        
         bgMainMenu = new Texture(Gdx.files.internal("menu/menu_background.png"));
         bgSubScreen = new Texture(Gdx.files.internal("menu/background.png"));
         timeframeTex = new Texture(Gdx.files.internal("menu/timeframe.png"));
@@ -123,20 +123,20 @@ public class MainMenuScreen implements Screen {
         creditTex = new Texture(Gdx.files.internal("menu/credit.png"));
         quitBtnTex = new Texture(Gdx.files.internal("menu/quit_button.png"));
 
-        // Load achievements specific assets
+        
         boardTex = new Texture(Gdx.files.internal("menu/achievement/board.png"));
-        // TODO: Chỉnh sửa các thông số chia NinePatch của board.png ở đây để điều chỉnh
-        // bo viền/giãn góc
-        // Định dạng: new NinePatch(texture, left, right, top, bottom)
+        
+        
+        
         boardPatch = new NinePatch(boardTex, 12, 12, 12, 12);
         catDecorTex = new Texture(Gdx.files.internal("menu/achievement/cat_decor.png"));
         tittleTex = new Texture(Gdx.files.internal("menu/achievement/tittle.png"));
 
-        // Load credit specific assets
+        
         creEndTex = new Texture(Gdx.files.internal("menu/cre_end.png"));
         titleVnTex = new Texture(Gdx.files.internal("menu/giat_tit_vn.png"));
 
-        // Load UI button textures for NinePatch return buttons
+        
         btnTex = new Texture(Gdx.files.internal("images/HUD/ui/button/button_blue.png"));
         btnPressedTex = new Texture(Gdx.files.internal("images/HUD/ui/button/button_blue_pressed.png"));
         btnPatch = new NinePatch(btnTex, 4, 4, 4, 4);
@@ -145,14 +145,14 @@ public class MainMenuScreen implements Screen {
         font = ResourceManager.getInstance().dialogFont;
         titleFont = ResourceManager.getInstance().hudFont;
 
-        // Calculate tint colors by lerping Color.WHITE towards BROWN
+        
         hoverColor = Color.WHITE.cpy().lerp(BROWN, 0.3f);
         pressedColor = Color.WHITE.cpy().lerp(BROWN, 0.6f);
     }
 
     @Override
     public void show() {
-        Gdx.input.setInputProcessor(null); // Direct mouse testing inside render
+        Gdx.input.setInputProcessor(null); 
         SoundManager.getInstance().playBGM(SoundManager.BGM_MENU);
     }
 
@@ -164,7 +164,7 @@ public class MainMenuScreen implements Screen {
         viewport.getCamera().update();
         batch.setProjectionMatrix(viewport.getCamera().combined);
 
-        // Get mouse position unprojected to virtual screen coordinates
+        
         float mx = Gdx.input.getX();
         float my = Gdx.input.getY();
         Vector3 unprojected = viewport.getCamera().unproject(new Vector3(mx, my, 0));
@@ -190,18 +190,18 @@ public class MainMenuScreen implements Screen {
 
         batch.end();
 
-        // Defer screen transition to prevent disposing assets while batch is
-        // rendering/flushing
+        
+        
         if (nextScreen != null) {
             ScreenManager.getInstance().clearAndSetScreen(nextScreen);
         }
     }
 
     private void renderMainMenu(SpriteBatch batch, float mouseX, float mouseY) {
-        // Draw background
+        
         batch.draw(bgMainMenu, 0, 0, Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT);
 
-        // 5 buttons on the left
+        
         float btnX = 80f;
         float spacing = 20f;
 
@@ -218,14 +218,14 @@ public class MainMenuScreen implements Screen {
         float w3 = howToPlayTex.getWidth() * scale;
         float w4 = creditTex.getWidth() * scale;
 
-        // Calculate total vertical height to center the buttons vertically and shift
-        // down slightly
+        
+        
         float totalH = h0 + h1 + h2 + h3 + h4 + 4 * spacing;
         float startY = ((Constants.VIRTUAL_HEIGHT - totalH) / 2f) - 90f;
 
-        // Draw buttons bottom-up (Credit at the bottom, New Game at the top)
+        
 
-        // 5. Credit
+        
         float y4 = startY;
         if (handleButton(batch, creditTex, btnX, y4, w4, h4, mouseX, mouseY, true)) {
             currentState = State.CREDITS;
@@ -234,20 +234,20 @@ public class MainMenuScreen implements Screen {
             isDraggingScrollbar = false;
         }
 
-        // 4. How To Play
+        
         float y3 = y4 + h4 + spacing;
         if (handleButton(batch, howToPlayTex, btnX, y3, w3, h3, mouseX, mouseY, true)) {
             currentState = State.HOW_TO_PLAY;
         }
 
-        // 3. Achievement
+        
         float y2 = y3 + h3 + spacing;
         if (handleButton(batch, achievementTex, btnX, y2, w2, h2, mouseX, mouseY, true)) {
             SoundManager.getInstance().playSFX(SoundManager.SFX_UI_CONFIRM);
             currentState = State.ACHIEVEMENTS;
         }
 
-        // 2. Continue (Enabled only if active session exists in memory)
+        
         boolean hasSave = GameManager.getInstance().getPlayer() != null;
         float y1 = y2 + h2 + spacing;
         if (handleButton(batch, continueTex, btnX, y1, w1, h1, mouseX, mouseY, hasSave)) {
@@ -255,14 +255,14 @@ public class MainMenuScreen implements Screen {
             nextScreen = new PlayScreen(true);
         }
 
-        // 1. New Game
+        
         float y0 = y1 + h1 + spacing;
         if (handleButton(batch, newGameTex, btnX, y0, w0, h0, mouseX, mouseY, true)) {
             SoundManager.getInstance().playSFX(SoundManager.SFX_UI_CONFIRM);
             nextScreen = new PlayScreen(false);
         }
 
-        // Quit Button (Bottom-Right corner, aligned with Credit button y4)
+        
         float qw = quitBtnTex.getWidth() * scale;
         float qh = quitBtnTex.getHeight() * scale;
         float qx = Constants.VIRTUAL_WIDTH - qw - 80f;
@@ -274,35 +274,35 @@ public class MainMenuScreen implements Screen {
     }
 
     private void renderCredits(SpriteBatch batch, float mouseX, float mouseY) {
-        // Draw background
+        
         batch.draw(bgSubScreen, 0, 0, Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT);
 
-        // Draw NinePatch timeframe panel
+        
         float panelW = 750f;
         float panelH = 450f;
         float panelX = (Constants.VIRTUAL_WIDTH - panelW) / 2f;
         float panelY = (Constants.VIRTUAL_HEIGHT - panelH) / 2f;
         timeframePatch.draw(batch, panelX, panelY, panelW, panelH);
 
-        // Draw Title (Changed to "Credit")
+        
         titleFont.setColor(Color.YELLOW);
         titleFont.draw(batch, "Credit", panelX, panelY + panelH - 45f, panelW, Align.center, false);
         titleFont.setColor(Color.WHITE);
 
-        // Define bounds for clipping box inside timeframe panel
+        
         float clipX = panelX + 40f;
         float clipY = panelY + 110f;
         float clipW = panelW - 80f;
-        float clipH = panelH - 195f; // Decreased height to lower the top edge, preventing overlap with the "Credit"
-                                     // title
+        float clipH = panelH - 195f; 
+                                     
 
-        // Calculate scroll bounds
-        float topSpace = clipH; // Start below the bottom of the clipping area
+        
+        float topSpace = clipH; 
         float lineSpacing = 35f;
         float textH = CREDIT_LINES.length * lineSpacing;
         float gap = 50f;
 
-        // Enlarged cre_end.png image size with vertical limits check
+        
         float creEndW = 380f;
         float creEndH = creEndW * creEndTex.getHeight() / creEndTex.getWidth();
         if (creEndH > clipH - 40f) {
@@ -310,13 +310,13 @@ public class MainMenuScreen implements Screen {
             creEndW = creEndH * creEndTex.getWidth() / creEndTex.getHeight();
         }
 
-        // We want the scroll to stop when cre_end.png is perfectly centered in the
-        // clipping box
+        
+        
         float maxScrollY = (topSpace + textH + gap) - (clipH - creEndH) / 2f;
         if (maxScrollY < 0f)
             maxScrollY = 0f;
 
-        // Drag handle dimensions
+        
         float trackX = panelX + panelW - 35f;
         float trackY = clipY;
         float trackW = 8f;
@@ -325,20 +325,20 @@ public class MainMenuScreen implements Screen {
         float handleH = 40f;
         float handleRange = trackH - handleH;
 
-        // Update auto-scroll
+        
         float delta = Gdx.graphics.getDeltaTime();
         if (isAutoScrolling) {
-            creditScrollY += delta * 45f; // scroll speed: 45 pixels per second
+            creditScrollY += delta * 45f; 
             if (creditScrollY >= maxScrollY) {
                 creditScrollY = maxScrollY;
                 isAutoScrolling = false;
             }
         }
 
-        // Handle scrollbar dragging
+        
         if (Gdx.input.isTouched()) {
             if (Gdx.input.justTouched()) {
-                // Check if user clicked on or near the scrollbar
+                
                 if (mouseX >= trackX - 15f && mouseX <= trackX + trackW + 15f && mouseY >= trackY
                         && mouseY <= trackY + trackH) {
                     isDraggingScrollbar = true;
@@ -355,8 +355,7 @@ public class MainMenuScreen implements Screen {
         } else {
             isDraggingScrollbar = false;
         }
-
-        // Clip drawing to the interior of the timeframe panel using ScissorStack
+        // cái này dùng để giới hạn vùng vẽ credit, không cho tràn ra ngoài khung gỗ
         batch.flush();
         com.badlogic.gdx.math.Rectangle clipBounds = new com.badlogic.gdx.math.Rectangle(clipX, clipY, clipW, clipH);
         com.badlogic.gdx.math.Rectangle scissors = new com.badlogic.gdx.math.Rectangle();
@@ -365,26 +364,26 @@ public class MainMenuScreen implements Screen {
         boolean scissorPushed = com.badlogic.gdx.scenes.scene2d.utils.ScissorStack.pushScissors(scissors);
 
         if (scissorPushed) {
-            // Draw credit lines and the giat_tit_vn.png image at the top
+            
             font.getData().setScale(1.0f);
             for (int i = 0; i < CREDIT_LINES.length; i++) {
                 float docY = topSpace + i * lineSpacing;
                 float drawY = (clipY + clipH) - (docY - creditScrollY);
 
                 if (i == 0) {
-                    // Draw giat_tit_vn.png image instead of text
+                    
                     float titleImgW = 220f;
                     float titleImgH = titleImgW * titleVnTex.getHeight() / titleVnTex.getWidth();
                     float imgX = clipX + (clipW - titleImgW) / 2f;
-                    float imgY = drawY - titleImgH + 20f; // Align top of image with drawY line
+                    float imgY = drawY - titleImgH + 20f; 
                     batch.draw(titleVnTex, imgX, imgY, titleImgW, titleImgH);
                 } else if (!CREDIT_LINES[i].isEmpty()) {
-                    // Centered inside clipW
+                    
                     font.draw(batch, CREDIT_LINES[i], clipX, drawY + 12f, clipW, Align.center, false);
                 }
             }
 
-            // Draw cre_end.png at the bottom of the credits scroll
+            
             float imgDocY = topSpace + textH + gap;
             float imgDrawY = (clipY + clipH) - (imgDocY - creditScrollY) - creEndH;
             float imgDrawX = clipX + (clipW - creEndW) / 2f;
@@ -394,15 +393,15 @@ public class MainMenuScreen implements Screen {
             com.badlogic.gdx.scenes.scene2d.utils.ScissorStack.popScissors();
         }
 
-        // Draw scrollbar background track (thin pressed button style)
+        
         btnPressedPatch.draw(batch, trackX, trackY, trackW, trackH);
 
-        // Draw scrollbar handle (blue button style)
+        
         float scrollRatio = maxScrollY > 0f ? creditScrollY / maxScrollY : 0f;
         float handleY = (trackY + trackH - handleH) - scrollRatio * handleRange;
         btnPatch.draw(batch, trackX - 2f, handleY, trackW + 4f, handleH);
 
-        // Draw "Quay lại" button inside timeframe frame
+        
         float btnW = 160f;
         float btnH = 45f;
         float btnX = (Constants.VIRTUAL_WIDTH - btnW) / 2f;
@@ -427,33 +426,33 @@ public class MainMenuScreen implements Screen {
     }
 
     private void renderHowToPlay(SpriteBatch batch, float mouseX, float mouseY) {
-        // Draw background
+        
         batch.draw(bgSubScreen, 0, 0, Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT);
 
-        // Draw NinePatch timeframe panel
+        
         float panelW = 750f;
         float panelH = 450f;
         float panelX = (Constants.VIRTUAL_WIDTH - panelW) / 2f;
         float panelY = (Constants.VIRTUAL_HEIGHT - panelH) / 2f;
         timeframePatch.draw(batch, panelX, panelY, panelW, panelH);
 
-        // Draw Title
+        
         titleFont.setColor(Color.YELLOW);
         titleFont.draw(batch, "HƯỚNG DẪN CHƠI", panelX, panelY + panelH - 50f, panelW, Align.center, false);
         titleFont.setColor(Color.WHITE);
 
-        // Draw guide content (left aligned with padding)
+        
         font.getData().setScale(1.1f);
         String guideText = "\n" +
                 "- Di chuyển: Sử dụng các phím WASD hoặc Mũi Tên\n" +
                 "- Tương tác (Nhiệm vụ/Minigame): Nhấn phím SPACE\n" +
                 "- Tạm dừng trò chơi: Nhấn phím ESC\n\n" +
-                // "- Mở bảng điều khiển gỡ lỗi (Debug): Nhấn phím F12\n\n" +
+                
                 "Hãy hoàn thành các minigame và thử thách sinh tồn để mở khóa đầy đủ 7 kết cục (Ending) của trò chơi!";
         font.draw(batch, guideText, panelX + 50f, panelY + panelH - 120f, panelW - 100f, Align.left, true);
         font.getData().setScale(1.0f);
 
-        // Draw "Quay lại" button inside timeframe frame
+        
         float btnW = 180f;
         float btnH = 60f;
         float btnX = (Constants.VIRTUAL_WIDTH - btnW) / 2f;
@@ -478,17 +477,17 @@ public class MainMenuScreen implements Screen {
     }
 
     private void renderAchievements(SpriteBatch batch, float mouseX, float mouseY) {
-        // Draw background
+        
         batch.draw(bgSubScreen, 0, 0, Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT);
 
-        // Draw NinePatch timeframe panel (enlarged to 1000x550)
+        
         float panelW = 1000f;
         float panelH = 550f;
         float panelX = (Constants.VIRTUAL_WIDTH - panelW) / 2f;
         float panelY = (Constants.VIRTUAL_HEIGHT - panelH) / 2f;
         timeframePatch.draw(batch, panelX, panelY, panelW, panelH);
 
-        // Draw Title (tittle.png) at the top of the panel (scaled to fit nicely)
+        
         float titleImgW = tittleTex.getWidth();
         float titleImgH = tittleTex.getHeight();
         float titleScale = Math.min(panelW * 0.6f / titleImgW, 75f / titleImgH);
@@ -498,16 +497,16 @@ public class MainMenuScreen implements Screen {
         float drawTitleY = panelY + panelH - drawTitleH - 22f;
         batch.draw(tittleTex, drawTitleX, drawTitleY, drawTitleW, drawTitleH);
 
-        // Define content layout coordinates
+        
         float padLeft = 50f;
         float padRight = 50f;
-        float padBottom = 75f; // Space for the back button
-        float contentW = panelW - padLeft - padRight; // 900f
-        float contentH = 370f; // Heightened board & decor
+        float padBottom = 75f; 
+        float contentW = panelW - padLeft - padRight; 
+        float contentH = 370f; 
         float gap = 25f;
-        float usableW = contentW - gap; // 875f
+        float usableW = contentW - gap; 
 
-        // Adjust layout: widen the board and narrow cat_decor (650:225)
+        
         float boardW = 650f;
         float decorW = 225f;
 
@@ -516,10 +515,10 @@ public class MainMenuScreen implements Screen {
         float decorX = boardX + boardW + gap;
         float decorY = panelY + padBottom;
 
-        // Draw Board (board.png) on the left using NinePatch
+        
         boardPatch.draw(batch, boardX, boardY, boardW, contentH);
 
-        // Draw Cat Decor (cat_decor.png) on the right (preserving aspect ratio)
+        
         float decorImgW = catDecorTex.getWidth();
         float decorImgH = catDecorTex.getHeight();
         float decorScale = Math.min(decorW / decorImgW, contentH / decorImgH);
@@ -529,38 +528,38 @@ public class MainMenuScreen implements Screen {
         float drawDecorY = decorY + (contentH - drawDecorH) / 2f;
         batch.draw(catDecorTex, drawDecorX, drawDecorY, drawDecorW, drawDecorH);
 
-        // Draw Headers: STT, Tên Kết Cục, Trạng Thái inside the board
+        
         float boardPadLeft = 40f;
         float boardPadRight = 40f;
         float boardPadTop = 25f;
-        float headerY = boardY + contentH - boardPadTop - 15f; // Raised to prevent overlap
+        float headerY = boardY + contentH - boardPadTop - 15f; 
 
-        font.getData().setScale(0.85f); // Set to 0.85f for better legibility on a larger board
-        font.setColor(new Color(0.85f, 0.65f, 0f, 1f)); // Dark yellow color
+        font.getData().setScale(0.85f); 
+        font.setColor(new Color(0.85f, 0.65f, 0f, 1f)); 
         drawBoldText(batch, "STT", boardX + boardPadLeft, headerY);
         drawBoldText(batch, "Tên Kết Cục", boardX + boardPadLeft + 60f, headerY);
-        drawBoldText(batch, "Trạng Thái", boardX + boardW - boardPadRight - 90f, headerY); // Centered over checkbox
-                                                                                           // column
+        drawBoldText(batch, "Trạng Thái", boardX + boardW - boardPadRight - 90f, headerY); 
+                                                                                           
         font.setColor(Color.WHITE);
 
         com.badlogic.gdx.Preferences prefs = Gdx.app.getPreferences("CatLife_Endings");
 
-        // Render ending rows with closer vertical spacing (38f) starting lower to
-        // prevent overlap
+        
+        
         for (int i = 0; i < 7; i++) {
             float y = boardY + contentH - boardPadTop - 62f - i * 38f;
             String endingName = hust.hedspi.oop.game.managers.SaveManager.OFFICIAL_ENDINGS[i];
             boolean unlocked = prefs.getBoolean(endingName, false);
 
-            // STT
+            
             drawBoldText(batch, String.valueOf(i + 1), boardX + boardPadLeft, y + 20f);
 
-            // Tên Kết Cục
+            
             if (unlocked) {
                 font.setColor(Color.WHITE);
                 drawBoldText(batch, endingName, boardX + boardPadLeft + 60f, y + 20f);
             } else {
-                // Build red question marks string preserving spaces
+                
                 StringBuilder sb = new StringBuilder();
                 for (int k = 0; k < endingName.length(); k++) {
                     if (endingName.charAt(k) == ' ') {
@@ -574,26 +573,26 @@ public class MainMenuScreen implements Screen {
             }
             font.setColor(Color.WHITE);
 
-            // Checkbox: boxSize = 26
+            
             float boxSize = 26f;
             float boxX = boardX + boardW - boardPadRight - 60f;
             float boxY = y + 2f;
 
             if (unlocked) {
-                // Checked: active blue button with a yellow 'X' in the center
+                
                 btnPatch.draw(batch, boxX, boxY, boxSize, boxSize);
                 font.setColor(Color.YELLOW);
                 drawBoldText(batch, "X", boxX, boxY + boxSize / 2f + 7f, boxSize, Align.center, false);
                 font.setColor(Color.WHITE);
             } else {
-                // Unchecked: dark blue/pressed empty box
+                
                 btnPressedPatch.draw(batch, boxX, boxY, boxSize, boxSize);
             }
         }
         font.getData().setScale(1.0f);
 
-        // Draw "Quay lại" button inside timeframe frame (re-centered and scaled for
-        // 1000x550)
+        
+        
         float btnW = 160f;
         float btnH = 45f;
         float btnX = (Constants.VIRTUAL_WIDTH - btnW) / 2f;
@@ -628,28 +627,28 @@ public class MainMenuScreen implements Screen {
         font.draw(batch, text, x + 0.6f, y, targetWidth, align, wrap);
     }
 
-    /**
-     * Draws a button texture, checks for mouse interaction, and tints it with a
-     * brown tone.
-     * 30% brown for hover, 60% brown for pressed. 50% opacity gray for disabled.
-     */
+    
+
+
+
+
     private boolean handleButton(SpriteBatch batch, Texture tex, float x, float y, float w, float h, float mouseX,
             float mouseY, boolean enabled) {
         boolean hovered = enabled && (mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h);
         boolean pressed = hovered && Gdx.input.isTouched();
 
         if (!enabled) {
-            batch.setColor(0.5f, 0.5f, 0.5f, 0.5f); // Gray out and 50% opacity
+            batch.setColor(0.5f, 0.5f, 0.5f, 0.5f); 
         } else if (pressed) {
-            batch.setColor(pressedColor); // 60% brown tint
+            batch.setColor(pressedColor); 
         } else if (hovered) {
-            batch.setColor(hoverColor); // 30% brown tint
+            batch.setColor(hoverColor); 
         } else {
-            batch.setColor(Color.WHITE); // Normal
+            batch.setColor(Color.WHITE); 
         }
 
         batch.draw(tex, x, y, w, h);
-        batch.setColor(Color.WHITE); // Reset batch color
+        batch.setColor(Color.WHITE); 
 
         return hovered && Gdx.input.justTouched();
     }

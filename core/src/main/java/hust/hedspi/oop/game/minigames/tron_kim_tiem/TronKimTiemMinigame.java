@@ -22,22 +22,22 @@ import hust.hedspi.oop.game.utils.MinigameID;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-/**
- * Minigame "Trốn Kim Tiêm" (PET_ESCAPE_VET).
- *
- * Nhiệm vụ người chơi: Điều khiển mèo né tránh các đạn độc (poisonball) bắn ra từ Boss ở trung tâm.
- * Sống sót trong vòng 45 giây để giành chiến thắng.
- * Trực tiếp va chạm với Boss hoặc Poisonball sẽ thất bại ngay lập tức.
- */
+
+
+
+
+
+
+
 public class TronKimTiemMinigame implements IMinigameStrategy {
 
     private static final String ASSET_BASE = "minigames/tron_kim_tiem/";
-    private static final float GAME_DURATION = 45f; // Sống sót trong 45 giây
+    private static final float GAME_DURATION = 45f; 
 
-    private static final float CAT_SPEED = 160f; // Tốc độ di chuyển đi bộ
-    private static final float CAT_RUN_SPEED = 280f; // Tốc độ di chuyển chạy nhanh
-    private static final float CAT_DISPLAY_SIZE = 96f; // Kích thước hiển thị của mèo
-    private static final float CAT_HITBOX_RADIUS = 20f; // Bán kính va chạm của mèo
+    private static final float CAT_SPEED = 160f; 
+    private static final float CAT_RUN_SPEED = 280f; 
+    private static final float CAT_DISPLAY_SIZE = 96f; 
+    private static final float CAT_HITBOX_RADIUS = 20f; 
 
     private static final int FRAME_CELL = 80;
     private static final int IDLE_FRAMES = 8;
@@ -49,7 +49,7 @@ public class TronKimTiemMinigame implements IMinigameStrategy {
 
     private enum AnimState { IDLE, WALK, RUN }
 
-    // ── Poison Ball Struct ──────────────────────────────────────────────────
+    
     private static class PoisonBall {
         float x, y;
         float vx, vy;
@@ -65,7 +65,7 @@ public class TronKimTiemMinigame implements IMinigameStrategy {
         }
 
         void update(float dt) {
-            // Shift trail history for premium ghost trail effect
+            
             for (int i = prevX.length - 1; i > 0; i--) {
                 prevX[i] = prevX[i - 1];
                 prevY[i] = prevY[i - 1];
@@ -76,41 +76,41 @@ public class TronKimTiemMinigame implements IMinigameStrategy {
                 prevCount++;
             }
 
-            // Move
+            
             x += vx * dt;
             y += vy * dt;
         }
     }
 
-    // ── Textures ─────────────────────────────────────────────────────────────
+    
     private Texture bgTexture, bossTexture, poisonBallTexture, timeFrameTexture, dimTexture;
     private Texture idleTexture, walkTexture, runTexture;
 
-    // ── Animations ────────────────────────────────────────────────────────────
+    
     private Animation<TextureRegion> idleAnim, walkAnim, runAnim;
     private AnimState animState;
     private float stateTime;
 
-    // ── Screen size ──────────────────────────────────────────────────────────
+    
     private int screenW, screenH;
 
-    // ── Entities State ───────────────────────────────────────────────────────
+    
     private float catX, catY;
     private boolean facingLeft;
 
     private float bossX, bossY;
     private float bossRadius;
     private float bossRotation;
-    private float bossShootFlash; // Effect when shooting
+    private float bossShootFlash; 
 
     private final ArrayList<PoisonBall> poisonBalls = new ArrayList<>();
     private float spawnTimer;
 
-    // ── Game State ───────────────────────────────────────────────────────────
+    
     private float timer;
     private boolean gameOver, won, exitRequested;
 
-    // ── UI ───────────────────────────────────────────────────────────────────
+    
     private BitmapFont hudFont, dialogFont;
     private I18NBundle bundle;
 
@@ -125,17 +125,17 @@ public class TronKimTiemMinigame implements IMinigameStrategy {
         dialogFont = ResourceManager.getInstance().dialogFont;
         bundle = ResourceManager.getInstance().getBundle();
 
-        // Mèo xuất hiện ở góc dưới bên trái, cách xa Boss ở trung tâm
+        
         catX = 150f;
         catY = 150f;
         facingLeft = false;
         animState = AnimState.IDLE;
         stateTime = 0f;
 
-        // Boss ở trung tâm tuyệt đối
+        
         bossX = screenW / 2f;
         bossY = screenH / 2f;
-        bossRadius = 60f; // Bán kính va chạm của Boss
+        bossRadius = 60f; 
         bossRotation = 0f;
         bossShootFlash = 0f;
 
@@ -204,7 +204,7 @@ public class TronKimTiemMinigame implements IMinigameStrategy {
             return;
         }
 
-        // ── 1. Người chơi di chuyển ──────────────────────────────────────────
+        
         boolean running = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)
                 || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT);
         float speed = running ? CAT_RUN_SPEED : CAT_SPEED;
@@ -230,12 +230,12 @@ public class TronKimTiemMinigame implements IMinigameStrategy {
         catX += dx;
         catY += dy;
 
-        // Giới hạn trong màn hình (có trừ bán kính lề)
+        
         float boundPadding = CAT_DISPLAY_SIZE / 3f;
         catX = MathUtils.clamp(catX, boundPadding, screenW - boundPadding);
         catY = MathUtils.clamp(catY, boundPadding, screenH - boundPadding);
 
-        // Cập nhật trạng thái hoạt ảnh mèo
+        
         AnimState targetAnim = !moving ? AnimState.IDLE : (running ? AnimState.RUN : AnimState.WALK);
         if (targetAnim != animState) {
             animState = targetAnim;
@@ -243,27 +243,27 @@ public class TronKimTiemMinigame implements IMinigameStrategy {
         }
         stateTime += dt;
 
-        // ── 2. Boss hoạt ảnh xoay & nhấp nhô ────────────────────────────────────
+        
         if (bossShootFlash > 0f) {
-            bossShootFlash -= dt * 4f; // Hiệu ứng lóe sáng phai nhanh
+            bossShootFlash -= dt * 4f; 
         }
 
-        // ── 3. Spawn đạn độc (tần suất & số lượng tăng dần) ────────────────────
+        
         spawnTimer += dt;
         float currentSpawnInterval = Math.max(0.18f, 0.72f - (timer / GAME_DURATION) * 0.58f);
         if (spawnTimer >= currentSpawnInterval) {
             spawnTimer = 0f;
-            bossShootFlash = 1f; // Boss sáng bừng lên khi bắn
+            bossShootFlash = 1f; 
             SoundManager.getInstance().playSFX(SoundManager.SFX_VET_SYRINGE);
 
-            // Xác định số đạn bắn cùng lúc (Tăng đáng kể mật độ)
+            
             int count = 1;
             if (timer > 30f) {
-                count = MathUtils.random(3, 4); // Cuối trận bắn 3-4 viên
+                count = MathUtils.random(3, 4); 
             } else if (timer > 15f) {
-                count = MathUtils.random(2, 3); // Giữa trận bắn 2-3 viên
+                count = MathUtils.random(2, 3); 
             } else {
-                count = MathUtils.random(1, 2); // Đầu trận bắn 1-2 viên
+                count = MathUtils.random(1, 2); 
             }
 
             for (int i = 0; i < count; i++) {
@@ -272,7 +272,7 @@ public class TronKimTiemMinigame implements IMinigameStrategy {
                 float vx = MathUtils.cosDeg(angle) * bulletSpeed;
                 float vy = MathUtils.sinDeg(angle) * bulletSpeed;
 
-                // Xuất phát cách Boss một khoảng nhỏ cho tự nhiên
+                
                 float offsetDistance = bossRadius * 0.7f;
                 float sx = bossX + MathUtils.cosDeg(angle) * offsetDistance;
                 float sy = bossY + MathUtils.sinDeg(angle) * offsetDistance;
@@ -281,29 +281,29 @@ public class TronKimTiemMinigame implements IMinigameStrategy {
             }
         }
 
-        // ── 4. Cập nhật đạn độc & xóa đạn bay ngoài màn hình ───────────────────
+        
         Iterator<PoisonBall> it = poisonBalls.iterator();
         while (it.hasNext()) {
             PoisonBall ball = it.next();
             ball.update(dt);
 
-            // Kiểm tra ra khỏi màn hình
+            
             float margin = 80f;
             if (ball.x < -margin || ball.x > screenW + margin || ball.y < -margin || ball.y > screenH + margin) {
                 it.remove();
                 continue;
             }
 
-            // Kiểm tra va chạm với mèo
+            
             float distToCat = Vector2.dst(catX, catY, ball.x, ball.y);
-            float ballRadius = 12f; // Bán kính va chạm poisonball
+            float ballRadius = 12f; 
             if (distToCat < CAT_HITBOX_RADIUS + ballRadius) {
                 endGame(false);
                 return;
             }
         }
 
-        // ── 5. Kiểm tra va chạm giữa mèo và Boss ở tâm ─────────────────────────
+        
         float distToBoss = Vector2.dst(catX, catY, bossX, bossY);
         if (distToBoss < CAT_HITBOX_RADIUS + bossRadius) {
             endGame(false);
@@ -319,39 +319,39 @@ public class TronKimTiemMinigame implements IMinigameStrategy {
 
     @Override
     public void render(SpriteBatch batch) {
-        // ── 1. Vẽ background trải rộng toàn màn hình ──────────────────────────
+        
         batch.draw(bgTexture, 0, 0, screenW, screenH);
 
-        // ── 2. Vẽ các đạn độc kèm hiệu ứng bóng mờ (trail) premium ─────────────
+        
         float ballSize = 28f;
         for (PoisonBall ball : poisonBalls) {
-            // Vẽ các bóng mờ phía sau
+            
             for (int i = ball.prevCount - 1; i >= 0; i--) {
                 float alpha = 0.35f * (1f - (float) i / ball.prevX.length);
-                batch.setColor(0.6f, 1.0f, 0.6f, alpha); // Ánh lục mờ ảo
+                batch.setColor(0.6f, 1.0f, 0.6f, alpha); 
                 batch.draw(poisonBallTexture, ball.prevX[i] - ballSize / 2f, ball.prevY[i] - ballSize / 2f, ballSize, ballSize);
             }
             batch.setColor(Color.WHITE);
 
-            // Vẽ viên đạn độc chính
+            
             batch.draw(poisonBallTexture, ball.x - ballSize / 2f, ball.y - ballSize / 2f, ballSize, ballSize);
         }
 
-        // ── 3. Vẽ Boss ở trung tâm có thở phập phồng (pulse) & xoay tròn ────────
+        
         float bossPulse = 1.0f + 0.06f * MathUtils.sin(stateTime * 5f);
         if (bossShootFlash > 0f) {
-            bossPulse += bossShootFlash * 0.08f; // Giật nhẹ khi bắn
+            bossPulse += bossShootFlash * 0.08f; 
         }
         float bW = bossTexture.getWidth() * bossPulse * 1.2f;
         float bH = bossTexture.getHeight() * bossPulse * 1.2f;
 
-        // Nếu bắn đạn, nhuộm Boss ánh sáng đỏ nhẹ cảnh báo
+        
         if (bossShootFlash > 0f) {
             batch.setColor(1.0f, 1.0f - bossShootFlash * 0.4f, 1.0f - bossShootFlash * 0.4f, 1.0f);
         }
         batch.draw(bossTexture,
                 bossX - bW / 2f, bossY - bH / 2f,
-                bW / 2f, bH / 2f, // Tâm xoay
+                bW / 2f, bH / 2f, 
                 bW, bH,
                 1f, 1f,
                 bossRotation,
@@ -359,26 +359,26 @@ public class TronKimTiemMinigame implements IMinigameStrategy {
                 false, false);
         batch.setColor(Color.WHITE);
 
-        // ── 4. Vẽ mèo hoạt ảnh ────────────────────────────────────────────────
+        
         float hs = CAT_DISPLAY_SIZE / 2f;
         Animation<TextureRegion> currentAnim = (animState == AnimState.RUN) ? runAnim
                 : (animState == AnimState.WALK) ? walkAnim : idleAnim;
         TextureRegion frame = currentAnim.getKeyFrame(stateTime);
 
-        // Xoay chiều mặt mèo dựa theo di chuyển
+        
         if (!facingLeft && !frame.isFlipX()) frame.flip(true, false);
         if (facingLeft && frame.isFlipX()) frame.flip(true, false);
 
         batch.draw(frame, catX - hs, catY - hs, CAT_DISPLAY_SIZE, CAT_DISPLAY_SIZE);
 
-        // ── 5. HUD: TimeFrame & thời gian còn lại (Góc trên-PHẢI) ──────────────
+        
         float tfScale = 3f;
         float tfW = timeFrameTexture.getWidth() * tfScale;
         float tfH = timeFrameTexture.getHeight() * tfScale;
         float tfX = screenW - tfW - 15f;
         float tfY = screenH - tfH - 15f;
 
-        // Rung lắc nhẹ khung thời gian khi sắp hết giờ (< 10s) tạo kịch tính
+        
         float timeLeft = Math.max(0f, GAME_DURATION - timer);
         float shakeX = 0f, shakeY = 0f;
         if (timeLeft < 10f && !gameOver) {
@@ -394,7 +394,7 @@ public class TronKimTiemMinigame implements IMinigameStrategy {
                 tfX + 8f + shakeX, tfY + tfH * 0.85f + shakeY);
         hudFont.setColor(Color.WHITE);
 
-        // ── 6. Trình bày GameOver overlay ──────────────────────────────────────
+        
         if (gameOver) {
             renderGameOver(batch);
         }

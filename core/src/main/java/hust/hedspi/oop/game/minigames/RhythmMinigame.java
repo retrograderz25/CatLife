@@ -22,7 +22,7 @@ public class RhythmMinigame implements IMinigameStrategy {
         if (finished) return;
         
         timer += dt;
-        // Logic giả lập: Sau 2 giây, nếu nhấn Space trong khoảng từ 2-4 giây thì thắng, nếu quá 5 giây thì thua
+        
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             if (timer >= 2.0f && timer <= 4.0f) {
                 won = true;
@@ -42,7 +42,7 @@ public class RhythmMinigame implements IMinigameStrategy {
 
     @Override
     public void render(SpriteBatch batch) {
-        // TODO: Vẽ UI của Rhythm game (Ví dụ: Nốt nhạc trôi xuống)
+        
     }
 
     @Override
