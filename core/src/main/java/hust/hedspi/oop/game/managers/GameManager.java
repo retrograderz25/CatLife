@@ -27,7 +27,7 @@ public class GameManager {
         TimeManager.getInstance().resetTime();
         
         if (isStrayCat) {
-            player = new StrayCat(400, 300, 12, 12, Cat.CatColor.ORANGE); 
+            player = new StrayCat(400, 300, 12, 12, Cat.CatColor.ORANGE); // Center of screen, larger
         } else {
             player = new HouseCat(400, 300, 12, 12, Cat.CatColor.WHITE);
         }
@@ -43,7 +43,7 @@ public class GameManager {
         if (player != null) {
             player.update(dt);
             
-            
+            // Logic Sinh tử (Life & Death Cycle)
             if (player.getHp() <= 0) {
                 currentState = GameState.GAME_OVER;
                 ScreenManager.getInstance().pushScreen(new hust.hedspi.oop.game.screens.EndingScreen("Kiếp Lang Bạt", false));

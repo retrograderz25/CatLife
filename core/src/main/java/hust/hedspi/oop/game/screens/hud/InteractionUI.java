@@ -33,7 +33,7 @@ public class InteractionUI {
     private TriggerZone currentZone;
     private Cat player;
     
-    private int selectedButtonIndex = 0; 
+    private int selectedButtonIndex = 0; // 0 for Yes, 1 for No
 
     public InteractionUI(Cat player) {
         this.player = player;
@@ -42,9 +42,9 @@ public class InteractionUI {
         rootTable.setFillParent(true);
         rootTable.setVisible(false);
 
-        
+        // Tạo overlay đen mờ cho toàn màn hình
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        pixmap.setColor(0, 0, 0, 0.6f); 
+        pixmap.setColor(0, 0, 0, 0.6f); // 60% alpha
         pixmap.fill();
         overlayTex = new Texture(pixmap);
         pixmap.dispose();
@@ -71,7 +71,7 @@ public class InteractionUI {
         dialogTable.setBackground(panelBg);
         dialogTable.pad(30);
 
-        
+        // Label tên NPC
         Label.LabelStyle nameStyle = new Label.LabelStyle(ResourceManager.getInstance().nameFont, Color.GOLD);
         nameLabel = new Label("NPC Name", nameStyle);
         dialogTable.add(nameLabel).left().padBottom(10).row();
@@ -91,10 +91,10 @@ public class InteractionUI {
         
         dialogTable.add(buttonTable).colspan(2).center();
         
-        rootTable.center(); 
+        rootTable.center(); // Đưa khung thoại ra giữa màn hình cho dễ nhìn
         rootTable.add(dialogTable).width(800);
 
-        
+        // Bắt sự kiện Click chuột
         btnYes.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -111,7 +111,7 @@ public class InteractionUI {
             }
         });
 
-        
+        // Bắt sự kiện bàn phím
         rootTable.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
@@ -154,18 +154,18 @@ public class InteractionUI {
         
         String zoneKey = "task_" + zone.getZoneName().replace(" ", "_");
         String text = ResourceManager.getInstance().getBundle().get("task_default");
-        String npcName = "Mèo lạ"; 
+        String npcName = "Mèo lạ"; // Tên mặc định
         
         try {
             text = ResourceManager.getInstance().getBundle().get(zoneKey);
         } catch (Exception e) {
-            
+            // Fallback to default text already set
         }
 
         try {
             npcName = ResourceManager.getInstance().getBundle().get(zoneKey + "_npc");
         } catch (Exception e) {
-            
+            // Fallback to default npcName already set
         }
         
         nameLabel.setText(npcName);
@@ -175,7 +175,7 @@ public class InteractionUI {
         updateButtonFocus();
         SoundManager.getInstance().playSFX(SoundManager.SFX_CAT_MEOW_NORMAL);
         
-        
+        // Cấp quyền focus cho bàn phím
         if (rootTable.getStage() != null) {
             rootTable.getStage().setKeyboardFocus(rootTable);
         }
@@ -197,7 +197,7 @@ public class InteractionUI {
         if (currentZone != null) {
             if ("Adopt".equals(currentZone.getZoneName())) {
                 hust.hedspi.oop.game.managers.StoryManager.getInstance().recordResult(hust.hedspi.oop.game.utils.MinigameID.PET_BEG, true);
-                
+                // Force UI update to show the adopted icon
                 hust.hedspi.oop.game.managers.GameManager.getInstance().getPlayer().notifyObservers();
             } else {
                 currentZone.onInteract(player);

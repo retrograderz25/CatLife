@@ -19,7 +19,7 @@ import hust.hedspi.oop.game.utils.IObserver;
 public class TestScreen implements Screen, IObserver {
     private SpriteBatch batch;
     
-    
+    // Cached data for UI (Observer Pattern)
     private String timeString = "";
     private String dayString = "";
     private boolean uiNeedsUpdate = true;
@@ -27,10 +27,10 @@ public class TestScreen implements Screen, IObserver {
     public TestScreen() {
         batch = new SpriteBatch();
         
-        
+        // Start game session with StrayCat (true)
         GameManager.getInstance().startNewGame(true);
         
-        
+        // Đăng ký nhận thông báo từ TimeManager
         TimeManager.getInstance().addObserver(this);
         
         updateUIData();
@@ -49,31 +49,31 @@ public class TestScreen implements Screen, IObserver {
 
     @Override
     public void render(float delta) {
-        
+        // Cập nhật logic các Manager
         TimeManager.getInstance().update(delta);
         GameManager.getInstance().update(delta);
 
-        
+        // Nút tắt mở nhanh Minigame
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
             ScreenManager.getInstance().pushScreen(new MinigameScreen(new RhythmMinigame()));
-            return; 
+            return; // Tránh render tiếp TestScreen trong frame này
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
             ScreenManager.getInstance().pushScreen(new MinigameScreen(new CaoMongMinigame()));
             return;
         }
 
-        
+        // UI update based on flags
         if (uiNeedsUpdate) {
             updateUIData();
         }
 
-        
+        // Draw
         ScreenUtils.clear(0.2f, 0.2f, 0.2f, 1);
         
         batch.begin();
         
-        
+        // Render Player
         if (GameManager.getInstance().getPlayer() != null) {
             GameManager.getInstance().getPlayer().render(batch);
         }
@@ -126,7 +126,7 @@ public class TestScreen implements Screen, IObserver {
 
     @Override
     public void onNotify(Object... args) {
-        
+        // Gọi khi TimeManager hoặc các Subject khác bắn Notify
         uiNeedsUpdate = true;
     }
 }

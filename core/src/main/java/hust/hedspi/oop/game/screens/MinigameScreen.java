@@ -33,17 +33,17 @@ public class MinigameScreen implements Screen {
     public static Viewport viewport;
     private OrthographicCamera camera;
 
-    
+    // --- PAUSE MENU ---
     private boolean isPaused = false;
     private Texture dimTexture;
     private BitmapFont font;
-    private int selectedOption = 0; 
+    private int selectedOption = 0; // 0: Resume, 1: Exit
     
-    
+    // --- DEBUG MENU ---
     private Stage debugStage;
     private DebugMenu debugMenu;
 
-    
+    // --- TUTORIAL / INSTRUCTIONS POPUP ---
     private boolean showTutorial = true;
     private Texture tfTex;
     private Texture btnTex;
@@ -64,10 +64,10 @@ public class MinigameScreen implements Screen {
         viewport = new FitViewport(Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT, camera);
         viewport.apply();
 
-        
+        // Đổi trạng thái game tổng để tạm dừng Map chính
         GameManager.getInstance().pauseGame();
 
-        
+        // Khởi tạo tài nguyên cho Pause Menu
         Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pix.setColor(Color.WHITE);
         pix.fill();
@@ -76,7 +76,7 @@ public class MinigameScreen implements Screen {
 
         font = ResourceManager.getInstance().dialogFont;
         
-        
+        // Khởi tạo tài nguyên cho Tutorial Popup
         tfTex = new Texture(Gdx.files.internal("images/HUD/ui/panel/timeframe.png"));
         btnTex = new Texture(Gdx.files.internal("images/HUD/ui/button/button_blue.png"));
         btnPressedTex = new Texture(Gdx.files.internal("images/HUD/ui/button/button_blue_pressed.png"));
@@ -89,7 +89,7 @@ public class MinigameScreen implements Screen {
         staticBtnPatch = btnPatch;
         staticBtnPressedPatch = btnPressedPatch;
 
-        
+        // Khởi tạo Debug Menu
         debugStage = new Stage(viewport, batch);
         debugMenu = new DebugMenu();
         debugStage.addActor(debugMenu.getTable());
@@ -117,19 +117,19 @@ public class MinigameScreen implements Screen {
     private String getBGMForStrategy(IMinigameStrategy s) {
         if (s == null) return SoundManager.BGM_MG_FUNNY1;
         switch (s.getClass().getSimpleName()) {
-            
+            // Hài hước / Lãng mạn
             case "CaoMongMinigame":      return SoundManager.BGM_MG_FUNNY1;
             case "PetBegMinigame":       return SoundManager.BGM_MG_FUNNY1;
             case "BathGameMinigame":     return SoundManager.BGM_MG_FUNNY2;
             case "NhayHipHopMinigame":   return SoundManager.BGM_MG_HIPHOP;
             case "TimTieuTamMinigame":   return SoundManager.BGM_MG_FUNNY3;
             case "RhythmMinigame":       return SoundManager.BGM_MG_FUNNY3;
-            
+            // Sinh tồn / Trốn chạy
             case "ThoatKhoiCongMinigame": return SoundManager.BGM_MG_ESCAPE1;
             case "TromMeoMinigame":       return SoundManager.BGM_MG_ESCAPE2;
             case "ThoatKhoiLongMinigame": return SoundManager.BGM_MG_ESCAPE3;
             case "TronKimTiemMinigame":   return SoundManager.BGM_MG_ESCAPE3;
-            
+            // Đánh nhau / Băng đảng
             case "CombatDonMinigame":    return SoundManager.BGM_MG_FIGHT2;
             case "CombatMinigame":       return SoundManager.BGM_MG_BOSS;
             default:                     return SoundManager.BGM_MG_FUNNY1;
@@ -141,9 +141,9 @@ public class MinigameScreen implements Screen {
         if (shouldExit || strategy.isFinished()) {
             ScreenManager.getInstance().popScreen();
             
-            
+            // Xử lý chuỗi sự kiện (Chain Minigames)
             if (strategy instanceof hust.hedspi.oop.game.minigames.trom_meo.TromMeoMinigame && !strategy.isWon()) {
-                
+                // Thua Trốn Trộm Mèo -> Bị bắt nhốt -> Tự động chuyển sang game Thoát Khỏi Lồng
                 ScreenManager.getInstance().pushScreen(new MinigameScreen(new hust.hedspi.oop.game.minigames.thoat_khoi_long.ThoatKhoiLongMinigame()));
             } else {
                 GameManager.getInstance().resumeGame();
@@ -151,19 +151,19 @@ public class MinigameScreen implements Screen {
             return;
         }
 
-        
+        // Bật tắt DebugMenu
         if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.F12)) {
             debugMenu.toggle();
         }
 
-        
+        // Bắt phím ESC để bật/tắt Pause Menu (chỉ khi game chưa kết thúc và debug menu đang đóng)
         if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ESCAPE) && !strategy.isFinished() && !debugMenu.isVisible()) {
             isPaused = !isPaused;
-            selectedOption = 0; 
+            selectedOption = 0; // Mặc định trỏ vào "Tiếp tục"
         }
 
         if (isPaused) {
-            
+            // Điều khiển Menu Pause
             if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.UP) || Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.W)) {
                 selectedOption = 0;
             } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.DOWN) || Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.S)) {
@@ -176,7 +176,7 @@ public class MinigameScreen implements Screen {
                 }
             }
         } else if (showTutorial) {
-            
+            // Handle tutorial input
             if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.SPACE)) {
                 showTutorial = false;
             } else if (Gdx.input.justTouched()) {
@@ -190,7 +190,7 @@ public class MinigameScreen implements Screen {
                 }
             }
         } else if (!debugMenu.isVisible()) {
-            
+            // Cập nhật logic game nếu không Pause và không mở Debug
             strategy.update(delta);
         }
 
@@ -201,42 +201,42 @@ public class MinigameScreen implements Screen {
 
         batch.begin();
         
-        
+        // Luôn vẽ minigame bên dưới
         strategy.render(batch);
         
-        
+        // Vẽ lớp Tutorial đè lên trên minigame
         if (showTutorial) {
-            
+            // Dim background
             batch.setColor(0f, 0f, 0f, 0.7f);
             batch.draw(dimTexture, 0, 0, Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT);
             batch.setColor(Color.WHITE);
             
-            
+            // Draw timeframe panel (NinePatch)
             float panelW = 750f;
             float panelH = 420f;
             float panelX = (Constants.VIRTUAL_WIDTH - panelW) / 2f;
             float panelY = (Constants.VIRTUAL_HEIGHT - panelH) / 2f;
             panelPatch.draw(batch, panelX, panelY, panelW, panelH);
             
-            
+            // Draw title
             String titleText = getMinigameTitle();
             font.getData().setScale(1.8f);
             font.setColor(Color.YELLOW);
             font.draw(batch, titleText, panelX, panelY + panelH - 50f, panelW, Align.center, false);
             
-            
+            // Draw instructions text (wrapped)
             String instrText = getMinigameInstruction();
             font.getData().setScale(1.2f);
             font.setColor(Color.WHITE);
             font.draw(batch, instrText, panelX + 50f, panelY + panelH - 120f, panelW - 100f, Align.center, true);
             
-            
+            // Draw "Đã hiểu" button
             float btnW = 180f;
             float btnH = 60f;
             float btnX = (Constants.VIRTUAL_WIDTH - btnW) / 2f;
             float btnY = panelY + 40f;
             
-            
+            // Check if mouse is hovering/pressing inside button bounds to draw pressed texture
             boolean isHoveredOrPressed = false;
             Vector2 mousePos = unproject(Gdx.input.getX(), Gdx.input.getY());
             if (mousePos.x >= btnX && mousePos.x <= btnX + btnW && mousePos.y >= btnY && mousePos.y <= btnY + btnH) {
@@ -249,17 +249,17 @@ public class MinigameScreen implements Screen {
                 btnPatch.draw(batch, btnX, btnY, btnW, btnH);
             }
             
-            
+            // Draw button text
             font.getData().setScale(1.1f);
             font.setColor(isHoveredOrPressed ? Color.YELLOW : Color.WHITE);
             font.draw(batch, "Đã hiểu", btnX, btnY + btnH / 2f + 8f, btnW, Align.center, false);
             
-            
+            // Reset scale and color
             font.getData().setScale(1.0f);
             font.setColor(Color.WHITE);
         }
         
-        
+        // Vẽ lớp Pause Menu đè lên trên cùng
         if (isPaused) {
             batch.setColor(0f, 0f, 0f, 0.7f);
             batch.draw(dimTexture, 0, 0, Constants.VIRTUAL_WIDTH, Constants.VIRTUAL_HEIGHT);
@@ -276,7 +276,7 @@ public class MinigameScreen implements Screen {
             font.setColor(selectedOption == 1 ? Color.YELLOW : Color.WHITE);
             font.draw(batch, selectedOption == 1 ? "> Thoát về Đường Phố <" : "Thoát về Đường Phố", 0, Constants.VIRTUAL_HEIGHT / 2f - 40, Constants.VIRTUAL_WIDTH, Align.center, false);
             
-            font.getData().setScale(1.0f); 
+            font.getData().setScale(1.0f); // Reset scale
             font.setColor(Color.WHITE);
         }
 

@@ -4,7 +4,7 @@ import hust.hedspi.oop.game.entities.Cat;
 
 public class HissSkill extends BaseSkill {
     public HissSkill() {
-        
+        // Tên skill, Thời gian hồi chiêu (5.0 giây), Tiêu hao thể lực (15)
         super("Khè (Hiss)", 5.0f, 15);
     }
 
