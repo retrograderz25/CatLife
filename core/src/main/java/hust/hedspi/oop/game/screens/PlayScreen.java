@@ -46,9 +46,9 @@ public class PlayScreen implements Screen {
     private InteractionUI interactionUI;
     private DebugMenu debugMenu;
     
-    
     private Texture hasTaskIcon;
-
+    private Texture soundOnTexture;
+    private Texture soundOffTexture;
     
     private boolean isPaused = false;
     private Texture dimTexture;
@@ -98,6 +98,8 @@ public class PlayScreen implements Screen {
         uiStage.addActor(debugMenu.getTable());
         
         hasTaskIcon = new Texture(Gdx.files.internal("images/HUD/Cat/has_task(stack_with_cat).png"));
+        soundOnTexture = new Texture(Gdx.files.internal("images/AudioControl/Mute Button unmuted1.png"));
+        soundOffTexture = new Texture(Gdx.files.internal("images/AudioControl/Mute Button muted1.png"));
 
         
         Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -175,7 +177,18 @@ public class PlayScreen implements Screen {
         }
 
         if (isPaused) {
-            
+            if (Gdx.input.justTouched()) {
+                com.badlogic.gdx.math.Vector3 temp = new com.badlogic.gdx.math.Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+                uiStage.getViewport().unproject(temp);
+                float vw = uiStage.getViewport().getWorldWidth();
+                float vh = uiStage.getViewport().getWorldHeight();
+                float soundBtnSize = 48f;
+                float soundBtnX = vw - soundBtnSize - 30f;
+                float soundBtnY = vh - soundBtnSize - 30f;
+                if (temp.x >= soundBtnX && temp.x <= soundBtnX + soundBtnSize && temp.y >= soundBtnY && temp.y <= soundBtnY + soundBtnSize) {
+                    SoundManager.getInstance().toggleMute();
+                }
+            }
             if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W)) {
                 selectedOption = 0;
             } else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || Gdx.input.isKeyJustPressed(Input.Keys.S)) {
@@ -385,7 +398,6 @@ public class PlayScreen implements Screen {
         uiStage.draw();
 
         if (isPaused) {
-            
             batch.setProjectionMatrix(uiStage.getViewport().getCamera().combined);
             batch.begin();
             batch.setColor(0f, 0f, 0f, 0.7f);
@@ -406,6 +418,12 @@ public class PlayScreen implements Screen {
             font.setColor(selectedOption == 1 ? Color.YELLOW : Color.WHITE);
             font.draw(batch, selectedOption == 1 ? "> Quay lại Menu <" : "Quay lại Menu", 0, vh / 2f - 40, vw, Align.center, false);
             
+            float soundBtnSize = 48f;
+            float soundBtnX = vw - soundBtnSize - 30f;
+            float soundBtnY = vh - soundBtnSize - 30f;
+            Texture soundTex = SoundManager.getInstance().isMuted() ? soundOffTexture : soundOnTexture;
+            batch.draw(soundTex, soundBtnX, soundBtnY, soundBtnSize, soundBtnSize);
+
             font.getData().setScale(1.0f);
             font.setColor(Color.WHITE);
             batch.end();
@@ -438,6 +456,8 @@ public class PlayScreen implements Screen {
         if (interactionUI != null) interactionUI.dispose();
         if (debugMenu != null) debugMenu.dispose();
         if (hasTaskIcon != null) hasTaskIcon.dispose();
+        if (soundOnTexture != null) soundOnTexture.dispose();
+        if (soundOffTexture != null) soundOffTexture.dispose();
         if (darkLayerTexture != null) darkLayerTexture.dispose();
         if (haloTexture != null) haloTexture.dispose();
         if (fbo != null) fbo.dispose();

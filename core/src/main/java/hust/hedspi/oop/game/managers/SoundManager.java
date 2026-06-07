@@ -84,6 +84,25 @@ public class SoundManager {
     private Music currentBGM;
     private String currentBGMPath;
     private float  bgmVolume = 0.6f;
+    private boolean muted = false;
+
+    public boolean isMuted() {
+        return muted;
+    }
+
+    public void setMuted(boolean m) {
+        muted = m;
+        if (currentBGM != null) {
+            currentBGM.setVolume(muted ? 0f : bgmVolume);
+        }
+        if (currentAmbient != null) {
+            currentAmbient.setVolume(muted ? 0f : ambientVolume);
+        }
+    }
+
+    public void toggleMute() {
+        setMuted(!muted);
+    }
 
     public void playBGM(String path) {
         if (path == null) return;
@@ -91,7 +110,7 @@ public class SoundManager {
         stopBGM();
         currentBGM = Gdx.audio.newMusic(Gdx.files.internal(path));
         currentBGM.setLooping(true);
-        currentBGM.setVolume(bgmVolume);
+        currentBGM.setVolume(muted ? 0f : bgmVolume);
         currentBGM.play();
         currentBGMPath = path;
     }
@@ -103,7 +122,7 @@ public class SoundManager {
     public void resumeBGM() { if (currentBGM != null && !currentBGM.isPlaying()) currentBGM.play();  }
     public void setBGMVolume(float v) {
         bgmVolume = Math.max(0f, Math.min(1f, v));
-        if (currentBGM != null) currentBGM.setVolume(bgmVolume);
+        if (currentBGM != null) currentBGM.setVolume(muted ? 0f : bgmVolume);
     }
 
     
@@ -119,7 +138,7 @@ public class SoundManager {
         stopAmbient();
         currentAmbient = Gdx.audio.newMusic(Gdx.files.internal(path));
         currentAmbient.setLooping(true);
-        currentAmbient.setVolume(ambientVolume);
+        currentAmbient.setVolume(muted ? 0f : ambientVolume);
         currentAmbient.play();
         currentAmbientPath = path;
     }
@@ -128,18 +147,13 @@ public class SoundManager {
         currentAmbientPath = null;
     }
 
-    
-    
-    
     private final Map<String, Sound> sfxCache = new HashMap<>();
     private float sfxVolume = 0.8f;
 
-    
     public void playSFX(String path) {
         playSFX(path, sfxVolume);
     }
 
-    
     public void playSFX(String path, float volume) {
         if (path == null) return;
         Sound s = sfxCache.get(path);
@@ -147,7 +161,7 @@ public class SoundManager {
             s = Gdx.audio.newSound(Gdx.files.internal(path));
             sfxCache.put(path, s);
         }
-        s.play(Math.max(0f, Math.min(1f, volume)));
+        s.play(muted ? 0f : Math.max(0f, Math.min(1f, volume)));
     }
 
     
