@@ -4,7 +4,7 @@ import hust.hedspi.oop.game.entities.Cat;
 
 public class ScratchSkill extends BaseSkill {
     public ScratchSkill() {
-        
+        // Tên skill, Thời gian hồi chiêu (1.5 giây), Tiêu hao thể lực (10)
         super("Cào (Scratch)", 1.5f, 10);
     }
 

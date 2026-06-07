@@ -18,30 +18,30 @@ import hust.hedspi.oop.game.utils.MinigameID;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-
-
-
-
-
+/**
+ * Minigame "Võ Mèo Lang Thang Đơn" / "Combat Don" (GANG_FIGHT_1VN).
+ *
+ * Chỉ dùng opponent_white.png làm đối thủ và hnad_bicolor.png làm cú đấm cho cả 3 làn đường.
+ */
 public class CombatDonMinigame implements IMinigameStrategy {
 
     private static final String ASSET_BASE = "minigames/combat_don/";
     private static final float GAME_DURATION = 45f;
 
-    
-    
-    
-    private static final float TARGET_Y = 75f; 
-    private static final float TOLERANCE = 45f; 
-    private static final float OPPONENT_Y = 350f; 
+    // ──────────────────────────────────────────────────────────────────────────
+    // BẠN CÓ THỂ ĐỔI VỊ TRÍ Y CỦA KHUNG ĐỠ VÀ ĐỐI THỦ TẠI ĐÂY / ADJUST Y POSITIONS HERE:
+    // ──────────────────────────────────────────────────────────────────────────
+    private static final float TARGET_Y = 75f; // Vị trí Y của khung đỡ đòn (frame.png)
+    private static final float TOLERANCE = 45f; // Sai số khoảng cách cho phép để đỡ đòn thành công
+    private static final float OPPONENT_Y = 350f; // Vị trí Y của 3 đối thủ ở trên cùng
 
-    
+    // ── Cú đấm (Falling Hand Struct) ──────────────────────────────────────────
     private static class FallingHand {
-        int lane;      
-        float y;       
-        float speed;   
-        boolean hit;   
-        boolean missed;
+        int lane;      // 0: Trái, 1: Giữa, 2: Phải
+        float y;       // Vị trí Y hiện tại
+        float speed;   // Tốc độ rơi (pixels/giây)
+        boolean hit;   // Đã đỡ thành công
+        boolean missed;// Bị hụt (vượt quá khung đỡ)
 
         FallingHand(int lane, float y, float speed) {
             this.lane = lane;
@@ -56,24 +56,24 @@ public class CombatDonMinigame implements IMinigameStrategy {
         }
     }
 
-    
+    // ── Textures ─────────────────────────────────────────────────────────────
     private Texture bgTexture;
     private Texture frameTexture;
     private Texture catHandTexture;
     private Texture timeFrameTexture;
     private Texture dimTexture;
 
-    
+    // Chỉ dùng 1 loại đối thủ và 1 loại đòn đấm cho cả 3 làn
     private Texture opponentTexture;
     private Texture handTexture;
 
-    
+    // ── Screen size ──────────────────────────────────────────────────────────
     private int screenW, screenH;
 
-    
+    // ── Làn đường & Tọa độ X ─────────────────────────────────────────────────
     private float[] laneX = new float[3];
 
-    
+    // ── Game State ───────────────────────────────────────────────────────────
     private final ArrayList<FallingHand> fallingHands = new ArrayList<>();
     private float spawnTimer;
     private float timer;
@@ -84,7 +84,7 @@ public class CombatDonMinigame implements IMinigameStrategy {
     private float[] catHandActiveTimer = new float[3];
     private static final float CAT_HAND_SHOW_DURATION = 0.18f;
 
-    
+    // ── UI ───────────────────────────────────────────────────────────────────
     private BitmapFont hudFont, dialogFont;
     private I18NBundle bundle;
 
@@ -124,10 +124,10 @@ public class CombatDonMinigame implements IMinigameStrategy {
         catHandTexture = new Texture(Gdx.files.internal(ASSET_BASE + "cat_hand.png"));
         timeFrameTexture = new Texture(Gdx.files.internal(ASSET_BASE + "timeframe.png"));
 
-        
+        // Chỉ dùng opponent_white.png làm đối thủ duy nhất
         opponentTexture = new Texture(Gdx.files.internal(ASSET_BASE + "opponent_white.png"));
 
-        
+        // Chỉ dùng hnad_bicolor.png làm đòn đấm duy nhất
         handTexture = new Texture(Gdx.files.internal(ASSET_BASE + "cat_punch/hnad_bicolor.png"));
 
         Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -179,7 +179,6 @@ public class CombatDonMinigame implements IMinigameStrategy {
         }
 
         spawnTimer += dt;
-        // càng về sau tay rơi càng nhanh vs dồn dập hơn
         float currentSpawnInterval = Math.max(0.45f, 1.1f - (timer / GAME_DURATION) * 0.65f);
         if (spawnTimer >= currentSpawnInterval) {
             spawnTimer = 0f;
@@ -213,7 +212,7 @@ public class CombatDonMinigame implements IMinigameStrategy {
                 }
             }
 
-            
+            // Xóa cú đấm khi rơi ra khỏi màn hình
             if (hand.y < -50f || hand.hit) {
                 it.remove();
             }
@@ -257,22 +256,22 @@ public class CombatDonMinigame implements IMinigameStrategy {
     public void render(SpriteBatch batch) {
         batch.draw(bgTexture, 0, 0, screenW, screenH);
 
-        
+        // Vẽ bệ đỡ đối thủ (kéo giãn ngang frame.png)
         float platformW = laneX[2] - laneX[0] + 120f;
-        float platformH = 16f; 
+        float platformH = 16f; // Kéo giãn mỏng lại thành bệ đỡ nằm ngang
         batch.draw(frameTexture,
                 laneX[0] - 60f,
                 OPPONENT_Y - platformH / 2f,
                 platformW, platformH);
 
-        
+        // Vẽ duy nhất 1 đối thủ mèo trắng ở giữa đứng trên bệ đỡ (Combat Đơn)
         float oppSize = 100f;
         batch.draw(opponentTexture,
                 laneX[1] - oppSize / 2f,
                 OPPONENT_Y + platformH / 2f,
                 oppSize, oppSize);
 
-        
+        // Vẽ 3 khung đỡ
         float frameSize = 88f;
         for (int i = 0; i < 3; i++) {
             batch.draw(frameTexture,
@@ -291,7 +290,7 @@ public class CombatDonMinigame implements IMinigameStrategy {
             }
         }
 
-        
+        // Vẽ các cú đấm đang rơi (Đều dùng handTexture)
         float handSize = 72f;
         for (FallingHand hand : fallingHands) {
             if (!hand.hit) {
@@ -310,7 +309,7 @@ public class CombatDonMinigame implements IMinigameStrategy {
             }
         }
 
-        
+        // HUD: Khung thời gian & Thông tin hụt đòn
         float tfScale = 3f;
         float tfW = timeFrameTexture.getWidth() * tfScale;
         float tfH = timeFrameTexture.getHeight() * tfScale;

@@ -9,7 +9,7 @@ import hust.hedspi.oop.game.entities.Cat;
 public class IdleState implements ICatState {
     @Override
     public void enter(Cat cat) {
-        
+        // System.out.println("Cat enters Idle State.");
     }
 
     @Override
@@ -22,12 +22,12 @@ public class IdleState implements ICatState {
         if ((Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT))) { dx -= 1; }
         if ((Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT))) { dx += 1; }
 
-        
+        // Chuyển sang trạng thái Chạy (RunState) nếu người chơi có hướng di chuyển thực sự
         if (dx != 0 || dy != 0) {
             cat.changeState(new RunState());
         }
         
-        
+        // Ví dụ: Nhấn phím Z để ngủ
         if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
             cat.changeState(new SleepState());
         }

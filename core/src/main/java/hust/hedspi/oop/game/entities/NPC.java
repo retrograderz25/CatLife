@@ -2,10 +2,10 @@ package hust.hedspi.oop.game.entities;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-
-
-
-
+/**
+ * NPC class represents a non-player character cat.
+ * It stays at a fixed position and displays an idle animation.
+ */
 public class NPC extends Cat {
     
     private String npcName;
@@ -17,18 +17,18 @@ public class NPC extends Cat {
 
     @Override
     public void applyPassiveSkill(float dt) {
-        
+        // NPCs don't usually have passive skills that affect stats like the player
     }
 
     @Override
     public void update(float dt) {
-        
+        // NPC logic - currently just staying idle
         super.update(dt);
     }
 
     @Override
     public void render(SpriteBatch batch) {
-        
+        // Render idle animation
         renderAnimation(batch, "IDLE", com.badlogic.gdx.Gdx.graphics.getDeltaTime());
     }
 

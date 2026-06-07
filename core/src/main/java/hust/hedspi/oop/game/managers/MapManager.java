@@ -55,7 +55,7 @@ public class MapManager {
         }
         
         currentMap = new TmxMapLoader().load(filePath);
-        
+        // Unit scale có thể tùy chỉnh tùy vào size của map, thường là 1f cho pixel art
         mapRenderer = new OrthogonalTiledMapRenderer(currentMap, 1f); 
         
         loadCollisions();
@@ -94,7 +94,7 @@ public class MapManager {
                     
                     TriggerZone zone = new TriggerZone(rect.x, rect.y, rect.width, rect.height, name);
                     
-                    
+                    // Add TimeCondition based on rules
                     if (name.equals("Warzone1") || name.equals("Warzone2")) {
                         zone.setTimeCondition(new hust.hedspi.oop.game.utils.TimeCondition(18, 24));
                     } else if (name.equals("Adopt") || name.equals("Bubble") || name.equals("Office Gate")) {
@@ -103,7 +103,7 @@ public class MapManager {
                         zone.setTimeCondition(new hust.hedspi.oop.game.utils.TimeCondition(20, 24));
                     }
                     
-                    
+                    // Auto-Hooking Minigames based on trigger names
                     switch (name) {
                         case "Sewage":
                             zone.setLinkedMinigame(new ThoatKhoiCongMinigame());
@@ -133,13 +133,13 @@ public class MapManager {
                             zone.setLinkedMinigame(new NhayHipHopMinigame());
                             break;
                         case "Adopt":
-                            
+                            // No linked minigame, handled directly by InteractionUI
                             break;
                     }
                     
                     triggerZones.add(zone);
                     
-                    
+                    // Thêm NPC đứng tại vị trí trigger
                     CatColor color = colors[colorIndex % colors.length];
                     NPC npc = new NPC(rect.x, rect.y, 12, 12, color, "NPC " + name);
                     npcs.add(npc);
@@ -172,14 +172,14 @@ public class MapManager {
         if (currentMap == null) return 0f;
         int width = currentMap.getProperties().get("width", Integer.class);
         int tileWidth = currentMap.getProperties().get("tilewidth", Integer.class);
-        return Math.max(width * tileWidth, 750f); 
+        return Math.max(width * tileWidth, 750f); // 750 là chiều rộng của bức ảnh street.png
     }
 
     public float getMapPixelHeight() {
         if (currentMap == null) return 0f;
         int height = currentMap.getProperties().get("height", Integer.class);
         int tileHeight = currentMap.getProperties().get("tileheight", Integer.class);
-        return Math.max(height * tileHeight, 415f); 
+        return Math.max(height * tileHeight, 415f); // 415 là chiều cao của bức ảnh street.png
     }
 
     public void dispose() {

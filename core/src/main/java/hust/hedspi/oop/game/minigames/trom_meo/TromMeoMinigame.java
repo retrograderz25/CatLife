@@ -21,12 +21,12 @@ import hust.hedspi.oop.game.utils.MinigameID;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-
-
-
-
-
-
+/**
+ * Minigame "Trom Meo" (THIEF_HIDE).
+ *
+ * Người chơi điều khiển mèo né tránh các bẫy (trap) bắn ra từ Boss ở trung tâm.
+ * Sống sót trong 45 giây để thắng.
+ */
 public class TromMeoMinigame implements IMinigameStrategy {
 
     private static final String ASSET_BASE = "minigames/trom_meo/";
@@ -47,7 +47,7 @@ public class TromMeoMinigame implements IMinigameStrategy {
 
     private enum AnimState { IDLE, WALK, RUN }
 
-    
+    // ── Trap struct (formerly PoisonBall) ──────────────────────────────────────
     private static class Trap {
         float x, y;
         float vx, vy;
@@ -63,7 +63,7 @@ public class TromMeoMinigame implements IMinigameStrategy {
         }
 
         void update(float dt) {
-            
+            // Trail history
             for (int i = prevX.length - 1; i > 0; i--) {
                 prevX[i] = prevX[i - 1];
                 prevY[i] = prevY[i - 1];
@@ -72,17 +72,17 @@ public class TromMeoMinigame implements IMinigameStrategy {
             prevY[0] = y;
             if (prevCount < prevX.length) prevCount++;
 
-            
+            // Move
             x += vx * dt;
             y += vy * dt;
         }
     }
 
-    
+    // ── Textures ───────────────────────────────────────────────────────────────
     private Texture bgTexture, bossTexture, trapTexture, timeFrameTexture, dimTexture;
     private Texture idleTexture, walkTexture, runTexture;
 
-    
+    // ── Animations ───────────────────────────────────────────────────────────────
     private Animation<TextureRegion> idleAnim, walkAnim, runAnim;
     private AnimState animState;
     private float stateTime;
@@ -194,7 +194,7 @@ public class TromMeoMinigame implements IMinigameStrategy {
             return;
         }
 
-        
+        // Player movement
         boolean running = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT);
         float speed = running ? CAT_RUN_SPEED : CAT_SPEED;
         float dx = 0f, dy = 0f;
@@ -223,7 +223,7 @@ public class TromMeoMinigame implements IMinigameStrategy {
         }
         stateTime += dt;
 
-        
+        // Spawn traps
         spawnTimer += dt;
         float currentSpawnInterval = Math.max(0.18f, 0.72f - (timer / GAME_DURATION) * 0.58f);
         if (spawnTimer >= currentSpawnInterval) {
@@ -245,7 +245,7 @@ public class TromMeoMinigame implements IMinigameStrategy {
             }
         }
 
-        
+        // Update traps and remove off-screen
         Iterator<Trap> it = traps.iterator();
         while (it.hasNext()) {
             Trap t = it.next();
@@ -255,7 +255,7 @@ public class TromMeoMinigame implements IMinigameStrategy {
                 it.remove();
                 continue;
             }
-            
+            // Collision with cat
             float distToCat = Vector2.dst(catX, catY, t.x, t.y);
             float trapRadius = 12f;
             if (distToCat < CAT_HITBOX_RADIUS + trapRadius) {
@@ -264,7 +264,7 @@ public class TromMeoMinigame implements IMinigameStrategy {
             }
         }
 
-        
+        // Collision with boss
         if (Vector2.dst(catX, catY, bossX, bossY) < CAT_HITBOX_RADIUS + bossRadius) {
             endGame(false);
             return;
@@ -279,13 +279,12 @@ public class TromMeoMinigame implements IMinigameStrategy {
 
     @Override
     public void render(SpriteBatch batch) {
-        
+        // Background
         batch.draw(bgTexture, 0, 0, screenW, screenH);
 
-        
+        // Traps with trail effect
         float trapSize = 28f;
         for (Trap t : traps) {
-            // vẽ hiệu ứng bóng mờ (trail) chạy sau cái bẫy cho ngầu
             for (int i = t.prevCount - 1; i >= 0; i--) {
                 float alpha = 0.35f * (1f - (float) i / t.prevX.length);
                 batch.setColor(0.9f, 0.6f, 0.2f, alpha);
@@ -295,7 +294,7 @@ public class TromMeoMinigame implements IMinigameStrategy {
             batch.draw(trapTexture, t.x - trapSize / 2f, t.y - trapSize / 2f, trapSize, trapSize);
         }
 
-        
+        // Boss (no rotation per user request)
         float bossPulse = 1.0f + 0.06f * MathUtils.sin(stateTime * 5f);
         if (bossShootFlash > 0f) bossPulse += bossShootFlash * 0.08f;
         float bW = bossTexture.getWidth() * bossPulse * 1.2f;
@@ -304,7 +303,7 @@ public class TromMeoMinigame implements IMinigameStrategy {
         batch.draw(bossTexture, bossX - bW / 2f, bossY - bH / 2f, bW / 2f, bH / 2f, bW, bH, 1f, 1f, bossRotation, 0, 0, bossTexture.getWidth(), bossTexture.getHeight(), false, false);
         batch.setColor(Color.WHITE);
 
-        
+        // Cat
         float hs = CAT_DISPLAY_SIZE / 2f;
         Animation<TextureRegion> curAnim = switch (animState) {
             case RUN -> runAnim;
@@ -316,7 +315,7 @@ public class TromMeoMinigame implements IMinigameStrategy {
         if (facingLeft && frame.isFlipX()) frame.flip(true, false);
         batch.draw(frame, catX - hs, catY - hs, CAT_DISPLAY_SIZE, CAT_DISPLAY_SIZE);
 
-        
+        // Timeframe UI
         float tfScale = 3f;
         float tfW = timeFrameTexture.getWidth() * tfScale;
         float tfH = timeFrameTexture.getHeight() * tfScale;
@@ -331,7 +330,7 @@ public class TromMeoMinigame implements IMinigameStrategy {
         batch.draw(timeFrameTexture, tfX + shakeX, tfY + shakeY, tfW, tfH);
         hudFont.setColor(timeLeft < 10f ? Color.RED : Color.WHITE);
         hudFont.draw(batch, String.format("%.0f", timeLeft) + bundle.get("trom_meo_time_unit"), tfX + 8f + shakeX, tfY + tfH * 0.85f + shakeY);
-        
+        // Game Over overlay
         if (gameOver) {
             renderGameOver(batch);
         }

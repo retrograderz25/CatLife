@@ -7,10 +7,10 @@ import hust.hedspi.oop.game.managers.ScreenManager;
 import hust.hedspi.oop.game.screens.MinigameScreen;
 import hust.hedspi.oop.game.minigames.IMinigameStrategy;
 
-
-
-
-
+/**
+ * TriggerZone là vùng va chạm ẩn (Hitbox).
+ * Nó implement IInteractable để người chơi có thể nhấn [E] tương tác khi đứng đè lên.
+ */
 public class TriggerZone extends Entity implements IInteractable {
     private TimeCondition timeCondition;
     private IMinigameStrategy linkedMinigame;
@@ -34,11 +34,11 @@ public class TriggerZone extends Entity implements IInteractable {
     }
 
     public boolean canTrigger() {
-        
+        // 1. Kiểm tra điều kiện thời gian
         if (timeCondition != null && !timeCondition.isCurrentlyValid()) {
             return false;
         }
-        
+        // 2. Kiểm tra điều kiện tiên quyết từ cốt truyện
         if (!hust.hedspi.oop.game.managers.StoryManager.getInstance().isZoneUnlocked(zoneName)) {
             return false;
         }
@@ -47,7 +47,7 @@ public class TriggerZone extends Entity implements IInteractable {
 
     @Override
     public void onInteract(Cat player) {
-        
+        // Nếu hợp lệ và có Minigame được liên kết, mở Minigame
         if (linkedMinigame != null) {
             System.out.println("TriggerZone [" + zoneName + "]: Trigger Minigame!");
             ScreenManager.getInstance().pushScreen(new MinigameScreen(linkedMinigame));
@@ -58,12 +58,12 @@ public class TriggerZone extends Entity implements IInteractable {
 
     @Override
     public void update(float dt) {
-        
+        // TriggerZone là vật thể tĩnh, ẩn, thường không cần update logic chuyển động
     }
 
     @Override
     public void render(SpriteBatch batch) {
-        
-        
+        // TriggerZone là vô hình (Invisible), KHÔNG render gì cả.
+        // Chỉ vẽ khi dùng chức năng Debug (sử dụng ShapeRenderer thay vì SpriteBatch).
     }
 }

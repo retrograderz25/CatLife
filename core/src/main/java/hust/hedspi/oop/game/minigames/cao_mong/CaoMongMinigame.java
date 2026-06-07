@@ -17,16 +17,16 @@ import hust.hedspi.oop.game.minigames.IMinigameStrategy;
 import hust.hedspi.oop.game.utils.Constants;
 import hust.hedspi.oop.game.utils.MinigameID;
 
-
-
-
-
-
-
-
-
-
-
+/**
+ * Minigame "Cào Móng" (DAILY_SCRATCH).
+ *
+ * Bố cục tay:
+ *   Tay PHẢI (góc dưới-phải) → chạm zone UP và RIGHT
+ *   Tay TRÁI (góc dưới-trái) → chạm zone DOWN và LEFT
+ *
+ * Animation: mỗi khi bấm đúng, tay tương ứng vươn dần lên đến zone
+ * rồi rút về vị trí nghỉ (lerp 0→1→0 trong HAND_SHOW_TIME giây).
+ */
 public class CaoMongMinigame implements IMinigameStrategy {
 
     private static final float GAME_DURATION  = Constants.CAO_MONG_DURATION;
@@ -37,61 +37,61 @@ public class CaoMongMinigame implements IMinigameStrategy {
 
     private static final String ASSET_BASE = "minigames/cao_mong/";
 
-    
+    // Góc quay mũi tên: UP=0° DOWN=180° LEFT=90°CCW RIGHT=-90°CW (sprite gốc hướng lên)
     private static final float[] ARROW_ROTATIONS = { 0f, 180f, 90f, -90f };
 
-    
+    // Tỉ lệ vị trí zone trên board
     private static final float ZONE_FAR_RATIO  = 0.75f;
     private static final float ZONE_NEAR_RATIO = 0.25f;
 
-    
+    // Phím điều hướng theo thứ tự: 0=UP 1=DOWN 2=LEFT 3=RIGHT
     private static final int[] DIRECTION_KEYS = {
         Input.Keys.UP, Input.Keys.DOWN, Input.Keys.LEFT, Input.Keys.RIGHT
     };
 
-    
+    // Index tay
     private static final int LEFT_HAND  = 0;
     private static final int RIGHT_HAND = 1;
 
-    
+    // Textures
     private Texture        bgTexture, boardTexture, catHandTexture, timeFrameTexture, dimTexture;
     private Texture[]      arrowTextures;
     private TextureRegion[] arrowRegions;
-    private TextureRegion  handRegionRight; 
-    private TextureRegion  handRegionLeft;  
+    private TextureRegion  handRegionRight; // bàn tay phải (sprite gốc)
+    private TextureRegion  handRegionLeft;  // bàn tay trái  (flipX)
 
-    
+    // Layout
     private int   screenW, screenH;
     private float boardX, boardY, boardW, boardH;
     private float arrowW, arrowH;
     private float handW,  handH;
     private float tfX, tfY, tfW, tfH;
 
-    
+    // Hint panel (bên phải board)
     private float hintX, hintY, hintW, hintH;
-    private String[] hintLines; 
+    private String[] hintLines; // load từ bundle trong start()
 
-    
+    // Vị trí nghỉ của từng tay (tâm sprite, một phần ẩn dưới màn hình)
     private final float[] handRestCX = new float[2];
     private final float[] handRestCY = new float[2];
 
-    
+    // Trạng thái animation tay
     private final boolean[] handActive    = new boolean[2];
     private final float[]   handAnimTime  = new float[2];
-    private final int[]     handTarget    = new int[2]; 
+    private final int[]     handTarget    = new int[2]; // zone (0-3) mà tay đang vươn tới
 
-    
+    // Game state
     private float   timer;
     private int     score;
     private boolean gameOver, exitRequested, won;
-    private int     activeArrow; 
+    private int     activeArrow; // zone đang hiển thị mũi tên (0-3)
 
-    
+    // Fonts & bundle từ ResourceManager (không tạo mới, không dispose)
     private BitmapFont hudFont;
     private BitmapFont dialogFont;
     private I18NBundle bundle;
 
-    
+    // -------------------------------------------------------------------------
 
     @Override
     public void start() {
@@ -140,7 +140,7 @@ public class CaoMongMinigame implements IMinigameStrategy {
 
         handRegionRight = new TextureRegion(catHandTexture);
         handRegionLeft  = new TextureRegion(catHandTexture);
-        handRegionLeft.flip(true, false); 
+        handRegionLeft.flip(true, false); // tay trái = mirror ngang của tay phải
 
         Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pix.setColor(Color.WHITE);
@@ -161,8 +161,8 @@ public class CaoMongMinigame implements IMinigameStrategy {
         handW = catHandTexture.getWidth()  * HAND_SCALE;
         handH = catHandTexture.getHeight() * HAND_SCALE;
 
-        
-        
+        // Tay đứng ở vị trí 1/3 và 2/3 chiều ngang màn hình (dưới board).
+        // Tâm sprite nằm ở handH*0.3 → phần dưới bị cắt bởi mép màn hình.
         handRestCX[LEFT_HAND]  = screenW / 3f;
         handRestCX[RIGHT_HAND] = screenW * 2f / 3f;
         handRestCY[LEFT_HAND]  = handH * 0.3f;
@@ -173,53 +173,53 @@ public class CaoMongMinigame implements IMinigameStrategy {
         tfX = 10f;
         tfY = screenH - tfH - 10f;
 
-        
-        float iconSz = 18f; 
+        // Hint panel: ngay bên phải board, căn giữa dọc
+        float iconSz = 18f; // icon mũi tên nhỏ (px, square bounding box)
         float lineH  = 26f;
-        hintW = iconSz + 55f;         
-        hintH = 4 * lineH + 14f;      
+        hintW = iconSz + 55f;         // icon + khoảng cách + text
+        hintH = 4 * lineH + 14f;      // 4 dòng + padding trên/dưới
         hintX = boardX + boardW + 10f;
         hintY = (screenH - hintH) / 2f;
     }
 
-    
+    /** Tay nào xử lý hướng dir: UP/RIGHT → tay phải, DOWN/LEFT → tay trái. */
     private int handOf(int dir) {
         return (dir == 0 || dir == 3) ? RIGHT_HAND : LEFT_HAND;
     }
 
-    
-
-
-
-
-
+    /**
+     * Easing cho animation "mèo vờn": vươn nhanh (ease-out) → giữ → rút nhẹ.
+     *   0–25% thời gian : vươn lên, ease-out quadratic (snappy)
+     *   25–50%           : giữ tại target (brief touch)
+     *   50–100%          : rút về, linear
+     */
     private float getLerpFactor(float animTime) {
         float norm = MathUtils.clamp(animTime / HAND_SHOW_TIME, 0f, 1f);
         if (norm < 0.25f) {
             float t = norm / 0.25f;
-            return 1f - (1f - t) * (1f - t); 
+            return 1f - (1f - t) * (1f - t); // ease-out quad
         } else if (norm < 0.5f) {
-            return 1f;                         
+            return 1f;                         // hold
         } else {
             float t = (norm - 0.5f) / 0.5f;
-            return 1f - t;                     
+            return 1f - t;                     // linear retract
         }
     }
 
-    
+    /** Tâm (cx, cy) của zone dir trên board. */
     private float[] zoneCenter(int dir) {
         float cx = boardX + boardW / 2f;
         float cy = boardY + boardH / 2f;
         switch (dir) {
-            case 0: return new float[]{ cx, boardY + boardH * (ZONE_FAR_RATIO + 0.03f)  }; 
-            case 1: return new float[]{ cx, boardY + boardH * (ZONE_NEAR_RATIO - 0.03f) }; 
-            case 2: return new float[]{ boardX + boardW * (ZONE_NEAR_RATIO - 0.03f), cy }; 
-            case 3: return new float[]{ boardX + boardW * (ZONE_FAR_RATIO + 0.03f),  cy }; 
+            case 0: return new float[]{ cx, boardY + boardH * (ZONE_FAR_RATIO + 0.03f)  }; // UP
+            case 1: return new float[]{ cx, boardY + boardH * (ZONE_NEAR_RATIO - 0.03f) }; // DOWN
+            case 2: return new float[]{ boardX + boardW * (ZONE_NEAR_RATIO - 0.03f), cy }; // LEFT
+            case 3: return new float[]{ boardX + boardW * (ZONE_FAR_RATIO + 0.03f),  cy }; // RIGHT
         }
         return new float[]{ cx, cy };
     }
 
-    
+    /** Vẽ TextureRegion căn tâm tại (cx, cy), cho phép rotation. */
     private void drawCentered(SpriteBatch batch, TextureRegion region,
                                float cx, float cy, float w, float h, float rotation) {
         batch.draw(region,
@@ -230,7 +230,7 @@ public class CaoMongMinigame implements IMinigameStrategy {
             rotation);
     }
 
-    
+    // -------------------------------------------------------------------------
 
     @Override
     public void update(float dt) {
@@ -253,7 +253,7 @@ public class CaoMongMinigame implements IMinigameStrategy {
 
         timer += dt;
 
-        
+        // Tiến animation từng tay
         for (int h = 0; h < 2; h++) {
             if (handActive[h]) {
                 handAnimTime[h] += dt;
@@ -292,16 +292,16 @@ public class CaoMongMinigame implements IMinigameStrategy {
         batch.draw(bgTexture, 0, 0, screenW, screenH);
         batch.draw(boardTexture, boardX, boardY, boardW, boardH);
 
-        
+        // Mũi tên active – xoay đúng hướng
         float[] ac = zoneCenter(activeArrow);
         drawCentered(batch, arrowRegions[activeArrow],
             ac[0], ac[1], arrowW, arrowH, ARROW_ROTATIONS[activeArrow]);
 
-        
+        // Hai bàn tay – luôn hiển thị, tay active thì vươn về phía zone
         renderHand(batch, LEFT_HAND,  handRegionLeft);
         renderHand(batch, RIGHT_HAND, handRegionRight);
 
-        
+        // Timeframe + đếm ngược
         batch.draw(timeFrameTexture, tfX, tfY, tfW, tfH);
         float timeLeft = Math.max(0f, GAME_DURATION - timer);
         hudFont.setColor(timeLeft < 10f ? Color.RED : Color.WHITE);
@@ -310,19 +310,19 @@ public class CaoMongMinigame implements IMinigameStrategy {
             tfX + 8f, tfY + tfH * 0.85f);
         hudFont.setColor(Color.WHITE);
 
-        
+        // Score góc trên phải
         dialogFont.setColor(Color.WHITE);
         dialogFont.draw(batch, score + " / " + WIN_THRESHOLD, screenW - 100f, screenH - 10f);
 
         if (gameOver) renderGameOver(batch);
     }
 
-    
+    /** Tính vị trí và vẽ một tay (index h). */
     private void renderHand(SpriteBatch batch, int h, TextureRegion region) {
         float cx, cy;
         if (handActive[h]) {
             float[] zone = zoneCenter(handTarget[h]);
-            
+            // Đặt tâm sprite sao cho đầu ngón (đỉnh sprite) chạm đúng tâm zone
             float targetCX = zone[0];
             float targetCY = zone[1] - handH / 2f;
             float t = getLerpFactor(handAnimTime[h]);
@@ -387,7 +387,7 @@ public class CaoMongMinigame implements IMinigameStrategy {
         dialogFont.setColor(Color.WHITE);
     }
 
-    
+    // -------------------------------------------------------------------------
 
     @Override public boolean isFinished() { return exitRequested; }
     @Override public boolean isWon()      { return won; }
@@ -401,7 +401,7 @@ public class CaoMongMinigame implements IMinigameStrategy {
         safeDispose(dimTexture);
         if (arrowTextures != null)
             for (Texture t : arrowTextures) safeDispose(t);
-        
+        // hudFont, dialogFont, bundle thuộc ResourceManager → không dispose ở đây
     }
 
     private void safeDispose(Texture t) { if (t != null) t.dispose(); }
