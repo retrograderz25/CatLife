@@ -20,7 +20,6 @@ public class PlayerHUD implements IObserver {
     private Table statsTable;
     private Table iconTable;
     private Label hpLabel;
-    private Label hungerLabel;
     private Label energyLabel;
     private Image adoptedIcon;
     private Cat player;
@@ -47,11 +46,9 @@ public class PlayerHUD implements IObserver {
         Label.LabelStyle labelStyle = new Label.LabelStyle(ResourceManager.getInstance().hudFont, Color.WHITE);
         
         hpLabel = new Label("", labelStyle);
-        hungerLabel = new Label("", labelStyle);
         energyLabel = new Label("", labelStyle);
 
         contentTable.add(hpLabel).left().padBottom(5).row();
-        contentTable.add(hungerLabel).left().padBottom(5).row();
         contentTable.add(energyLabel).left();
 
         // Thêm contentTable vào statsTable gốc với lề 10px từ góc trên trái
@@ -85,8 +82,6 @@ public class PlayerHUD implements IObserver {
     private void updateLabels() {
         if (player == null) return;
         hpLabel.setText("HP: " + player.getHp() + "/100");
-        hungerLabel.setText("Hunger: " + player.getHunger() + "/100");
-        energyLabel.setText("Energy: " + player.getEnergy() + "/100");
         
         if (adoptedIcon != null) {
             // Nếu đã được nhận nuôi (Zone Bubble được mở)

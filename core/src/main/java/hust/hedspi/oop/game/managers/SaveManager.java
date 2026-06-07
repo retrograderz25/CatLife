@@ -24,6 +24,11 @@ public class SaveManager {
         prefs.flush(); // Ghi xuống ổ cứng
     }
     
+    public static boolean isEndingUnlocked(String endingKey) {
+        Preferences prefs = Gdx.app.getPreferences(SAVE_FILE);
+        return prefs.getBoolean(endingKey, false);
+    }
+
     // Đếm số lượng ending đã mở khóa
     public static int getUnlockedEndingsCount() {
         Preferences prefs = Gdx.app.getPreferences(SAVE_FILE);
@@ -35,5 +40,11 @@ public class SaveManager {
             }
         }
         return count;
+    }
+
+    public static void clearAllSaves() {
+        Preferences prefs = Gdx.app.getPreferences(SAVE_FILE);
+        prefs.clear();
+        prefs.flush();
     }
 }

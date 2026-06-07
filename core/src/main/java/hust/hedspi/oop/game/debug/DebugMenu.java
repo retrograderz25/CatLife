@@ -21,10 +21,10 @@ import hust.hedspi.oop.game.managers.TimeManager;
 public class DebugMenu {
     private Table rootTable;
     private Texture panelTex, btnTex, btnPressedTex;
-    private Label hourLabel, minLabel, hpLabel, energyLabel, hungerLabel;
+    private Label hourLabel, minLabel, hpLabel, energyLabel;
     private boolean isVisible = false;
     
-    private TextButton winBtn, loseBtn, unadoptBtn;
+    private TextButton winBtn, loseBtn, unadoptBtn, resetSavesBtn;
 
     public DebugMenu() {
         rootTable = new Table();
@@ -102,46 +102,6 @@ public class DebugMenu {
         contentTable.add(hpLabel).width(150).align(Align.center);
         contentTable.add(addHpBtn).width(40).height(40).pad(5).row();
 
-        // 4. Player: Energy
-        energyLabel = new Label("Năng lượng: ", labelStyle);
-        TextButton subEnBtn = new TextButton(" - ", btnStyle);
-        TextButton addEnBtn = new TextButton(" + ", btnStyle);
-        subEnBtn.addListener(new ClickListener() {
-            public void clicked(InputEvent e, float x, float y) {
-                Cat p = GameManager.getInstance().getPlayer();
-                if(p != null) { p.decreaseEnergy(10); updateLabels(); }
-            }
-        });
-        addEnBtn.addListener(new ClickListener() {
-            public void clicked(InputEvent e, float x, float y) {
-                Cat p = GameManager.getInstance().getPlayer();
-                if(p != null) { p.increaseEnergy(10); updateLabels(); }
-            }
-        });
-        contentTable.add(subEnBtn).width(40).height(40).pad(5);
-        contentTable.add(energyLabel).width(150).align(Align.center);
-        contentTable.add(addEnBtn).width(40).height(40).pad(5).row();
-
-        // 5. Player: Hunger
-        hungerLabel = new Label("Độ đói: ", labelStyle);
-        TextButton subHuBtn = new TextButton(" - ", btnStyle);
-        TextButton addHuBtn = new TextButton(" + ", btnStyle);
-        subHuBtn.addListener(new ClickListener() {
-            public void clicked(InputEvent e, float x, float y) {
-                Cat p = GameManager.getInstance().getPlayer();
-                if(p != null) { p.decreaseHunger(10); updateLabels(); }
-            }
-        });
-        addHuBtn.addListener(new ClickListener() {
-            public void clicked(InputEvent e, float x, float y) {
-                Cat p = GameManager.getInstance().getPlayer();
-                if(p != null) { p.increaseHunger(10); updateLabels(); }
-            }
-        });
-        contentTable.add(subHuBtn).width(40).height(40).pad(5);
-        contentTable.add(hungerLabel).width(150).align(Align.center);
-        contentTable.add(addHuBtn).width(40).height(40).pad(5).row();
-
         // 6. Adopt / Unadopt
         unadoptBtn = new TextButton("Bỏ Nhận Nuôi", btnStyle);
         unadoptBtn.addListener(new ClickListener() {
@@ -151,7 +111,20 @@ public class DebugMenu {
                 if(p != null) { p.notifyObservers(); }
             }
         });
-        contentTable.add(unadoptBtn).width(150).height(40).pad(5).colspan(3).center().row();
+        
+        resetSavesBtn = new TextButton("Reset Thành Tích", btnStyle);
+        resetSavesBtn.addListener(new ClickListener() {
+            public void clicked(InputEvent e, float x, float y) {
+                hust.hedspi.oop.game.managers.SaveManager.clearAllSaves();
+                hust.hedspi.oop.game.managers.StoryManager.getInstance().resetStoryFlags();
+                System.out.println("Đã reset toàn bộ thành tích và lịch sử chơi!");
+            }
+        });
+
+        Table actionTable = new Table();
+        actionTable.add(unadoptBtn).width(150).height(40).pad(5);
+        actionTable.add(resetSavesBtn).width(150).height(40).pad(5);
+        contentTable.add(actionTable).colspan(3).center().row();
 
         // 7. Force Minigame Result
         winBtn = new TextButton("Thắng Game", btnStyle);
@@ -186,8 +159,6 @@ public class DebugMenu {
         Cat p = GameManager.getInstance().getPlayer();
         if (p != null) {
             hpLabel.setText("HP: " + p.getHp());
-            energyLabel.setText("Năng lượng: " + p.getEnergy());
-            hungerLabel.setText("Độ đói: " + p.getHunger());
         }
         
         // Hide minigame buttons if not in minigame

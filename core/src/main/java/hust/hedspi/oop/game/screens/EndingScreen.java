@@ -156,26 +156,8 @@ public class EndingScreen implements Screen {
             }
         });
 
-        TextButton btnContinue = new TextButton("Tiếp Tục Khám Phá", btnStyle);
-        btnContinue.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                ScreenManager.getInstance().popScreen(); 
-                if (GameManager.getInstance().getPlayer().getHp() <= 0) {
-                    GameManager.getInstance().getPlayer().setHp(100); // Hồi sinh
-                }
-                GameManager.getInstance().resumeGame();
-            }
-        });
-
         Table btnTable = new Table();
-        if ("Quán Thịt Hổ".equals(endingName)) {
-            // Ending "Quán Thịt Hổ" là Instant Death vĩnh viễn, vô hiệu hóa nút Tiếp Tục
-            btnTable.add(btnNewLife).width(300).height(60);
-        } else {
-            btnTable.add(btnNewLife).width(300).height(60).padRight(30);
-            btnTable.add(btnContinue).width(300).height(60);
-        }
+        btnTable.add(btnNewLife).width(300).height(60);
 
         dialogTable.add(btnTable);
         rootTable.add(dialogTable);

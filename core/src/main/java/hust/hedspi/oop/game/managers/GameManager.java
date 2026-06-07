@@ -46,8 +46,8 @@ public class GameManager {
             // Logic Sinh tử (Life & Death Cycle)
             if (player.getHp() <= 0) {
                 currentState = GameState.GAME_OVER;
-                StoryManager.getInstance().evaluateFinalEnding(player);
-                System.out.println("Game Over Triggered!");
+                ScreenManager.getInstance().pushScreen(new hust.hedspi.oop.game.screens.EndingScreen("Kiếp Lang Bạt", false));
+                System.out.println("Game Over Triggered: Kiếp Lang Bạt");
             }
         }
     }
